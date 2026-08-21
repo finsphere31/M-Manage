@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Money Management & Ledger</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+      color: #212529;
+      -webkit-text-size-adjust: 100%;
+      padding-bottom: 20px;
+    }
+
+    /* Fixed/Sticky Top Navigation Header */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #f0f2f5;
+      padding: 10px 12px 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    
+    .header-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .app-brand-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.2px;
+    }
+    .three-dots-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      color: #495057;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .three-dots-btn:hover {
+      background: #e2e6ea;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .nav-tabs button {
+      padding: 9px 16px;
+      border: 1px solid #ced4da;
+      background: #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 14px;
+      color: #495057;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .nav-tabs button.active {
+      background: #0d6efd;
+      color: #ffffff;
+      border-color: #0d6efd;
+      box-shadow: 0 2px 4px rgba(13,110,253,0.3);
+    }
+
+    .sheet-container {
+      background: #ffffff;
+      padding: 14px;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      max-width: 1100px;
+      margin: 10px 12px;
+    }
+    @media (min-width: 1124px) {
+      .sheet-container { margin: 10px auto; }
+      .sticky-header { max-width: 1100px; margin: 0 auto; }
+    }
+
+    .top-action-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .current-page-badge {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0d6efd;
+      background: #e7f1ff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid #b6d4fe;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .current-page-badge:hover {
+      background: #d0e2ff;
+    }
+    .plus-btn {
+      padding: 6px 14px;
+      background: #198754;
+      color: white;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(25,135,84,0.25);
+    }
+
+    /* Fixed Scroll Area For Entries Under Top Options */
+    .table-scroll {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 60vh;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 14px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 580px;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #495057;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      box-shadow: 0 1px 0 #dee2e6;
+    }
+    input, select {
+      width: 100%;
+      border: 1px solid transparent;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      color: inherit;
+    }
+    input:focus, select:focus {
+      background: #ffffff;
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
+    }
+    .num { text-align: right; }
+    
+    /* Expense Red Styling */
+    .exp-num {
+      color: #dc3545 !important;
+      font-weight: 600;
+    }
+    
+    .total-row {
+      background: #f8f9fa;
+      font-weight: bold;
+      color: #212529;
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      box-shadow: 0 -1px 0 #dee2e6;
+    }
+    .action-btn {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 5px 9px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .add-row-btn {
+      padding: 9px 18px;
+      background: #0dcaf0;
+      color: #212529;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-block;
+    }
+    .btn-toggle-bal {
+      padding: 9px 16px;
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .bal-summary-panel {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      background: #f8f9fa;
+    }
+    .month-bal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .month-bal-item {
+      padding: 11px 15px;
+      background: #ffffff;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .overall-total-box {
+      border-top: 2px solid #dee2e6;
+      padding-top: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .text-green { color: #198754; font-weight: 600; }
+    .text-red { color: #dc3545; font-weight: 600; }
+    .filter-box {
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .filter-box select {
+      border: 1px solid #ced4da;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #fff;
+      min-width: 220px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 10px;
+      max-width: 380px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .modal-box h4 {
+      margin-bottom: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #212529;
+    }
+    .modal-box input {
+      border: 1px solid #ced4da;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #fff;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .modal-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-save-btn { background: #0d6efd; color: #fff; }
+    .modal-cancel-btn { background: #6c757d; color: #fff; }
+    .modal-del-btn { background: #dc3545; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header & Navigation -->
+  <div class="sticky-header">
+    <div class="header-top-row">
+      <span class="app-brand-title" id="appBrandTitle">Money Management</span>
+      <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
+    </div>
+    <div class="nav-tabs">
+      <button class="active" onclick="switchSection('sheet', this)">Cashbook Sheet</button>
+      <button onclick="switchSection('receivables', this)">Receivables</button>
+      <button onclick="switchSection('payables', this)">Payables</button>
+      <button onclick="switchSection('ledger', this)">Ledger Report</button>
+    </div>
+  </div>
+
+  <!-- Cashbook Section -->
+  <div id="sheet-section" class="sheet-container">
+    <div class="top-action-bar">
+      <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
+        <span id="badgePageTitle">Active Page</span>
+        <span style="font-size: 12px; opacity: 0.7;">✎</span>
+      </div>
+      <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy whole previous page and add new">+</button>
+    </div>
+
+    <div class="table-scroll">
+      <table id="cashTable">
+        <thead>
+          <tr>
+            <th style="width: 20%;">Date</th>
+            <th style="width: 32%;">Particular</th>
+            <th style="width: 16%;">Income</th>
+            <th style="width: 16%;">Exp</th>
+            <th style="width: 16%;">Bal</th>
+            <th style="width: 5%;"></th>
+          </tr>
+        </thead>
+        <tbody id="sheetTableBody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="2" class="num">Total</td>
+            <td id="totalIncome" class="num">0</td>
+            <td id="totalExp" class="num exp-num">0</td>
+            <td id="totalBal" class="num">0</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+
+    <!-- Month Balance Section -->
+    <div style="margin-top: 20px;">
+      <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
+      
+      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none;">
+        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
+        <div class="month-bal-list" id="monthBalList"></div>
+        <div class="overall-total-box">
+          <span>Total Available Balance (All Months):</span>
+          <span id="allMonthsTotalBal" class="num">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receivables Section -->
+  <div id="receivables-section" class="sheet-container" style="display:none;">
+    <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Receivable (Due In)</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">Date</th>
+            <th style="width: 30%;">Debtor Name / Account</th>
+            <th style="width: 25%;">Description</th>
+            <th style="width: 20%;">Amount</th>
+            <th style="width: 5%;"></th>
+          </tr>
+        </thead>
+        <tbody id="recTableBody"></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
+  </div>
+
+  <!-- Payables Section -->
+  <div id="payables-section" class="sheet-container" style="display:none;">
+    <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">Date</th>
+            <th style="width: 30%;">Creditor Name / Account</th>
+            <th style="width: 25%;">Description</th>
+            <th style="width: 20%;">Amount</th>
+            <th style="width: 5%;"></th>
+          </tr>
+        </thead>
+        <tbody id="payTableBody"></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
+  </div>
+
+  <!-- Ledger Report Section -->
+  <div id="ledger-section" class="sheet-container" style="display:none;">
+    <h3 style="margin-bottom: 12px; font-size: 18px;">Account & Person Ledger Details</h3>
+    <div class="filter-box">
+      <label><strong>Select Account / Person:</strong></label>
+      <select id="ledgerAccountSelect" onchange="renderAccountLedger()">
+        <option value="ALL">-- View All Entries --</option>
+      </select>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Source Page / Type</th>
+            <th>Particular / Account</th>
+            <th class="num">Income / Due In</th>
+            <th class="num exp-num">Exp / Due Out</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerDetailBody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" class="num">Net Calculation</td>
+            <td id="ledgerFilterIn" class="num">0</td>
+            <td id="ledgerFilterOut" class="num exp-num">0</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="3" class="num">Closing Balance</td>
+            <td colspan="2" id="ledgerFilterBalance" class="num">0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Dialog for Page Rename / Add -->
+  <div class="modal-overlay" id="pageModal">
+    <div class="modal-box">
+      <h4 id="modalHeading">Edit Page Name</h4>
+      <input type="text" id="modalPageNameInput" placeholder="Enter page name">
+      <div class="modal-actions">
+        <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
+        <div style="display:flex; gap:8px;">
+          <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
+          <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Dialog for Website / Brand Name -->
+  <div class="modal-overlay" id="appNameModal">
+    <div class="modal-box">
+      <h4>Edit Website / Header Name</h4>
+      <input type="text" id="modalAppNameInput" placeholder="Enter website title">
+      <div class="modal-actions" style="justify-content: flex-end;">
+        <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
+        <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
+
+    let isBalPanelVisible = false;
+    let isCreatingNew = false;
+
+    // Load App Name
+    let appTitle = localStorage.getItem('cashbook_app_name') || "Money Management";
+    document.getElementById('appBrandTitle').innerText = appTitle;
+
+    // Load sheets or initiate clean dynamic page
+    let sheets = JSON.parse(localStorage.getItem('cashbook_sheets')) || [
+      {
+        name: currentMonthYear,
+        rows: [
+          { date: today, particular: "", income: 0, exp: 0 }
+        ]
+      }
+    ];
+
+    let currentSheetIndex = sheets.length - 1;
+    let receivables = JSON.parse(localStorage.getItem('cashbook_receivables')) || [];
+    let payables = JSON.parse(localStorage.getItem('cashbook_payables')) || [];
+
+    function saveAllData() {
+      localStorage.setItem('cashbook_sheets', JSON.stringify(sheets));
+      localStorage.setItem('cashbook_receivables', JSON.stringify(receivables));
+      localStorage.setItem('cashbook_payables', JSON.stringify(payables));
+    }
+
+    function updateBadge() {
+      const titleEl = document.getElementById('badgePageTitle');
+      titleEl.innerText = `Active Page: ${sheets[currentSheetIndex].name}`;
+    }
+
+    function renderSheet() {
+      updateBadge();
+      const tbody = document.getElementById('sheetTableBody');
+      tbody.innerHTML = '';
+      const currentRows = sheets[currentSheetIndex].rows;
+
+      currentRows.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="date" value="${row.date}" onchange="updateRowData(${i}, 'date', this.value)"></td>
+          <td><input type="text" value="${row.particular}" placeholder="Particular" onchange="updateRowData(${i}, 'particular', this.value)"></td>
+          <td><input type="number" inputmode="numeric" class="num" value="${row.income === 0 ? '' : row.income}" placeholder="0" oninput="handleAmountInput(${i}, 'income', this.value)"></td>
+          <td><input type="number" inputmode="numeric" class="num exp-num" value="${row.exp === 0 ? '' : row.exp}" placeholder="0" oninput="handleAmountInput(${i}, 'exp', this.value)"></td>
+          <td class="num bal-cell" id="bal-cell-${i}">0</td>
+          <td><button class="action-btn" onclick="removeRow(${i})">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      calculateCashTotals();
+    }
+
+    function handleAmountInput(rowIndex, field, value) {
+      sheets[currentSheetIndex].rows[rowIndex][field] = value === '' ? 0 : (parseFloat(value) || 0);
+      saveAllData();
+      calculateCashTotals();
+      if (isBalPanelVisible) renderBalances();
+    }
+
+    function updateRowData(rowIndex, field, value) {
+      sheets[currentSheetIndex].rows[rowIndex][field] = value;
+      saveAllData();
+    }
+
+    function calculateCashTotals() {
+      const currentRows = sheets[currentSheetIndex].rows;
+      let runningBal = 0;
+      let totalInc = 0;
+      let totalExp = 0;
+
+      currentRows.forEach((row, i) => {
+        const inc = parseFloat(row.income) || 0;
+        const exp = parseFloat(row.exp) || 0;
+        runningBal += (inc - exp);
+        totalInc += inc;
+        totalExp += exp;
+
+        const cell = document.getElementById(`bal-cell-${i}`);
+        if (cell) {
+          cell.innerText = runningBal;
+          cell.className = `num bal-cell ${runningBal < 0 ? 'text-red' : ''}`;
+        }
+      });
+
+      document.getElementById('totalIncome').innerText = totalInc;
+      document.getElementById('totalExp').innerText = totalExp;
+      const totalBalEl = document.getElementById('totalBal');
+      totalBalEl.innerText = runningBal;
+      totalBalEl.className = `num ${runningBal < 0 ? 'text-red' : ''}`;
+    }
+
+    function addRow() {
+      sheets[currentSheetIndex].rows.push({
+        date: today,
+        particular: '',
+        income: 0,
+        exp: 0
+      });
+      saveAllData();
+      renderSheet();
+      if (isBalPanelVisible) renderBalances();
+    }
+
+    function removeRow(index) {
+      sheets[currentSheetIndex].rows.splice(index, 1);
+      saveAllData();
+      renderSheet();
+      if (isBalPanelVisible) renderBalances();
+    }
+
+    /* Modal Handling */
+    function openRenameModal() {
+      isCreatingNew = false;
+      document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
+      const input = document.getElementById('modalPageNameInput');
+      input.value = sheets[currentSheetIndex].name;
+      document.getElementById('modalDeleteBtn').style.display = sheets.length > 1 ? 'block' : 'none';
+      document.getElementById('pageModal').style.display = 'flex';
+      setTimeout(() => { input.focus(); input.select(); }, 100);
+    }
+
+    function copyAndAddNewSheet() {
+      isCreatingNew = true;
+      document.getElementById('modalHeading').innerText = 'New Page Name';
+      const input = document.getElementById('modalPageNameInput');
+      input.value = `Page ${sheets.length + 1}`;
+      document.getElementById('modalDeleteBtn').style.display = 'none';
+      document.getElementById('pageModal').style.display = 'flex';
+      setTimeout(() => { input.focus(); input.select(); }, 100);
+    }
+
+    function openAppNameModal() {
+      const input = document.getElementById('modalAppNameInput');
+      input.value = document.getElementById('appBrandTitle').innerText;
+      document.getElementById('appNameModal').style.display = 'flex';
+      setTimeout(() => { input.focus(); input.select(); }, 100);
+    }
+
+    function saveAppName() {
+      const val = document.getElementById('modalAppNameInput').value.trim();
+      const finalTitle = val !== "" ? val : "Money Management";
+      document.getElementById('appBrandTitle').innerText = finalTitle;
+      localStorage.setItem('cashbook_app_name', finalTitle);
+      closeModal('appNameModal');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function savePageModal() {
+      const inputVal = document.getElementById('modalPageNameInput').value.trim();
+      const finalName = inputVal !== "" ? inputVal : `Page ${sheets.length + 1}`;
+
+      if (isCreatingNew) {
+        const previousRows = sheets[sheets.length - 1].rows;
+        const copiedRows = previousRows.map(r => ({
+          date: today,
+          particular: r.particular,
+          income: r.income,
+          exp: r.exp
+        }));
+
+        sheets.push({
+          name: finalName,
+          rows: copiedRows
+        });
+        currentSheetIndex = sheets.length - 1;
+      } else {
+        sheets[currentSheetIndex].name = finalName;
+      }
+
+      saveAllData();
+      renderSheet();
+      if (isBalPanelVisible) renderBalances();
+      closeModal('pageModal');
+    }
+
+    function deleteCurrentSheet() {
+      if (confirm(`Delete "${sheets[currentSheetIndex].name}"?`)) {
+        sheets.splice(currentSheetIndex, 1);
+        if (currentSheetIndex >= sheets.length) {
+          currentSheetIndex = sheets.length - 1;
+        }
+        saveAllData();
+        renderSheet();
+        if (isBalPanelVisible) renderBalances();
+        closeModal('pageModal');
+      }
+    }
+
+    function toggleBalPanel() {
+      const panel = document.getElementById('balSummaryPanel');
+      const btn = document.getElementById('toggleBalBtn');
+      isBalPanelVisible = !isBalPanelVisible;
+
+      if (isBalPanelVisible) {
+        panel.style.display = 'block';
+        btn.innerText = 'Hide Available Balance';
+        renderBalances();
+      } else {
+        panel.style.display = 'none';
+        btn.innerText = 'Show Available Balance';
+      }
+    }
+
+    function renderBalances() {
+      const listContainer = document.getElementById('monthBalList');
+      listContainer.innerHTML = '';
+      let totalAccumulated = 0;
+
+      sheets.forEach((sheet, idx) => {
+        let sheetBal = 0;
+        sheet.rows.forEach(r => {
+          sheetBal += (parseFloat(r.income) || 0) - (parseFloat(r.exp) || 0);
+        });
+
+        totalAccumulated += sheetBal;
+        const colorClass = sheetBal < 0 ? 'text-red' : 'text-green';
+        const displayBal = (sheetBal >= 0 ? '+' : '') + sheetBal;
+
+        const item = document.createElement('div');
+        item.className = 'month-bal-item';
+        item.title = "Click to view page details";
+        item.onclick = () => openMonthDetails(idx);
+        item.innerHTML = `
+          <span><strong>${sheet.name}:</strong></span>
+          <span class="${colorClass}">${displayBal}</span>
+        `;
+        listContainer.appendChild(item);
+      });
+
+      const totalEl = document.getElementById('allMonthsTotalBal');
+      totalEl.innerText = (totalAccumulated >= 0 ? '+' : '') + totalAccumulated;
+      totalEl.className = `num ${totalAccumulated < 0 ? 'text-red' : 'text-green'}`;
+    }
+
+    function openMonthDetails(index) {
+      currentSheetIndex = index;
+      renderSheet();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDueTables() {
+      const rBody = document.getElementById('recTableBody');
+      rBody.innerHTML = '';
+      receivables.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="date" value="${r.date}" onchange="receivables[${i}].date=this.value;saveAllData();"></td>
+          <td><input type="text" value="${r.name}" placeholder="Name" onchange="receivables[${i}].name=this.value;saveAllData();"></td>
+          <td><input type="text" value="${r.desc}" placeholder="Description" onchange="receivables[${i}].desc=this.value;saveAllData();"></td>
+          <td><input type="number" inputmode="numeric" class="num" value="${r.amount === 0 ? '' : r.amount}" placeholder="0" oninput="receivables[${i}].amount=parseFloat(this.value)||0;saveAllData();"></td>
+          <td><button class="action-btn" onclick="receivables.splice(${i},1);saveAllData();renderDueTables();">✕</button></td>
+        `;
+        rBody.appendChild(tr);
+      });
+
+      const pBody = document.getElementById('payTableBody');
+      pBody.innerHTML = '';
+      payables.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="date" value="${p.date}" onchange="payables[${i}].date=this.value;saveAllData();"></td>
+          <td><input type="text" value="${p.name}" placeholder="Name" onchange="payables[${i}].name=this.value;saveAllData();"></td>
+          <td><input type="text" value="${p.desc}" placeholder="Description" onchange="payables[${i}].desc=this.value;saveAllData();"></td>
+          <td><input type="number" inputmode="numeric" class="num exp-num" value="${p.amount === 0 ? '' : p.amount}" placeholder="0" oninput="payables[${i}].amount=parseFloat(this.value)||0;saveAllData();"></td>
+          <td><button class="action-btn" onclick="payables.splice(${i},1);saveAllData();renderDueTables();">✕</button></td>
+        `;
+        pBody.appendChild(tr);
+      });
+    }
+
+    function addDueRow(type) {
+      if (type === 'recTableBody') {
+        receivables.push({ date: today, name: '', desc: '', amount: 0 });
+      } else {
+        payables.push({ date: today, name: '', desc: '', amount: 0 });
+      }
+      saveAllData();
+      renderDueTables();
+    }
+
+    function switchSection(section, btn) {
+      document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('sheet-section').style.display = section === 'sheet' ? 'block' : 'none';
+      document.getElementById('receivables-section').style.display = section === 'receivables' ? 'block' : 'none';
+      document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
+      document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
+
+      if (section === 'ledger') {
+        populateLedgerAccounts();
+        renderAccountLedger();
+      }
+    }
+
+    function populateLedgerAccounts() {
+      const select = document.getElementById('ledgerAccountSelect');
+      const currentSelected = select.value;
+      select.innerHTML = '<option value="ALL">-- View All Entries --</option>';
+
+      const accounts = new Set();
+      sheets.forEach(s => s.rows.forEach(r => { if(r.particular && r.particular.trim()) accounts.add(r.particular.trim()); }));
+      receivables.forEach(r => { if(r.name && r.name.trim()) accounts.add(r.name.trim()); });
+      payables.forEach(p => { if(p.name && p.name.trim()) accounts.add(p.name.trim()); });
+
+      accounts.forEach(acc => {
+        const opt = document.createElement('option');
+        opt.value = acc;
+        opt.innerText = acc;
+        select.appendChild(opt);
+      });
+
+      if (Array.from(select.options).some(o => o.value === currentSelected)) {
+        select.value = currentSelected;
+      }
+    }
+
+    function renderAccountLedger() {
+      const selected = document.getElementById('ledgerAccountSelect').value;
+      const tbody = document.getElementById('ledgerDetailBody');
+      tbody.innerHTML = '';
+
+      let totalIn = 0;
+      let totalOut = 0;
+
+      sheets.forEach(s => {
+        s.rows.forEach(r => {
+          if (selected === 'ALL' || (r.particular && r.particular.trim().toLowerCase() === selected.toLowerCase())) {
+            const inc = parseFloat(r.income) || 0;
+            const exp = parseFloat(r.exp) || 0;
+            totalIn += inc;
+            totalOut += exp;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${r.date}</td>
+              <td>Cashbook (${s.name})</td>
+              <td>${r.particular || '-'}</td>
+              <td class="num">${inc}</td>
+              <td class="num exp-num">${exp}</td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
+      });
+
+      receivables.forEach(r => {
+        if (selected === 'ALL' || (r.name && r.name.trim().toLowerCase() === selected.toLowerCase())) {
+          const amt = parseFloat(r.amount) || 0;
+          totalIn += amt;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${r.date}</td>
+            <td>Receivable (Due In)</td>
+            <td>${r.name || '-'} ${r.desc ? '(' + r.desc + ')' : ''}</td>
+            <td class="num">${amt}</td>
+            <td class="num exp-num">0</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      payables.forEach(p => {
+        if (selected === 'ALL' || (p.name && p.name.trim().toLowerCase() === selected.toLowerCase())) {
+          const amt = parseFloat(p.amount) || 0;
+          totalOut += amt;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.date}</td>
+            <td>Payable (Due Out)</td>
+            <td>${p.name || '-'} ${p.desc ? '(' + p.desc + ')' : ''}</td>
+            <td class="num">0</td>
+            <td class="num exp-num">${amt}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      const net = totalIn - totalOut;
+      document.getElementById('ledgerFilterIn').innerText = totalIn;
+      document.getElementById('ledgerFilterOut').innerText = totalOut;
+      const balEl = document.getElementById('ledgerFilterBalance');
+      balEl.innerText = (net >= 0 ? "+" : "") + net;
+      balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
+    }
+
+    document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') savePageModal();
+      if (e.key === 'Escape') closeModal('pageModal');
+    });
+
+    document.getElementById('modalAppNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') saveAppName();
+      if (e.key === 'Escape') closeModal('appNameModal');
+    });
+
+    renderSheet();
+    renderDueTables();
+  </script>
+</body>
+</html>
