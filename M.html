@@ -381,20 +381,21 @@
       </table>
     </div>
 
-    <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+<!-- Action Buttons Side-by-Side -->
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
+      <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+      <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
+    </div>
 
     <!-- Month Balance Section -->
-    <div style="margin-top: 20px;">
-      <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-      
-      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none;">
-        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
-        <div class="month-bal-list" id="monthBalList"></div>
-        <div class="overall-total-box">
-          <span>Total Available Balance (All Months):</span>
-          <span id="allMonthsTotalBal" class="num">0</span>
-        </div>
+    <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
+      <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
+      <div class="month-bal-list" id="monthBalList"></div>
+      <div class="overall-total-box">
+        <span>Total Available Balance (All Months):</span>
+        <span id="allMonthsTotalBal" class="num">0</span>
       </div>
+     </div>
     </div>
   </div>
 
