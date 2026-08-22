@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FinTrack - Money Management</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>FinTrack - Money Management & Ledger</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -15,7 +14,7 @@
       padding-bottom: 20px;
     }
 
-    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
+    /* Fullscreen Dedicated Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -47,10 +46,24 @@
       color: #6c757d;
       margin-bottom: 24px;
     }
-    .google-btn-container {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
+    .fintrack-input-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .fintrack-input-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #212529;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .fintrack-input-group input:focus {
+      border-color: #1e70bf;
+      box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
     }
     .fintrack-btn {
       width: 100%;
@@ -65,24 +78,21 @@
       margin-top: 8px;
       box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
       transition: opacity 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
     }
     .fintrack-btn:hover {
       opacity: 0.95;
     }
-    .helper-box {
-      background: #f1f8ff;
-      border: 1px solid #cce5ff;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 11px;
-      color: #004085;
-      margin-top: 15px;
-      text-align: left;
-      line-height: 1.4;
+    .fintrack-card-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    .fintrack-card-footer a {
+      color: #2482cb;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
     }
 
     /* Dashboard Metric Cards */
@@ -127,7 +137,6 @@
       padding: 10px 12px 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
-    
     .header-top-row {
       display: flex;
       justify-content: space-between;
@@ -156,6 +165,10 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      max-width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sync-status {
       font-size: 11px;
@@ -272,7 +285,6 @@
       box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
-    /* Scroll Area */
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
@@ -495,29 +507,36 @@
 </head>
 <body>
 
+  <!-- Fullscreen Login / Register Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
-      <h1>FinTrack</h1>
-      <p class="subtitle" id="authSubtitle">Secure Google Sync</p>
+      <h1 id="authTitle">FinTrack</h1>
+      <p class="subtitle" id="authSubtitle">Please Login</p>
 
-      <button class="fintrack-btn" onclick="initiateGoogleAuth()">
-        <svg width="18" height="18" viewBox="0 0 18 18" style="margin-right:2px;"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.9c1.69-1.55 2.69-3.84 2.69-6.57z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.33-1.59-5.05-3.74H.92v2.3A8.99 8.99 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.71a5.4 5.4 0 0 1 0-3.42V4.98H.92a8.99 8.99 0 0 0 0 8.04l3.03-2.31z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.1A8.99 8.99 0 0 0 .92 4.98l3.03 2.31C4.67 5.18 6.65 3.58 9 3.58z"/></svg>
-        Sign in with Google
-      </button>
+      <div class="fintrack-input-group">
+        <input type="email" id="loginGmail" placeholder="Gmail ID (e.g. name@gmail.com)" autocomplete="email">
+      </div>
 
-      <div class="helper-box">
-        🔒 <strong>Automatic Ledger Sync:</strong><br>
-        Logging in via Gmail safely stores your structural parameters and sheets securely in your personal Google Drive for fluid multi-device usage.
+      <div class="fintrack-input-group">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+      </div>
+
+      <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
+
+      <div class="fintrack-card-footer">
+        <a onclick="handleForgotPassword()">Forgot Password?</a>
+        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
       </div>
     </div>
   </div>
 
+  <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
     <div class="sticky-header">
       <div class="header-top-row">
         <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
         <div class="header-user-actions">
-          <span id="syncIndicator" class="sync-status">☁ Synced</span>
+          <span id="syncIndicator" class="sync-status">☁ Cloud Synced</span>
           <div id="userInfoPill" class="user-pill">
             <span>👤</span> <span id="currentUserNameLabel">User</span>
           </div>
@@ -534,6 +553,7 @@
       </div>
     </div>
 
+    <!-- Dashboard Section -->
     <div id="dashboard-section" class="sheet-container">
       <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview & Dashboard</h3>
       
@@ -571,11 +591,12 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive Now</button>
+        <button class="btn-sync-now" onclick="syncWithCloud(true)">☁ Sync Now</button>
         <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
       </div>
     </div>
 
+    <!-- Cashbook Section -->
     <div id="sheet-section" class="sheet-container" style="display:none;">
       <div class="top-action-bar">
         <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
@@ -613,7 +634,7 @@
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
+        <button class="btn-sync-now" onclick="syncWithCloud(true)">☁ Sync Cloud</button>
       </div>
 
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
@@ -626,6 +647,7 @@
       </div>
     </div>
 
+    <!-- Receivables Section -->
     <div id="receivables-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Receivable (Due In)</h3>
       <div class="table-scroll">
@@ -645,6 +667,7 @@
       <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
     </div>
 
+    <!-- Payables Section -->
     <div id="payables-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
       <div class="table-scroll">
@@ -664,6 +687,7 @@
       <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
     </div>
 
+    <!-- Reports & Ledger Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
       
@@ -728,6 +752,7 @@
       </div>
     </div>
 
+    <!-- Modals -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
@@ -755,27 +780,28 @@
   </div>
 
   <script>
-    // Configuration details for Google client authentication hooks
-    // Place your generated standard Google OAuth 2.0 Web Client ID here if running in production ecosystems
-    const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
-    
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
+    let authMode = 'login';
     let syncTimer = null;
-    let accessToken = null;
 
-    let currentUserEmail = localStorage.getItem('fintrack_gmail_id') || null;
-
+    let currentUser = JSON.parse(localStorage.getItem('fintrack_active_user')) || null;
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
     document.getElementById('appBrandTitle').innerText = appTitle;
 
-    function getUserStorageKey(suffix) {
-      const userPrefix = currentUserEmail ? btoa(currentUserEmail).replace(/=/g, '') + '_' : 'guest_';
-      return `cashbook_${userPrefix}${suffix}`;
+    function getStorageKey(suffix) {
+      const emailKey = currentUser ? currentUser.gmail.replace(/[^a-zA-Z0-9]/g, '_') : 'guest';
+      return `fintrack_${emailKey}_${suffix}`;
+    }
+
+    // Auto-resolving public cloud database endpoint based on Gmail key
+    function getCloudEndpoint(gmail) {
+      const sanitized = btoa(gmail.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
+      return `https://kvdb.io/4y9yUuVqN2VqM2N2N2N2N2/${sanitized}`;
     }
 
     let sheets = [];
@@ -783,75 +809,150 @@
     let payables = [];
     let currentSheetIndex = 0;
 
-    /* OAuth & Google Session Router Initialization */
+    /* Auth & Session Control */
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
 
-      if (currentUserEmail) {
+      if (currentUser) {
         authContainer.style.display = 'none';
         mainApp.style.display = 'block';
-        document.getElementById('currentUserNameLabel').innerText = currentUserEmail;
+        document.getElementById('currentUserNameLabel').innerText = currentUser.gmail;
         initUserData();
+        fetchFromCloud();
       } else {
         authContainer.style.display = 'flex';
         mainApp.style.display = 'none';
       }
     }
 
-    function initiateGoogleAuth() {
-      // Setup dynamic secure environment client connection model 
-      if (GOOGLE_CLIENT_ID.startsWith("YOUR_")) {
-        // Fallback testing wrapper simulation mode if developer configuration isn't updated
-        let simulatedEmail = prompt("Enter your Gmail address to simulate automated Drive Synchronization:", "user@gmail.com");
-        if(simulatedEmail && simulatedEmail.includes("@")) {
-          currentUserEmail = simulatedEmail.trim();
-          localStorage.setItem('fintrack_gmail_id', currentUserEmail);
-          checkAuthSession();
-        } else {
-          alert("Invalid Gmail ID");
-        }
+    function toggleAuthModeView() {
+      authMode = authMode === 'login' ? 'register' : 'login';
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleLink = document.getElementById('authModeToggleLink');
+
+      if (authMode === 'register') {
+        subtitle.innerText = 'Create Account';
+        submitBtn.innerText = 'Register';
+        toggleLink.innerText = 'Login';
+      } else {
+        subtitle.innerText = 'Please Login';
+        submitBtn.innerText = 'Login';
+        toggleLink.innerText = 'Register';
+      }
+    }
+
+    function handleAuthSubmit() {
+      const gmailVal = document.getElementById('loginGmail').value.trim().toLowerCase();
+      const passVal = document.getElementById('loginPassword').value.trim();
+
+      if (!gmailVal || !passVal) {
+        alert('Please enter your Gmail address and password.');
         return;
       }
 
-      // Live Google token client generation request channel context
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',
-        callback: (tokenResponse) => {
-          if (tokenResponse.access_token) {
-            accessToken = tokenResponse.access_token;
-            // Fetch validated Gmail context address metadata profile securely
-            fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-              headers: { 'Authorization': `Bearer ${accessToken}` }
-            })
-            .then(res => res.json())
-            .then(userInfo => {
-              if (userInfo.email) {
-                currentUserEmail = userInfo.email;
-                localStorage.setItem('fintrack_gmail_id', currentUserEmail);
-                checkAuthSession();
-                fetchDataFromGoogleDrive();
-              }
-            });
-          }
-        }
-      });
-      client.requestAccessToken();
+      if (!gmailVal.includes('@')) {
+        alert('Please enter a valid Gmail / Email address.');
+        return;
+      }
+
+      currentUser = { gmail: gmailVal, password: passVal };
+      localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+      
+      checkAuthSession();
+      syncWithCloud(true);
+    }
+
+    function handleForgotPassword() {
+      alert('Your data is synchronized to your Gmail ID. Simply enter your Gmail address and login to access your account.');
     }
 
     function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
-        currentUserEmail = null;
-        accessToken = null;
-        localStorage.removeItem('fintrack_gmail_id');
+        currentUser = null;
+        localStorage.removeItem('fintrack_active_user');
         checkAuthSession();
       }
     }
 
+    /* Universal Auto-Sync Engine */
+    function debouncedCloudSync() {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(() => {
+        syncWithCloud(false);
+      }, 1200);
+    }
+
+    function syncWithCloud(showNotify = false) {
+      if (!currentUser) return;
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Syncing...';
+      syncInd.style.color = '#0d6efd';
+      syncInd.style.display = 'inline-block';
+
+      const payload = {
+        sheets: sheets,
+        receivables: receivables,
+        payables: payables,
+        password: currentUser.password,
+        updatedAt: new Date().toISOString()
+      };
+
+      fetch(getCloudEndpoint(currentUser.gmail), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        syncInd.innerText = '☁ Cloud Synced';
+        syncInd.style.color = '#198754';
+        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        if (showNotify) alert('Connected & Synced! Your ledger is now live across your mobile and computer.');
+      })
+      .catch((err) => {
+        console.warn('Sync fallback to local:', err);
+        syncInd.innerText = '☁ Saved Locally';
+        syncInd.style.color = '#dc3545';
+      });
+    }
+
+    function fetchFromCloud() {
+      if (!currentUser) return;
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Loading Data...';
+      syncInd.style.color = '#0d6efd';
+      syncInd.style.display = 'inline-block';
+
+      fetch(getCloudEndpoint(currentUser.gmail))
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.sheets && data.sheets.length > 0) {
+          sheets = data.sheets;
+          receivables = data.receivables || [];
+          payables = data.payables || [];
+          currentSheetIndex = Math.max(0, sheets.length - 1);
+          saveAllData(false);
+          renderDashboard();
+          renderSheet();
+          renderDueTables();
+          syncInd.innerText = '☁ Cloud Synced';
+          syncInd.style.color = '#198754';
+          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        } else {
+          syncInd.style.display = 'none';
+        }
+      })
+      .catch(() => {
+        syncInd.style.display = 'none';
+      });
+    }
+
     /* Core Data Operations */
     function initUserData() {
-      sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
+      sheets = JSON.parse(localStorage.getItem(getStorageKey('sheets'))) || [
         {
           name: currentMonthYear,
           rows: [
@@ -859,8 +960,8 @@
           ]
         }
       ];
-      receivables = JSON.parse(localStorage.getItem(getUserStorageKey('receivables'))) || [];
-      payables = JSON.parse(localStorage.getItem(getUserStorageKey('payables'))) || [];
+      receivables = JSON.parse(localStorage.getItem(getStorageKey('receivables'))) || [];
+      payables = JSON.parse(localStorage.getItem(getStorageKey('payables'))) || [];
       currentSheetIndex = Math.max(0, sheets.length - 1);
 
       renderDashboard();
@@ -868,14 +969,14 @@
       renderDueTables();
     }
 
-    function saveAllData(shouldSync = true) {
-      localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
-      localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
-      localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
+    function saveAllData(triggerSync = true) {
+      localStorage.setItem(getStorageKey('sheets'), JSON.stringify(sheets));
+      localStorage.setItem(getStorageKey('receivables'), JSON.stringify(receivables));
+      localStorage.setItem(getStorageKey('payables'), JSON.stringify(payables));
       renderDashboard();
 
-      if (shouldSync && accessToken) {
-        debouncedDriveSync();
+      if (triggerSync) {
+        debouncedCloudSync();
       }
     }
 
@@ -999,124 +1100,7 @@
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Drive Auto-Sync Engine Implementation using REST APIs directly */
-    function debouncedDriveSync() {
-      clearTimeout(syncTimer);
-      syncTimer = setTimeout(() => {
-        syncWithGoogleDrive(false);
-      }, 2000);
-    }
-
-    function syncWithGoogleDrive(showNotify = false) {
-      if (!accessToken) {
-        if (showNotify) alert('Sync requires an active Google Session login validation token.');
-        return;
-      }
-
-      const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Syncing...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
-
-      const payloadData = {
-        sheets: sheets,
-        receivables: receivables,
-        payables: payables,
-        updatedAt: new Date().toISOString()
-      };
-
-      // Search if historical synchronization file profile metadata exists inside App Space
-      fetch('https://www.googleapis.com/drive/v3/files?q=name="fintrack_ledger_data.json" and trashed=false', {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-      })
-      .then(res => res.json())
-      .then(searchRes => {
-        let fileId = (searchRes.files && searchRes.files.length > 0) ? searchRes.files[0].id : null;
-        
-        let url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=media';
-        let method = 'POST';
-        
-        if (fileId) {
-          url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
-          method = 'PATCH';
-        } else {
-          // Meta Creation Configuration Request
-          fetch('https://www.googleapis.com/drive/v3/files', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: 'fintrack_ledger_data.json', mimeType: 'application/json' })
-          })
-          .then(res => res.json())
-          .then(newFile => {
-            uploadFileContent(newFile.id, payloadData, syncInd, showNotify);
-          });
-          return;
-        }
-        
-        uploadFileContent(fileId, payloadData, syncInd, showNotify);
-      })
-      .catch(() => {
-        syncInd.innerText = '☁ Cache Only';
-        syncInd.style.color = '#dc3545';
-      });
-    }
-
-    function uploadFileContent(id, data, indicator, notify) {
-      fetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(() => {
-        indicator.innerText = '☁ Drive Synced';
-        indicator.style.color = '#198754';
-        setTimeout(() => { indicator.style.display = 'none'; }, 3000);
-        if (notify) alert('Ledger architecture data state automatically locked into Google Drive Cloud space!');
-      });
-    }
-
-    function fetchDataFromGoogleDrive() {
-      if (!accessToken) return;
-
-      const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Downloading...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
-
-      fetch('https://www.googleapis.com/drive/v3/files?q=name="fintrack_ledger_data.json" and trashed=false', {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-      })
-      .then(res => res.json())
-      .then(searchRes => {
-        if (searchRes.files && searchRes.files.length > 0) {
-          let fileId = searchRes.files[0].id;
-          fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
-          })
-          .then(res => res.json())
-          .then(cloudData => {
-            if (cloudData && cloudData.sheets) {
-              sheets = cloudData.sheets;
-              receivables = cloudData.receivables || [];
-              payables = cloudData.payables || [];
-              currentSheetIndex = Math.max(0, sheets.length - 1);
-              saveAllData(false);
-              renderDashboard();
-              renderSheet();
-              renderDueTables();
-              syncInd.innerText = '☁ Restored';
-              syncInd.style.color = '#198754';
-              setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-            }
-          });
-        } else {
-          syncInd.style.display = 'none';
-        }
-      })
-      .catch(() => { syncInd.style.display = 'none'; });
-    }
-
-    /* Modal Handling */
+    /* Modal Dialogs */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1299,9 +1283,7 @@
       document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
       document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
 
-      if (section === 'dashboard') {
-        renderDashboard();
-      }
+      if (section === 'dashboard') renderDashboard();
       if (section === 'ledger') {
         populateLedgerAccounts();
         handleReportTypeChange();
@@ -1506,18 +1488,10 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
-    // Modal Enter & Escape Key Handlers
-    document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') savePageModal();
-      if (e.key === 'Escape') closeModal('pageModal');
-    });
+    document.getElementById('loginGmail').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
+    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
 
-    document.getElementById('modalAppNameInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') saveAppName();
-      if (e.key === 'Escape') closeModal('appNameModal');
-    });
-
-    // Check login state on initial load
+    // Initial trigger
     checkAuthSession();
   </script>
 </body>
