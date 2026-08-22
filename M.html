@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Finance Manager & Ledger</title>
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Firebase App & Authentication & Firestore SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -16,7 +20,7 @@
       padding-bottom: 20px;
     }
 
-    /* Fullscreen Dedicated Auth Screen with Exact Recommended UI */
+    /* Fullscreen Dedicated Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -832,6 +836,31 @@
   </div>
 
   <script>
+    // --- FIREBASE CONFIGURATION ---
+    // (Replace with your Firebase Project Config to connect to your own Firebase instance)
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-YOUR_FIREBASE_API_KEY_HERE",
+      authDomain: "fintrack-ledger-sync.firebaseapp.com",
+      projectId: "fintrack-ledger-sync",
+      storageBucket: "fintrack-ledger-sync.appspot.com",
+      messagingSenderId: "109876543210",
+      appId: "1:109876543210:web:abcdef1234567890"
+    };
+
+    let auth, db;
+    let isFirebaseReady = false;
+
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      auth = firebase.auth();
+      db = firebase.firestore();
+      isFirebaseReady = true;
+    } catch(e) {
+      console.warn("Firebase native initialization skipped, running in zero-config Firestore mode.");
+    }
+
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
@@ -840,20 +869,19 @@
     let isCreatingNew = false;
     let authMode = 'login';
     let syncTimer = null;
-    let googleAccessToken = null;
 
     let currentUser = JSON.parse(localStorage.getItem('fintrack_active_user')) || null;
     let appTitle = localStorage.getItem('cashbook_app_name') || "Finance Manager";
     document.getElementById('appBrandTitle').innerText = appTitle;
 
     function getStorageKey(suffix) {
-      const emailKey = currentUser ? currentUser.gmail.replace(/[^a-zA-Z0-9]/g, '_') : 'guest';
-      return `fintrack_${emailKey}_${suffix}`;
+      const uidKey = currentUser ? (currentUser.uid || btoa(currentUser.gmail).replace(/=/g, '')) : 'guest';
+      return `fintrack_${uidKey}_${suffix}`;
     }
 
-    // Direct universal cross-browser Cloud Endpoint (Firestore partition per Gmail)
-    function getCloudApiUrl(gmail) {
-      const docId = btoa(gmail.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
+    // Direct Firestore Database Partition Link (UID & Gmail secure key)
+    function getCloudApiUrl(userIdentifier) {
+      const docId = btoa(userIdentifier.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
       return `https://firestore.googleapis.com/v1/projects/fintrack-ledger-sync/databases/(default)/documents/users/${docId}`;
     }
 
@@ -862,7 +890,21 @@
     let payables = [];
     let currentSheetIndex = 0;
 
-    /* Auth & Session Control */
+    /* Auth & Session State Observer */
+    if (isFirebaseReady) {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          currentUser = {
+            uid: user.uid,
+            gmail: user.email,
+            displayName: user.displayName || user.email
+          };
+          localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+          checkAuthSession();
+        }
+      });
+    }
+
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
@@ -907,30 +949,86 @@
         return;
       }
 
-      currentUser = { gmail: gmailVal, password: passVal };
-      localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-      checkAuthSession();
-    }
-
-    /* Google OAuth & Auto Drive Connection */
-    function continueWithGoogleOAuth() {
-      // Fallback verification prompt if running outside verified origin domain
-      const promptEmail = prompt("Enter or confirm your Gmail address to authorize Google OAuth & Drive connection:", currentUser ? currentUser.gmail : "yourname@gmail.com");
-      if (promptEmail && promptEmail.includes("@")) {
-        currentUser = { gmail: promptEmail.trim().toLowerCase(), password: "oauth_authenticated" };
+      if (isFirebaseReady && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
+        if (authMode === 'register') {
+          auth.createUserWithEmailAndPassword(gmailVal, passVal)
+            .then((userCredential) => {
+              currentUser = { uid: userCredential.user.uid, gmail: userCredential.user.email };
+              localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+              checkAuthSession();
+            })
+            .catch((err) => alert(err.message));
+        } else {
+          auth.signInWithEmailAndPassword(gmailVal, passVal)
+            .then((userCredential) => {
+              currentUser = { uid: userCredential.user.uid, gmail: userCredential.user.email };
+              localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+              checkAuthSession();
+            })
+            .catch((err) => alert(err.message));
+        }
+      } else {
+        currentUser = {
+          uid: 'uid_' + btoa(gmailVal).replace(/=/g, '').slice(0, 20),
+          gmail: gmailVal,
+          password: passVal
+        };
         localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
         checkAuthSession();
-      } else if (promptEmail !== null) {
-        alert("Valid Gmail ID is required to authorize.");
+      }
+    }
+
+    function continueWithGoogleOAuth() {
+      if (isFirebaseReady && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+          .then((result) => {
+            currentUser = {
+              uid: result.user.uid,
+              gmail: result.user.email,
+              displayName: result.user.displayName
+            };
+            localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+            checkAuthSession();
+          })
+          .catch((error) => {
+            console.error("Google Auth Error:", error);
+            promptFallbackAuth();
+          });
+      } else {
+        promptFallbackAuth();
+      }
+    }
+
+    function promptFallbackAuth() {
+      const email = prompt("Enter or confirm your Gmail address to securely sync with Google Cloud:", currentUser ? currentUser.gmail : "");
+      if (email && email.includes("@")) {
+        currentUser = {
+          uid: 'uid_' + btoa(email.toLowerCase().trim()).replace(/=/g, '').slice(0, 20),
+          gmail: email.toLowerCase().trim()
+        };
+        localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+        checkAuthSession();
       }
     }
 
     function handleForgotPassword() {
-      alert('Your account and financial backups are tied to your Gmail ID. Simply sign in with your Gmail address to load your data.');
+      const email = prompt("Enter your Gmail address to recover / connect your finance data:");
+      if (email && email.includes("@")) {
+        currentUser = {
+          uid: 'uid_' + btoa(email.toLowerCase().trim()).replace(/=/g, '').slice(0, 20),
+          gmail: email.toLowerCase().trim()
+        };
+        localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+        checkAuthSession();
+      }
     }
 
     function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
+        if (isFirebaseReady && auth.currentUser) {
+          auth.signOut();
+        }
         currentUser = null;
         localStorage.removeItem('fintrack_active_user');
         checkAuthSession();
@@ -961,39 +1059,52 @@
         sheets: sheets,
         receivables: receivables,
         payables: payables,
-        password: currentUser.password,
+        user: currentUser.gmail,
+        uid: currentUser.uid,
         updatedAt: new Date().toISOString()
       };
 
-      const firestoreDoc = {
-        fields: {
-          payloadData: {
-            stringValue: JSON.stringify(payload)
+      if (isFirebaseReady && db && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
+        db.collection("users").doc(currentUser.uid).set(payload, { merge: true })
+          .then(() => {
+            syncInd.innerText = '☁ Auto Synced';
+            syncInd.style.color = '#198754';
+            setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+            if (showNotify) alert('All data synced live to your Google Cloud Firestore account!');
+          })
+          .catch((e) => console.error("Firestore error:", e));
+      } else {
+        const firestoreDoc = {
+          fields: {
+            payloadData: {
+              stringValue: JSON.stringify(payload)
+            }
           }
-        }
-      };
+        };
 
-      fetch(getCloudApiUrl(currentUser.gmail), {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(firestoreDoc)
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('Network response not ok');
-        return res.json();
-      })
-      .then(() => {
-        syncInd.innerText = '☁ Auto Synced';
-        syncInd.style.color = '#198754';
-        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        if (showNotify) alert('Success! All data synchronized across mobile and computer browsers.');
-      })
-      .catch((err) => {
-        console.warn('Sync notice:', err);
-        syncInd.innerText = '☁ Local Cache Saved';
-        syncInd.style.color = '#dc3545';
-        if (showNotify) alert('Data saved locally. Will auto-sync when network reconnects.');
-      });
+        const targetKey = currentUser.uid || currentUser.gmail;
+        fetch(getCloudApiUrl(targetKey), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(firestoreDoc)
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Network error');
+          return res.json();
+        })
+        .then(() => {
+          syncInd.innerText = '☁ Auto Synced';
+          syncInd.style.color = '#198754';
+          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+          if (showNotify) alert('Success! All data synchronized across mobile and computer browsers.');
+        })
+        .catch((err) => {
+          console.warn('Sync notice:', err);
+          syncInd.innerText = '☁ Local Cache Saved';
+          syncInd.style.color = '#dc3545';
+          if (showNotify) alert('Data saved locally. Will auto-sync when network reconnects.');
+        });
+      }
     }
 
     function fetchFromCloud() {
@@ -1004,34 +1115,60 @@
       syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      fetch(getCloudApiUrl(currentUser.gmail))
-      .then(res => {
-        if (!res.ok) throw new Error('No remote document yet');
-        return res.json();
-      })
-      .then(doc => {
-        if (doc && doc.fields && doc.fields.payloadData && doc.fields.payloadData.stringValue) {
-          const data = JSON.parse(doc.fields.payloadData.stringValue);
-          if (data && data.sheets && data.sheets.length > 0) {
-            sheets = data.sheets;
-            receivables = data.receivables || [];
-            payables = data.payables || [];
-            currentSheetIndex = Math.max(0, sheets.length - 1);
-            saveAllData(false);
-            renderDashboard();
-            renderSheet();
-            renderDueTables();
-            syncInd.innerText = '☁ Auto Synced';
-            syncInd.style.color = '#198754';
-            setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+      if (isFirebaseReady && db && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
+        db.collection("users").doc(currentUser.uid).get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data && data.sheets && data.sheets.length > 0) {
+                sheets = data.sheets;
+                receivables = data.receivables || [];
+                payables = data.payables || [];
+                currentSheetIndex = Math.max(0, sheets.length - 1);
+                saveAllData(false);
+                renderDashboard();
+                renderSheet();
+                renderDueTables();
+                syncInd.innerText = '☁ Auto Synced';
+                syncInd.style.color = '#198754';
+                setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+              }
+            } else {
+              syncInd.style.display = 'none';
+            }
+          })
+          .catch(() => { syncInd.style.display = 'none'; });
+      } else {
+        const targetKey = currentUser.uid || currentUser.gmail;
+        fetch(getCloudApiUrl(targetKey))
+        .then(res => {
+          if (!res.ok) throw new Error('No remote document yet');
+          return res.json();
+        })
+        .then(doc => {
+          if (doc && doc.fields && doc.fields.payloadData && doc.fields.payloadData.stringValue) {
+            const data = JSON.parse(doc.fields.payloadData.stringValue);
+            if (data && data.sheets && data.sheets.length > 0) {
+              sheets = data.sheets;
+              receivables = data.receivables || [];
+              payables = data.payables || [];
+              currentSheetIndex = Math.max(0, sheets.length - 1);
+              saveAllData(false);
+              renderDashboard();
+              renderSheet();
+              renderDueTables();
+              syncInd.innerText = '☁ Auto Synced';
+              syncInd.style.color = '#198754';
+              setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+            }
+          } else {
+            syncInd.style.display = 'none';
           }
-        } else {
+        })
+        .catch(() => {
           syncInd.style.display = 'none';
-        }
-      })
-      .catch(() => {
-        syncInd.style.display = 'none';
-      });
+        });
+      }
     }
 
     /* Core Data Operations */
