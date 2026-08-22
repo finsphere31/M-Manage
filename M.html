@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Money Management & Ledger</title>
+  <title>FinTrack - Money Management</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -12,6 +12,131 @@
       color: #212529;
       -webkit-text-size-adjust: 100%;
       padding-bottom: 20px;
+    }
+
+    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
+    #auth-screen-container {
+      position: fixed;
+      inset: 0;
+      background-color: #2b3a4a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+    .fintrack-card {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 360px;
+      padding: 36px 24px 30px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+    .fintrack-card h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0b1320;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .fintrack-card p.subtitle {
+      font-size: 14px;
+      color: #6c757d;
+      margin-bottom: 24px;
+    }
+    .fintrack-input-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .fintrack-input-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #212529;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .fintrack-input-group input:focus {
+      border-color: #1e70bf;
+      box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
+    }
+    .fintrack-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(180deg, #2482cb 0%, #175d9e 100%);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
+      transition: opacity 0.15s;
+    }
+    .fintrack-btn:hover {
+      opacity: 0.95;
+    }
+    .fintrack-card-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    .fintrack-card-footer a {
+      color: #2482cb;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .helper-box {
+      background: #f1f8ff;
+      border: 1px solid #cce5ff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #004085;
+      margin-top: 10px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    /* Dashboard Metric Cards */
+    .dash-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .metric-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .metric-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #212529;
+    }
+    .metric-sub {
+      font-size: 12px;
+      color: #888;
     }
 
     /* Fixed/Sticky Top Navigation Header */
@@ -35,6 +160,39 @@
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.2px;
+    }
+    .header-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .user-pill {
+      font-size: 12px;
+      font-weight: 600;
+      background: #e7f1ff;
+      color: #0d6efd;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid #b6d4fe;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .sync-status {
+      font-size: 11px;
+      font-weight: 500;
+      color: #198754;
+      display: none;
+    }
+    .logout-btn-header {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
     }
     .three-dots-btn {
       background: none;
@@ -135,7 +293,7 @@
       box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
-    /* Fixed Scroll Area For Entries Under Top Options */
+    /* Scroll Area */
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
@@ -182,7 +340,6 @@
     }
     .num { text-align: right; }
     
-    /* Expense Red Styling */
     .exp-num {
       color: #dc3545 !important;
       font-weight: 600;
@@ -228,6 +385,16 @@
       font-size: 13px;
       font-weight: 600;
     }
+    .btn-sync-now {
+      padding: 9px 16px;
+      background: #198754;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
     .bal-summary-panel {
       margin-top: 16px;
       padding: 14px;
@@ -263,19 +430,36 @@
     }
     .text-green { color: #198754; font-weight: 600; }
     .text-red { color: #dc3545; font-weight: 600; }
+
+    /* Filter Grid for Reports */
     .filter-box {
       margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
     }
-    .filter-box select {
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 180px;
+    }
+    .filter-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+    }
+    .filter-box select, .filter-box input {
       border: 1px solid #ced4da;
-      padding: 8px 12px;
+      padding: 7px 10px;
       border-radius: 6px;
       background: #fff;
-      min-width: 220px;
+      font-size: 13px;
     }
 
     /* Modals */
@@ -332,173 +516,285 @@
 </head>
 <body>
 
-  <!-- Sticky Top Header & Navigation -->
-  <div class="sticky-header">
-    <div class="header-top-row">
-      <span class="app-brand-title" id="appBrandTitle">Money Management</span>
-      <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
-    </div>
-    <div class="nav-tabs">
-      <button class="active" onclick="switchSection('sheet', this)">Cashbook Sheet</button>
-      <button onclick="switchSection('receivables', this)">Receivables</button>
-      <button onclick="switchSection('payables', this)">Payables</button>
-      <button onclick="switchSection('ledger', this)">Ledger Report</button>
-    </div>
-  </div>
+  <!-- Fullscreen Login / Register Screen -->
+  <div id="auth-screen-container">
+    <div class="fintrack-card">
+      <h1 id="authTitle">FinTrack</h1>
+      <p class="subtitle" id="authSubtitle">Please Login</p>
 
-  <!-- Cashbook Section -->
-  <div id="sheet-section" class="sheet-container">
-    <div class="top-action-bar">
-      <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
-        <span id="badgePageTitle">Active Page</span>
-        <span style="font-size: 12px; opacity: 0.7;">✎</span>
+      <div class="fintrack-input-group">
+        <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
-      <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy whole previous page and add new">+</button>
-    </div>
 
-    <div class="table-scroll">
-      <table id="cashTable">
-        <thead>
-          <tr>
-            <th style="width: 20%;">Date</th>
-            <th style="width: 32%;">Particular</th>
-            <th style="width: 16%;">Income</th>
-            <th style="width: 16%;">Exp</th>
-            <th style="width: 16%;">Bal</th>
-            <th style="width: 5%;"></th>
-          </tr>
-        </thead>
-        <tbody id="sheetTableBody"></tbody>
-        <tfoot>
-          <tr class="total-row">
-            <td colspan="2" class="num">Total</td>
-            <td id="totalIncome" class="num">0</td>
-            <td id="totalExp" class="num exp-num">0</td>
-            <td id="totalBal" class="num">0</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-<!-- Action Buttons Side-by-Side -->
-    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
-      <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
-      <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-    </div>
-
-    <!-- Month Balance Section -->
-    <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
-      <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
-      <div class="month-bal-list" id="monthBalList"></div>
-      <div class="overall-total-box">
-        <span>Total Available Balance (All Months):</span>
-        <span id="allMonthsTotalBal" class="num">0</span>
+      <div class="fintrack-input-group">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
-     </div>
+
+      <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
+        <input type="url" id="loginDriveUrl" placeholder="Google Drive Web App URL">
+        <div class="helper-box">
+          📂 <strong>Drive Integration:</strong> Enter your Apps Script Web App link to load your data on mobile and desktop devices.
+        </div>
+      </div>
+
+      <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
+
+      <div class="fintrack-card-footer">
+        <a onclick="handleForgotPassword()">Forgot Password?</a>
+        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
+      </div>
     </div>
   </div>
 
-  <!-- Receivables Section -->
-  <div id="receivables-section" class="sheet-container" style="display:none;">
-    <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Receivable (Due In)</h3>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 20%;">Date</th>
-            <th style="width: 30%;">Debtor Name / Account</th>
-            <th style="width: 25%;">Description</th>
-            <th style="width: 20%;">Amount</th>
-            <th style="width: 5%;"></th>
-          </tr>
-        </thead>
-        <tbody id="recTableBody"></tbody>
-      </table>
-    </div>
-    <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
-  </div>
-
-  <!-- Payables Section -->
-  <div id="payables-section" class="sheet-container" style="display:none;">
-    <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 20%;">Date</th>
-            <th style="width: 30%;">Creditor Name / Account</th>
-            <th style="width: 25%;">Description</th>
-            <th style="width: 20%;">Amount</th>
-            <th style="width: 5%;"></th>
-          </tr>
-        </thead>
-        <tbody id="payTableBody"></tbody>
-      </table>
-    </div>
-    <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
-  </div>
-
-  <!-- Ledger Report Section -->
-  <div id="ledger-section" class="sheet-container" style="display:none;">
-    <h3 style="margin-bottom: 12px; font-size: 18px;">Account & Person Ledger Details</h3>
-    <div class="filter-box">
-      <label><strong>Select Account / Person:</strong></label>
-      <select id="ledgerAccountSelect" onchange="renderAccountLedger()">
-        <option value="ALL">-- View All Entries --</option>
-      </select>
+  <!-- Main Application Wrapper (Hidden until login) -->
+  <div id="main-app-content" style="display:none;">
+    <!-- Sticky Top Header & Navigation -->
+    <div class="sticky-header">
+      <div class="header-top-row">
+        <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
+        <div class="header-user-actions">
+          <span id="syncIndicator" class="sync-status">☁ Synced</span>
+          <div id="userInfoPill" class="user-pill">
+            <span>👤</span> <span id="currentUserNameLabel">User</span>
+          </div>
+          <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
+          <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
+        </div>
+      </div>
+      <div class="nav-tabs">
+        <button class="active" onclick="switchSection('dashboard', this)">Dashboard</button>
+        <button onclick="switchSection('sheet', this)">Cashbook Sheet</button>
+        <button onclick="switchSection('receivables', this)">Receivables</button>
+        <button onclick="switchSection('payables', this)">Payables</button>
+        <button onclick="switchSection('ledger', this)">Reports</button>
+      </div>
     </div>
 
-    <div class="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Source Page / Type</th>
-            <th>Particular / Account</th>
-            <th class="num">Income / Due In</th>
-            <th class="num exp-num">Exp / Due Out</th>
-          </tr>
-        </thead>
-        <tbody id="ledgerDetailBody"></tbody>
-        <tfoot>
-          <tr class="total-row">
-            <td colspan="3" class="num">Net Calculation</td>
-            <td id="ledgerFilterIn" class="num">0</td>
-            <td id="ledgerFilterOut" class="num exp-num">0</td>
-          </tr>
-          <tr class="total-row">
-            <td colspan="3" class="num">Closing Balance</td>
-            <td colspan="2" id="ledgerFilterBalance" class="num">0</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  </div>
+    <!-- Dashboard Section -->
+    <div id="dashboard-section" class="sheet-container">
+      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview & Dashboard</h3>
+      
+      <div class="dash-metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Total Cash Income</span>
+          <span class="metric-val text-green" id="dashTotalIncome">0</span>
+          <span class="metric-sub">Across all cashbook sheets</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total Expenses</span>
+          <span class="metric-val text-red" id="dashTotalExp">0</span>
+          <span class="metric-sub">All logged spending</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Available Cash Balance</span>
+          <span class="metric-val" id="dashNetCash">0</span>
+          <span class="metric-sub">Current in-hand liquidity</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Receivables (Due In)</span>
+          <span class="metric-val text-green" id="dashDueIn">0</span>
+          <span class="metric-sub">Pending debtor collections</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Payables (Due Out)</span>
+          <span class="metric-val text-red" id="dashDueOut">0</span>
+          <span class="metric-sub">Pending creditor payments</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Projected Net Worth</span>
+          <span class="metric-val" id="dashProjectedNet">0</span>
+          <span class="metric-sub">Cash + Due In - Due Out</span>
+        </div>
+      </div>
 
-  <!-- Modal Dialog for Page Rename / Add -->
-  <div class="modal-overlay" id="pageModal">
-    <div class="modal-box">
-      <h4 id="modalHeading">Edit Page Name</h4>
-      <input type="text" id="modalPageNameInput" placeholder="Enter page name">
-      <div class="modal-actions">
-        <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
-        <div style="display:flex; gap:8px;">
-          <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
-          <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive Now</button>
+        <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
+      </div>
+    </div>
+
+    <!-- Cashbook Section -->
+    <div id="sheet-section" class="sheet-container" style="display:none;">
+      <div class="top-action-bar">
+        <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
+          <span id="badgePageTitle">Active Page</span>
+          <span style="font-size: 12px; opacity: 0.7;">✎</span>
+        </div>
+        <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy whole previous page and add new">+</button>
+      </div>
+
+      <div class="table-scroll">
+        <table id="cashTable">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Date</th>
+              <th style="width: 32%;">Particular</th>
+              <th style="width: 16%;">Income</th>
+              <th style="width: 16%;">Exp</th>
+              <th style="width: 16%;">Bal</th>
+              <th style="width: 5%;"></th>
+            </tr>
+          </thead>
+          <tbody id="sheetTableBody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="2" class="num">Total</td>
+              <td id="totalIncome" class="num">0</td>
+              <td id="totalExp" class="num exp-num">0</td>
+              <td id="totalBal" class="num">0</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Action Buttons Side-by-Side -->
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
+        <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+        <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
+      </div>
+
+      <!-- Month Balance Section -->
+      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
+        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
+        <div class="month-bal-list" id="monthBalList"></div>
+        <div class="overall-total-box">
+          <span>Total Available Balance (All Months):</span>
+          <span id="allMonthsTotalBal" class="num">0</span>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal Dialog for Website / Brand Name -->
-  <div class="modal-overlay" id="appNameModal">
-    <div class="modal-box">
-      <h4>Edit Website / Header Name</h4>
-      <input type="text" id="modalAppNameInput" placeholder="Enter website title">
-      <div class="modal-actions" style="justify-content: flex-end;">
-        <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
-        <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
+    <!-- Receivables Section -->
+    <div id="receivables-section" class="sheet-container" style="display:none;">
+      <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Receivable (Due In)</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 20%;">Date</th>
+              <th style="width: 30%;">Debtor Name / Account</th>
+              <th style="width: 25%;">Description</th>
+              <th style="width: 20%;">Amount</th>
+              <th style="width: 5%;"></th>
+            </tr>
+          </thead>
+          <tbody id="recTableBody"></tbody>
+        </table>
+      </div>
+      <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
+    </div>
+
+    <!-- Payables Section -->
+    <div id="payables-section" class="sheet-container" style="display:none;">
+      <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 20%;">Date</th>
+              <th style="width: 30%;">Creditor Name / Account</th>
+              <th style="width: 25%;">Description</th>
+              <th style="width: 20%;">Amount</th>
+              <th style="width: 5%;"></th>
+            </tr>
+          </thead>
+          <tbody id="payTableBody"></tbody>
+        </table>
+      </div>
+      <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
+    </div>
+
+    <!-- Reports & Ledger Section -->
+    <div id="ledger-section" class="sheet-container" style="display:none;">
+      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
+      
+      <div class="filter-box">
+        <div class="filter-group">
+          <label>Report Type:</label>
+          <select id="reportTypeSelect" onchange="handleReportTypeChange()">
+            <option value="ledger">Account / Person Ledger</option>
+            <option value="daywise">Day-wise Report</option>
+            <option value="monthwise">Month-wise Report</option>
+            <option value="yearwise">Year-wise Report</option>
+          </select>
+        </div>
+
+        <div class="filter-group" id="accountFilterGroup">
+          <label>Select Account / Person:</label>
+          <select id="ledgerAccountSelect" onchange="renderActiveReport()">
+            <option value="ALL">-- View All Entries --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Search (Particular/Name):</label>
+          <input type="text" id="reportSearchInput" placeholder="Search keyword..." oninput="renderActiveReport()">
+        </div>
+
+        <div class="filter-group">
+          <label>From Date:</label>
+          <input type="date" id="reportFromDate" onchange="renderActiveReport()">
+        </div>
+
+        <div class="filter-group">
+          <label>To Date:</label>
+          <input type="date" id="reportToDate" onchange="renderActiveReport()">
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead id="reportTableHead">
+            <tr>
+              <th>Date</th>
+              <th>Source Page / Type</th>
+              <th>Particular / Account</th>
+              <th class="num">Income / Due In</th>
+              <th class="num exp-num">Exp / Due Out</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerDetailBody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="3" class="num" id="reportFootLabel">Net Calculation</td>
+              <td id="ledgerFilterIn" class="num">0</td>
+              <td id="ledgerFilterOut" class="num exp-num">0</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3" class="num">Closing / Net Balance</td>
+              <td colspan="2" id="ledgerFilterBalance" class="num">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal Dialog for Page Rename / Add -->
+    <div class="modal-overlay" id="pageModal">
+      <div class="modal-box">
+        <h4 id="modalHeading">Edit Page Name</h4>
+        <input type="text" id="modalPageNameInput" placeholder="Enter page name">
+        <div class="modal-actions">
+          <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
+          <div style="display:flex; gap:8px;">
+            <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
+            <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Dialog for Website / Brand Name -->
+    <div class="modal-overlay" id="appNameModal">
+      <div class="modal-box">
+        <h4>Edit Website / Header Name</h4>
+        <input type="text" id="modalAppNameInput" placeholder="Enter website title">
+        <div class="modal-actions" style="justify-content: flex-end;">
+          <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
+          <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
+        </div>
       </div>
     </div>
   </div>
@@ -510,40 +806,205 @@
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
+    let authMode = 'login'; // 'login' or 'register'
+    let syncTimer = null;
 
-    // Load App Name
-    let appTitle = localStorage.getItem('cashbook_app_name') || "Money Management";
+    let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
+
+    let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
     document.getElementById('appBrandTitle').innerText = appTitle;
 
-    // Load sheets or initiate clean dynamic page
-    let sheets = JSON.parse(localStorage.getItem('cashbook_sheets')) || [
-      {
-        name: currentMonthYear,
-        rows: [
-          { date: today, particular: "", income: 0, exp: 0 }
-        ]
+    function getUserStorageKey(suffix) {
+      const userPrefix = currentUser ? currentUser.username + '_' : 'guest_';
+      return `cashbook_${userPrefix}${suffix}`;
+    }
+
+    let sheets = [];
+    let receivables = [];
+    let payables = [];
+    let currentSheetIndex = 0;
+
+    /* Auth Screen Management */
+    function checkAuthSession() {
+      const authContainer = document.getElementById('auth-screen-container');
+      const mainApp = document.getElementById('main-app-content');
+
+      if (currentUser) {
+        authContainer.style.display = 'none';
+        mainApp.style.display = 'block';
+        document.getElementById('currentUserNameLabel').innerText = currentUser.username;
+        initUserData();
+      } else {
+        authContainer.style.display = 'flex';
+        mainApp.style.display = 'none';
       }
-    ];
+    }
 
-    let currentSheetIndex = sheets.length - 1;
-    let receivables = JSON.parse(localStorage.getItem('cashbook_receivables')) || [];
-    let payables = JSON.parse(localStorage.getItem('cashbook_payables')) || [];
+    function toggleAuthModeView() {
+      authMode = authMode === 'login' ? 'register' : 'login';
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleLink = document.getElementById('authModeToggleLink');
+      const driveField = document.getElementById('driveLinkField');
 
-    function saveAllData() {
-      localStorage.setItem('cashbook_sheets', JSON.stringify(sheets));
-      localStorage.setItem('cashbook_receivables', JSON.stringify(receivables));
-      localStorage.setItem('cashbook_payables', JSON.stringify(payables));
+      if (authMode === 'register') {
+        subtitle.innerText = 'Create Account';
+        submitBtn.innerText = 'Register & Connect Drive';
+        driveField.style.display = 'block';
+        toggleLink.innerText = 'Login';
+      } else {
+        subtitle.innerText = 'Please Login';
+        submitBtn.innerText = 'Login';
+        driveField.style.display = 'none';
+        toggleLink.innerText = 'Register';
+      }
+    }
+
+    function handleAuthSubmit() {
+      const userVal = document.getElementById('loginUsername').value.trim();
+      const passVal = document.getElementById('loginPassword').value.trim();
+      const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
+
+      if (!userVal || !passVal) {
+        alert('Please enter username and password');
+        return;
+      }
+
+      if (authMode === 'register') {
+        if (!driveUrlVal) {
+          alert('Please enter your Google Drive Web App Link to sync and store data.');
+          return;
+        }
+
+        const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
+        if (existing) {
+          alert('Username already registered. Please log in.');
+          return;
+        }
+
+        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+        usersList.push(newUser);
+        localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+        currentUser = newUser;
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+
+        checkAuthSession();
+        syncWithGoogleDrive(true);
+      } else {
+        // Login Flow
+        const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
+        if (!found) {
+          // Allow cross-device instant sign in using Drive URL
+          const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
+          if (remoteDriveUrl && remoteDriveUrl.trim()) {
+            const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
+            usersList.push(externalUser);
+            localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+            currentUser = externalUser;
+            localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+            checkAuthSession();
+            fetchDataFromGoogleDrive();
+            return;
+          } else {
+            alert('Invalid credentials. Please register or verify password.');
+            return;
+          }
+        }
+
+        currentUser = found;
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+        checkAuthSession();
+        fetchDataFromGoogleDrive();
+      }
+    }
+
+    function handleForgotPassword() {
+      alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
+    }
+
+    function logoutUser() {
+      if (confirm('Are you sure you want to log out?')) {
+        currentUser = null;
+        localStorage.removeItem('cashbook_active_user');
+        checkAuthSession();
+      }
+    }
+
+    /* Core Data Operations */
+    function initUserData() {
+      sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
+        {
+          name: currentMonthYear,
+          rows: [
+            { date: today, particular: "", income: 0, exp: 0 }
+          ]
+        }
+      ];
+      receivables = JSON.parse(localStorage.getItem(getUserStorageKey('receivables'))) || [];
+      payables = JSON.parse(localStorage.getItem(getUserStorageKey('payables'))) || [];
+      currentSheetIndex = Math.max(0, sheets.length - 1);
+
+      renderDashboard();
+      renderSheet();
+      renderDueTables();
+    }
+
+    function saveAllData(shouldSync = true) {
+      localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
+      localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
+      localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
+      renderDashboard();
+
+      if (shouldSync && currentUser && currentUser.driveUrl) {
+        debouncedDriveSync();
+      }
     }
 
     function updateBadge() {
       const titleEl = document.getElementById('badgePageTitle');
-      titleEl.innerText = `Active Page: ${sheets[currentSheetIndex].name}`;
+      if (sheets[currentSheetIndex]) {
+        titleEl.innerText = `Active Page: ${sheets[currentSheetIndex].name}`;
+      }
+    }
+
+    function renderDashboard() {
+      let totalInc = 0;
+      let totalExp = 0;
+
+      sheets.forEach(s => {
+        s.rows.forEach(r => {
+          totalInc += parseFloat(r.income) || 0;
+          totalExp += parseFloat(r.exp) || 0;
+        });
+      });
+
+      const netCash = totalInc - totalExp;
+      let totalDueIn = receivables.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+      let totalDueOut = payables.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+      const projectedNet = netCash + totalDueIn - totalDueOut;
+
+      document.getElementById('dashTotalIncome').innerText = totalInc;
+      document.getElementById('dashTotalExp').innerText = totalExp;
+      
+      const netCashEl = document.getElementById('dashNetCash');
+      netCashEl.innerText = (netCash >= 0 ? '+' : '') + netCash;
+      netCashEl.className = `metric-val ${netCash < 0 ? 'text-red' : 'text-green'}`;
+
+      document.getElementById('dashDueIn').innerText = totalDueIn;
+      document.getElementById('dashDueOut').innerText = totalDueOut;
+
+      const projNetEl = document.getElementById('dashProjectedNet');
+      projNetEl.innerText = (projectedNet >= 0 ? '+' : '') + projectedNet;
+      projNetEl.className = `metric-val ${projectedNet < 0 ? 'text-red' : 'text-green'}`;
     }
 
     function renderSheet() {
       updateBadge();
       const tbody = document.getElementById('sheetTableBody');
       tbody.innerHTML = '';
+      if (!sheets[currentSheetIndex]) return;
       const currentRows = sheets[currentSheetIndex].rows;
 
       currentRows.forEach((row, i) => {
@@ -575,6 +1036,7 @@
     }
 
     function calculateCashTotals() {
+      if (!sheets[currentSheetIndex]) return;
       const currentRows = sheets[currentSheetIndex].rows;
       let runningBal = 0;
       let totalInc = 0;
@@ -620,6 +1082,89 @@
       if (isBalPanelVisible) renderBalances();
     }
 
+    /* Drive Sync Engine */
+    function debouncedDriveSync() {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(() => {
+        syncWithGoogleDrive(false);
+      }, 1500);
+    }
+
+    function syncWithGoogleDrive(showNotify = false) {
+      if (!currentUser || !currentUser.driveUrl) {
+        if (showNotify) alert('No Google Drive connection configured.');
+        return;
+      }
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Syncing...';
+      syncInd.style.color = '#0d6efd';
+      syncInd.style.display = 'inline-block';
+
+      const payload = {
+        action: 'save',
+        username: currentUser.username,
+        data: {
+          sheets: sheets,
+          receivables: receivables,
+          payables: payables,
+          updatedAt: new Date().toISOString()
+        }
+      };
+
+      fetch(currentUser.driveUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        syncInd.innerText = '☁ Synced to Drive';
+        syncInd.style.color = '#198754';
+        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        if (showNotify) alert('All data synced successfully to Google Drive!');
+      })
+      .catch((err) => {
+        console.error('Drive Sync Error:', err);
+        syncInd.innerText = '☁ Local Cache Saved';
+        syncInd.style.color = '#dc3545';
+        if (showNotify) alert('Data saved locally. Check Drive connection.');
+      });
+    }
+
+    function fetchDataFromGoogleDrive() {
+      if (!currentUser || !currentUser.driveUrl) return;
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Fetching from Drive...';
+      syncInd.style.color = '#0d6efd';
+      syncInd.style.display = 'inline-block';
+
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}`;
+
+      fetch(fetchUrl)
+      .then(res => res.json())
+      .then(resData => {
+        if (resData && resData.sheets) {
+          sheets = resData.sheets;
+          receivables = resData.receivables || [];
+          payables = resData.payables || [];
+          currentSheetIndex = Math.max(0, sheets.length - 1);
+          saveAllData(false);
+          renderDashboard();
+          renderSheet();
+          renderDueTables();
+          syncInd.innerText = '☁ Up to Date';
+          syncInd.style.color = '#198754';
+          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        }
+      })
+      .catch((err) => {
+        console.log('Fetch skipped or local state loaded.');
+        syncInd.style.display = 'none';
+      });
+    }
+
     /* Modal Handling */
     function openRenameModal() {
       isCreatingNew = false;
@@ -650,7 +1195,7 @@
 
     function saveAppName() {
       const val = document.getElementById('modalAppNameInput').value.trim();
-      const finalTitle = val !== "" ? val : "Money Management";
+      const finalTitle = val !== "" ? val : "FinTrack";
       document.getElementById('appBrandTitle').innerText = finalTitle;
       localStorage.setItem('cashbook_app_name', finalTitle);
       closeModal('appNameModal');
@@ -797,14 +1342,18 @@
       document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
+      document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'block' : 'none';
       document.getElementById('sheet-section').style.display = section === 'sheet' ? 'block' : 'none';
       document.getElementById('receivables-section').style.display = section === 'receivables' ? 'block' : 'none';
       document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
       document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
 
+      if (section === 'dashboard') {
+        renderDashboard();
+      }
       if (section === 'ledger') {
         populateLedgerAccounts();
-        renderAccountLedger();
+        handleReportTypeChange();
       }
     }
 
@@ -830,66 +1379,173 @@
       }
     }
 
-    function renderAccountLedger() {
-      const selected = document.getElementById('ledgerAccountSelect').value;
-      const tbody = document.getElementById('ledgerDetailBody');
-      tbody.innerHTML = '';
+    function handleReportTypeChange() {
+      const reportType = document.getElementById('reportTypeSelect').value;
+      const accountGroup = document.getElementById('accountFilterGroup');
+      const thead = document.getElementById('reportTableHead');
+      const footLabel = document.getElementById('reportFootLabel');
 
-      let totalIn = 0;
-      let totalOut = 0;
+      if (reportType === 'ledger') {
+        accountGroup.style.display = 'flex';
+        footLabel.colSpan = 3;
+        thead.innerHTML = `
+          <tr>
+            <th>Date</th>
+            <th>Source Page / Type</th>
+            <th>Particular / Account</th>
+            <th class="num">Income / Due In</th>
+            <th class="num exp-num">Exp / Due Out</th>
+          </tr>
+        `;
+      } else {
+        accountGroup.style.display = 'none';
+        footLabel.colSpan = 2;
+        let periodTitle = 'Date (Day)';
+        if (reportType === 'monthwise') periodTitle = 'Month';
+        if (reportType === 'yearwise') periodTitle = 'Year';
+
+        thead.innerHTML = `
+          <tr>
+            <th>${periodTitle}</th>
+            <th>Total Entries</th>
+            <th class="num">Total Income / In</th>
+            <th class="num exp-num">Total Exp / Out</th>
+          </tr>
+        `;
+      }
+      renderActiveReport();
+    }
+
+    function getAllNormalizedEntries() {
+      const entries = [];
 
       sheets.forEach(s => {
         s.rows.forEach(r => {
-          if (selected === 'ALL' || (r.particular && r.particular.trim().toLowerCase() === selected.toLowerCase())) {
-            const inc = parseFloat(r.income) || 0;
-            const exp = parseFloat(r.exp) || 0;
-            totalIn += inc;
-            totalOut += exp;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${r.date}</td>
-              <td>Cashbook (${s.name})</td>
-              <td>${r.particular || '-'}</td>
-              <td class="num">${inc}</td>
-              <td class="num exp-num">${exp}</td>
-            `;
-            tbody.appendChild(tr);
-          }
+          entries.push({
+            date: r.date || '',
+            source: `Cashbook (${s.name})`,
+            account: r.particular || '',
+            desc: '',
+            income: parseFloat(r.income) || 0,
+            exp: parseFloat(r.exp) || 0
+          });
         });
       });
 
       receivables.forEach(r => {
-        if (selected === 'ALL' || (r.name && r.name.trim().toLowerCase() === selected.toLowerCase())) {
-          const amt = parseFloat(r.amount) || 0;
-          totalIn += amt;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${r.date}</td>
-            <td>Receivable (Due In)</td>
-            <td>${r.name || '-'} ${r.desc ? '(' + r.desc + ')' : ''}</td>
-            <td class="num">${amt}</td>
-            <td class="num exp-num">0</td>
-          `;
-          tbody.appendChild(tr);
-        }
+        entries.push({
+          date: r.date || '',
+          source: 'Receivable (Due In)',
+          account: r.name || '',
+          desc: r.desc || '',
+          income: parseFloat(r.amount) || 0,
+          exp: 0
+        });
       });
 
       payables.forEach(p => {
-        if (selected === 'ALL' || (p.name && p.name.trim().toLowerCase() === selected.toLowerCase())) {
-          const amt = parseFloat(p.amount) || 0;
-          totalOut += amt;
+        entries.push({
+          date: p.date || '',
+          source: 'Payable (Due Out)',
+          account: p.name || '',
+          desc: p.desc || '',
+          income: 0,
+          exp: parseFloat(p.amount) || 0
+        });
+      });
+
+      return entries;
+    }
+
+    function renderActiveReport() {
+      const reportType = document.getElementById('reportTypeSelect').value;
+      const selectedAccount = document.getElementById('ledgerAccountSelect').value;
+      const searchTerm = document.getElementById('reportSearchInput').value.trim().toLowerCase();
+      const fromDate = document.getElementById('reportFromDate').value;
+      const toDate = document.getElementById('reportToDate').value;
+
+      const tbody = document.getElementById('ledgerDetailBody');
+      tbody.innerHTML = '';
+
+      let entries = getAllNormalizedEntries();
+
+      if (fromDate) entries = entries.filter(e => e.date >= fromDate);
+      if (toDate) entries = entries.filter(e => e.date <= toDate);
+
+      if (searchTerm) {
+        entries = entries.filter(e => 
+          (e.account && e.account.toLowerCase().includes(searchTerm)) ||
+          (e.desc && e.desc.toLowerCase().includes(searchTerm)) ||
+          (e.date && e.date.includes(searchTerm))
+        );
+      }
+
+      let totalIn = 0;
+      let totalOut = 0;
+
+      if (reportType === 'ledger') {
+        if (selectedAccount !== 'ALL') {
+          entries = entries.filter(e => e.account && e.account.trim().toLowerCase() === selectedAccount.toLowerCase());
+        }
+
+        entries.forEach(e => {
+          totalIn += e.income;
+          totalOut += e.exp;
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${p.date}</td>
-            <td>Payable (Due Out)</td>
-            <td>${p.name || '-'} ${p.desc ? '(' + p.desc + ')' : ''}</td>
-            <td class="num">0</td>
-            <td class="num exp-num">${amt}</td>
+            <td>${e.date || '-'}</td>
+            <td>${e.source}</td>
+            <td>${e.account || '-'} ${e.desc ? '(' + e.desc + ')' : ''}</td>
+            <td class="num">${e.income}</td>
+            <td class="num exp-num">${e.exp}</td>
           `;
           tbody.appendChild(tr);
-        }
-      });
+        });
+
+      } else {
+        const groups = {};
+
+        entries.forEach(e => {
+          let key = 'Undated';
+          if (e.date) {
+            if (reportType === 'daywise') key = e.date;
+            else if (reportType === 'monthwise') key = e.date.substring(0, 7);
+            else if (reportType === 'yearwise') key = e.date.substring(0, 4);
+          }
+
+          if (!groups[key]) {
+            groups[key] = { key: key, count: 0, income: 0, exp: 0 };
+          }
+          groups[key].count += 1;
+          groups[key].income += e.income;
+          groups[key].exp += e.exp;
+        });
+
+        const sortedKeys = Object.keys(groups).sort().reverse();
+
+        sortedKeys.forEach(k => {
+          const g = groups[k];
+          totalIn += g.income;
+          totalOut += g.exp;
+
+          let displayKey = g.key;
+          if (reportType === 'monthwise' && g.key !== 'Undated') {
+            const [y, m] = g.key.split('-');
+            const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+            displayKey = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${displayKey}</strong></td>
+            <td>${g.count} entries</td>
+            <td class="num">${g.income}</td>
+            <td class="num exp-num">${g.exp}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
 
       const net = totalIn - totalOut;
       document.getElementById('ledgerFilterIn').innerText = totalIn;
@@ -899,6 +1555,7 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
+    // Modal Enter & Escape Key Handlers
     document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') savePageModal();
       if (e.key === 'Escape') closeModal('pageModal');
@@ -909,8 +1566,8 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    renderSheet();
-    renderDueTables();
+    // Check login state on initial load
+    checkAuthSession();
   </script>
 </body>
 </html>
