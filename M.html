@@ -14,7 +14,7 @@
       padding-bottom: 20px;
     }
 
-    /* Fullscreen Dedicated Auth Screen */
+    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -94,6 +94,17 @@
       font-weight: 500;
       cursor: pointer;
     }
+    .helper-box {
+      background: #f1f8ff;
+      border: 1px solid #cce5ff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #004085;
+      margin-top: 10px;
+      text-align: left;
+      line-height: 1.4;
+    }
 
     /* Dashboard Metric Cards */
     .dash-metrics-grid {
@@ -128,7 +139,7 @@
       color: #888;
     }
 
-    /* Sticky Navigation */
+    /* Fixed/Sticky Top Navigation Header */
     .sticky-header {
       position: sticky;
       top: 0;
@@ -519,18 +530,25 @@
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
 
+      <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
+        <input type="url" id="loginDriveUrl" placeholder="Google Drive Web App URL">
+        <div class="helper-box">
+          📂 <strong>Drive Integration:</strong> Enter your Apps Script Web App link to load your data on mobile and desktop devices.
+        </div>
+      </div>
+
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
-        <a onclick="handleForgotPassword()">Need Help?</a>
+        <a onclick="handleForgotPassword()">Forgot Password?</a>
         <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
       </div>
     </div>
   </div>
 
-  <!-- Main Application Wrapper -->
+  <!-- Main Application Wrapper (Hidden until login) -->
   <div id="main-app-content" style="display:none;">
-    <!-- Sticky Navigation -->
+    <!-- Sticky Top Header & Navigation -->
     <div class="sticky-header">
       <div class="header-top-row">
         <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
@@ -630,12 +648,14 @@
         </table>
       </div>
 
+      <!-- Action Buttons Side-by-Side -->
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
         <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
       </div>
 
+      <!-- Month Balance Section -->
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
         <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
@@ -686,7 +706,7 @@
       <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
     </div>
 
-    <!-- Reports Section -->
+    <!-- Reports & Ledger Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
       
@@ -751,7 +771,7 @@
       </div>
     </div>
 
-    <!-- Modal Rename / Add -->
+    <!-- Modal Dialog for Page Rename / Add -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
@@ -766,7 +786,7 @@
       </div>
     </div>
 
-    <!-- Modal Brand Name -->
+    <!-- Modal Dialog for Website / Brand Name -->
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
         <h4>Edit Website / Header Name</h4>
@@ -780,18 +800,16 @@
   </div>
 
   <script>
-    // System Configured Drive Sync URL (Replace with your permanent Web App URL)
-    const APP_DRIVE_ENDPOINT = "https://script.google.com/macros/s/AKfycbz_YOUR_DEFAULT_SCRIPT_ID/exec";
-
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
-    let authMode = 'login';
+    let authMode = 'login'; // 'login' or 'register'
     let syncTimer = null;
 
+    let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
 
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
@@ -807,6 +825,7 @@
     let payables = [];
     let currentSheetIndex = 0;
 
+    /* Auth Screen Management */
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
@@ -824,17 +843,21 @@
 
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
+      const title = document.getElementById('authTitle');
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
+      const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
         subtitle.innerText = 'Create Account';
-        submitBtn.innerText = 'Register';
+        submitBtn.innerText = 'Register & Connect Drive';
+        driveField.style.display = 'block';
         toggleLink.innerText = 'Login';
       } else {
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
+        driveField.style.display = 'none';
         toggleLink.innerText = 'Register';
       }
     }
@@ -842,50 +865,63 @@
     function handleAuthSubmit() {
       const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
+      const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
 
       if (!userVal || !passVal) {
         alert('Please enter username and password');
         return;
       }
 
-      const submitBtn = document.getElementById('authSubmitBtn');
-      submitBtn.innerText = 'Connecting...';
-      submitBtn.disabled = true;
-
-      const cacheBuster = `&_t=${Date.now()}`;
-      const authUrl = APP_DRIVE_ENDPOINT + (APP_DRIVE_ENDPOINT.includes('?') ? '&' : '?') + `action=auth&username=${encodeURIComponent(userVal)}&password=${encodeURIComponent(passVal)}&mode=${authMode}${cacheBuster}`;
-
-      fetch(authUrl, { cache: 'no-store' })
-      .then(res => res.json())
-      .then(result => {
-        submitBtn.innerText = authMode === 'register' ? 'Register' : 'Login';
-        submitBtn.disabled = false;
-
-        currentUser = { username: userVal, password: passVal };
-        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-
-        if (result.sheets) {
-          sheets = result.sheets;
-          receivables = result.receivables || [];
-          payables = result.payables || [];
-          saveAllData(false);
+      if (authMode === 'register') {
+        if (!driveUrlVal) {
+          alert('Please enter your Google Drive Web App Link to sync and store data.');
+          return;
         }
+
+        const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
+        if (existing) {
+          alert('Username already registered. Please log in.');
+          return;
+        }
+
+        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+        usersList.push(newUser);
+        localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+        currentUser = newUser;
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+
         checkAuthSession();
-        fetchDataFromGoogleDrive(false);
-      })
-      .catch(() => {
-        submitBtn.innerText = authMode === 'register' ? 'Register' : 'Login';
-        submitBtn.disabled = false;
-        
-        currentUser = { username: userVal, password: passVal };
+        syncWithGoogleDrive(true);
+      } else {
+        // Login Flow
+        const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
+        if (!found) {
+          // Allow cross-device instant sign in using Drive URL
+          const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
+          if (remoteDriveUrl && remoteDriveUrl.trim()) {
+            const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
+            usersList.push(externalUser);
+            localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+            currentUser = externalUser;
+            localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+            checkAuthSession();
+            fetchDataFromGoogleDrive();
+            return;
+          } else {
+            alert('Invalid credentials. Please register or verify password.');
+            return;
+          }
+        }
+
+        currentUser = found;
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
         checkAuthSession();
-        fetchDataFromGoogleDrive(false);
-      });
+        fetchDataFromGoogleDrive();
+      }
     }
 
     function handleForgotPassword() {
-      alert('Enter your registered Username and Password to log in on any device.');
+      alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
     }
 
     function logoutUser() {
@@ -896,6 +932,7 @@
       }
     }
 
+    /* Core Data Operations */
     function initUserData() {
       sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
         {
@@ -920,7 +957,7 @@
       localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
       renderDashboard();
 
-      if (shouldSync && currentUser) {
+      if (shouldSync && currentUser && currentUser.driveUrl) {
         debouncedDriveSync();
       }
     }
@@ -1045,6 +1082,7 @@
       if (isBalPanelVisible) renderBalances();
     }
 
+    /* Drive Sync Engine */
     function debouncedDriveSync() {
       clearTimeout(syncTimer);
       syncTimer = setTimeout(() => {
@@ -1053,7 +1091,10 @@
     }
 
     function syncWithGoogleDrive(showNotify = false) {
-      if (!currentUser) return;
+      if (!currentUser || !currentUser.driveUrl) {
+        if (showNotify) alert('No Google Drive connection configured.');
+        return;
+      }
 
       const syncInd = document.getElementById('syncIndicator');
       syncInd.innerText = '☁ Syncing...';
@@ -1063,7 +1104,6 @@
       const payload = {
         action: 'save',
         username: currentUser.username,
-        password: currentUser.password,
         data: {
           sheets: sheets,
           receivables: receivables,
@@ -1072,12 +1112,12 @@
         }
       };
 
-      fetch(APP_DRIVE_ENDPOINT, {
+      fetch(currentUser.driveUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      .then(res => res.json().catch(() => ({ status: 'success' })))
       .then(() => {
         syncInd.innerText = '☁ Synced to Drive';
         syncInd.style.color = '#198754';
@@ -1086,45 +1126,29 @@
       })
       .catch((err) => {
         console.error('Drive Sync Error:', err);
-        syncInd.innerText = '☁ Saved Locally';
-        syncInd.style.color = '#198754';
-        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        if (showNotify) alert('Data saved.');
+        syncInd.innerText = '☁ Local Cache Saved';
+        syncInd.style.color = '#dc3545';
+        if (showNotify) alert('Data saved locally. Check Drive connection.');
       });
     }
 
-    function fetchDataFromGoogleDrive(showNotify = false) {
-      if (!currentUser) return;
+    function fetchDataFromGoogleDrive() {
+      if (!currentUser || !currentUser.driveUrl) return;
 
       const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Fetching latest...';
+      syncInd.innerText = '☁ Fetching from Drive...';
       syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      const cacheBuster = `&_t=${Date.now()}`;
-      const fetchUrl = APP_DRIVE_ENDPOINT + (APP_DRIVE_ENDPOINT.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}${cacheBuster}`;
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}`;
 
-      fetch(fetchUrl, { cache: 'no-store' })
+      fetch(fetchUrl)
       .then(res => res.json())
       .then(resData => {
-        let incomingSheets = null;
-        let incomingRec = [];
-        let incomingPay = [];
-
-        if (resData && resData.data && resData.data.sheets) {
-          incomingSheets = resData.data.sheets;
-          incomingRec = resData.data.receivables || [];
-          incomingPay = resData.data.payables || [];
-        } else if (resData && resData.sheets) {
-          incomingSheets = resData.sheets;
-          incomingRec = resData.receivables || [];
-          incomingPay = resData.payables || [];
-        }
-
-        if (incomingSheets && incomingSheets.length > 0) {
-          sheets = incomingSheets;
-          receivables = incomingRec;
-          payables = incomingPay;
+        if (resData && resData.sheets) {
+          sheets = resData.sheets;
+          receivables = resData.receivables || [];
+          payables = resData.payables || [];
           currentSheetIndex = Math.max(0, sheets.length - 1);
           saveAllData(false);
           renderDashboard();
@@ -1133,17 +1157,15 @@
           syncInd.innerText = '☁ Up to Date';
           syncInd.style.color = '#198754';
           setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-          if (showNotify) alert('Latest data loaded from Google Drive!');
-        } else {
-          syncInd.style.display = 'none';
         }
       })
       .catch((err) => {
-        console.log('Fetch note:', err);
+        console.log('Fetch skipped or local state loaded.');
         syncInd.style.display = 'none';
       });
     }
 
+    /* Modal Handling */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1533,6 +1555,7 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
+    // Modal Enter & Escape Key Handlers
     document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') savePageModal();
       if (e.key === 'Escape') closeModal('pageModal');
@@ -1543,10 +1566,8 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
+    // Check login state on initial load
     checkAuthSession();
-    if (currentUser) {
-      fetchDataFromGoogleDrive(false);
-    }
   </script>
 </body>
 </html>
