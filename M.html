@@ -3,28 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Finance Manager & Ledger</title>
-
-  <!-- Firebase App & Authentication & Firestore SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+  <title>FinTrack - Professional Money Management</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
+      background: #f4f6f9;
       color: #212529;
       -webkit-text-size-adjust: 100%;
-      padding-bottom: 20px;
+      padding-bottom: 24px;
     }
 
-    /* Fullscreen Dedicated Auth Screen */
+    /* Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
-      background-color: #2b3a4a;
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -35,112 +29,91 @@
       background: #ffffff;
       border-radius: 16px;
       width: 100%;
-      max-width: 380px;
-      padding: 32px 26px 26px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-      text-align: left;
+      max-width: 400px;
+      padding: 36px 28px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      text-align: center;
     }
     .fintrack-card h1 {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      color: #0b1320;
-      margin-bottom: 20px;
-      text-align: center;
+      color: #0f172a;
       letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .fintrack-card p.subtitle {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-bottom: 24px;
     }
     .fintrack-input-group {
-      margin-bottom: 14px;
+      margin-bottom: 15px;
+      text-align: left;
     }
     .fintrack-input-group label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
-      color: #495057;
+      color: #475569;
       margin-bottom: 6px;
     }
     .fintrack-input-group input {
       width: 100%;
-      padding: 11px 14px;
-      border: 1px solid #ced4da;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
       font-size: 14px;
-      color: #212529;
+      color: #1e293b;
       background: #fff;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s ease;
     }
     .fintrack-input-group input:focus {
-      border-color: #1e70bf;
-      box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
     .fintrack-btn {
       width: 100%;
-      padding: 12px;
-      background: #0d6efd;
+      padding: 13px;
+      background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
       color: #ffffff;
       font-size: 15px;
       font-weight: 600;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 6px;
-      box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
       transition: opacity 0.15s;
-      text-align: center;
     }
     .fintrack-btn:hover {
       opacity: 0.95;
     }
-    .auth-separator {
-      display: flex;
-      align-items: center;
-      text-align: center;
-      margin: 18px 0;
-      color: #888;
-      font-size: 12px;
-    }
-    .auth-separator::before, .auth-separator::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .auth-separator:not(:empty)::before {
-      margin-right: .75em;
-    }
-    .auth-separator:not(:empty)::after {
-      margin-left: .75em;
-    }
-    .google-btn {
-      width: 100%;
-      padding: 11px;
-      background: #ffffff;
-      color: #3c4043;
-      border: 1px solid #dadce0;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: background 0.2s;
-      box-shadow: 0 1px 3px rgba(60,64,67,0.08);
-    }
-    .google-btn:hover {
-      background: #f8f9fa;
-    }
     .fintrack-card-footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 22px;
       font-size: 13px;
     }
     .fintrack-card-footer a {
-      color: #0d6efd;
+      color: #2563eb;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
+    }
+    .fintrack-card-footer a:hover {
+      text-decoration: underline;
+    }
+    .helper-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 11.5px;
+      color: #1e40af;
+      margin-top: 8px;
+      text-align: left;
+      line-height: 1.4;
     }
 
     /* Dashboard Metric Cards */
@@ -151,8 +124,8 @@
       margin-bottom: 18px;
     }
     .metric-card {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 14px;
       display: flex;
@@ -160,30 +133,30 @@
       gap: 4px;
     }
     .metric-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #6c757d;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .metric-val {
       font-size: 20px;
       font-weight: 700;
-      color: #212529;
+      color: #0f172a;
     }
     .metric-sub {
-      font-size: 12px;
-      color: #888;
+      font-size: 11.5px;
+      color: #94a3b8;
     }
 
-    /* Fixed/Sticky Top Navigation Header */
+    /* Top Sticky Header */
     .sticky-header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: #f0f2f5;
+      background: #f4f6f9;
       padding: 10px 12px 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
     .header-top-row {
       display: flex;
@@ -194,22 +167,22 @@
     .app-brand-title {
       font-size: 17px;
       font-weight: 700;
-      color: #1a1a1a;
+      color: #0f172a;
       letter-spacing: -0.2px;
     }
     .header-user-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .user-pill {
       font-size: 12px;
       font-weight: 600;
-      background: #e7f1ff;
-      color: #0d6efd;
+      background: #e0f2fe;
+      color: #0369a1;
       padding: 4px 10px;
       border-radius: 20px;
-      border: 1px solid #b6d4fe;
+      border: 1px solid #bae6fd;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -220,12 +193,12 @@
     }
     .sync-status {
       font-size: 11px;
-      font-weight: 500;
-      color: #198754;
+      font-weight: 600;
+      color: #16a34a;
       display: none;
     }
     .logout-btn-header {
-      background: #dc3545;
+      background: #ef4444;
       color: #fff;
       border: none;
       font-size: 12px;
@@ -237,15 +210,15 @@
     .three-dots-btn {
       background: none;
       border: none;
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1;
       cursor: pointer;
-      color: #495057;
-      padding: 4px 8px;
+      color: #475569;
+      padding: 4px 6px;
       border-radius: 6px;
     }
     .three-dots-btn:hover {
-      background: #e2e6ea;
+      background: #e2e8f0;
     }
 
     .nav-tabs {
@@ -256,32 +229,32 @@
       padding-bottom: 4px;
     }
     .nav-tabs button {
-      padding: 9px 16px;
-      border: 1px solid #ced4da;
+      padding: 8px 16px;
+      border: 1px solid #cbd5e1;
       background: #ffffff;
       cursor: pointer;
       font-weight: 600;
       border-radius: 8px;
       white-space: nowrap;
-      font-size: 14px;
-      color: #495057;
+      font-size: 13.5px;
+      color: #475569;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
       flex-shrink: 0;
     }
     .nav-tabs button.active {
-      background: #0d6efd;
+      background: #2563eb;
       color: #ffffff;
-      border-color: #0d6efd;
-      box-shadow: 0 2px 4px rgba(13,110,253,0.3);
+      border-color: #2563eb;
+      box-shadow: 0 2px 5px rgba(37,99,235,0.3);
     }
 
     .sheet-container {
       background: #ffffff;
-      padding: 14px;
-      border: 1px solid #e9ecef;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       max-width: 1100px;
       margin: 10px 12px;
     }
@@ -295,33 +268,27 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 12px;
-      border-bottom: 1px solid #dee2e6;
+      border-bottom: 1px solid #e2e8f0;
       padding-bottom: 10px;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
     .current-page-badge {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
-      color: #0d6efd;
-      background: #e7f1ff;
-      padding: 8px 16px;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 7px 14px;
       border-radius: 8px;
-      border: 1px solid #b6d4fe;
+      border: 1px solid #bfdbfe;
       white-space: nowrap;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      user-select: none;
-      transition: background 0.15s ease;
-    }
-    .current-page-badge:hover {
-      background: #d0e2ff;
     }
     .plus-btn {
       padding: 6px 14px;
-      background: #198754;
+      background: #16a34a;
       color: white;
       border: none;
       font-size: 20px;
@@ -330,16 +297,15 @@
       border-radius: 8px;
       font-weight: bold;
       flex-shrink: 0;
-      box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
+    /* Scroll Area & Tables */
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
       max-height: 60vh;
-      -webkit-overflow-scrolling: touch;
       margin-bottom: 14px;
-      border: 1px solid #dee2e6;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
     }
     table {
@@ -348,75 +314,67 @@
       min-width: 580px;
     }
     th, td {
-      border: 1px solid #dee2e6;
+      border: 1px solid #e2e8f0;
       padding: 8px 10px;
       text-align: left;
-      font-size: 14px;
+      font-size: 13.5px;
     }
     th {
-      background: #f8f9fa;
+      background: #f8fafc;
       font-weight: 600;
-      color: #495057;
+      color: #475569;
       position: sticky;
       top: 0;
       z-index: 2;
-      box-shadow: 0 1px 0 #dee2e6;
     }
     input, select {
       width: 100%;
       border: 1px solid transparent;
       outline: none;
       background: transparent;
-      font-size: 14px;
+      font-size: 13.5px;
       padding: 4px 6px;
       border-radius: 6px;
       color: inherit;
     }
     input:focus, select:focus {
       background: #ffffff;
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
     }
     .num { text-align: right; }
-    
-    .exp-num {
-      color: #dc3545 !important;
-      font-weight: 600;
-    }
-    
+    .exp-num { color: #ef4444 !important; font-weight: 600; }
     .total-row {
-      background: #f8f9fa;
+      background: #f8fafc;
       font-weight: bold;
-      color: #212529;
+      color: #0f172a;
       position: sticky;
       bottom: 0;
       z-index: 2;
-      box-shadow: 0 -1px 0 #dee2e6;
     }
     .action-btn {
-      background: #dc3545;
+      background: #ef4444;
       color: #fff;
       border: none;
-      padding: 5px 9px;
+      padding: 4px 8px;
       cursor: pointer;
       border-radius: 6px;
       font-size: 12px;
       font-weight: bold;
     }
     .add-row-btn {
-      padding: 9px 18px;
-      background: #0dcaf0;
-      color: #212529;
+      padding: 8px 16px;
+      background: #0284c7;
+      color: #ffffff;
       border: none;
       cursor: pointer;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
-      display: inline-block;
+      font-size: 13.5px;
     }
     .btn-toggle-bal {
-      padding: 9px 16px;
-      background: #6c757d;
+      padding: 8px 16px;
+      background: #64748b;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -425,8 +383,8 @@
       font-weight: 600;
     }
     .btn-sync-now {
-      padding: 9px 16px;
-      background: #198754;
+      padding: 8px 16px;
+      background: #16a34a;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -438,8 +396,8 @@
       margin-top: 16px;
       padding: 14px;
       border-radius: 8px;
-      border: 1px solid #ced4da;
-      background: #f8f9fa;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
     }
     .month-bal-list {
       display: flex;
@@ -448,39 +406,39 @@
       margin-bottom: 12px;
     }
     .month-bal-item {
-      padding: 11px 15px;
+      padding: 10px 14px;
       background: #ffffff;
-      border: 1px solid #e9ecef;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
+      font-size: 13.5px;
       cursor: pointer;
     }
     .overall-total-box {
-      border-top: 2px solid #dee2e6;
+      border-top: 2px solid #e2e8f0;
       padding-top: 12px;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .text-green { color: #198754; font-weight: 600; }
-    .text-red { color: #dc3545; font-weight: 600; }
+    .text-green { color: #16a34a; font-weight: 600; }
+    .text-red { color: #ef4444; font-weight: 600; }
 
-    /* Filter Grid for Reports */
+    /* Filter Grid */
     .filter-box {
       margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
-      background: #f8f9fa;
+      background: #f8fafc;
       padding: 12px;
       border-radius: 8px;
-      border: 1px solid #dee2e6;
+      border: 1px solid #e2e8f0;
     }
     .filter-group {
       display: flex;
@@ -489,24 +447,24 @@
       flex: 1 1 180px;
     }
     .filter-group label {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
-      color: #495057;
+      color: #475569;
     }
     .filter-box select, .filter-box input {
-      border: 1px solid #ced4da;
+      border: 1px solid #cbd5e1;
       padding: 7px 10px;
       border-radius: 6px;
       background: #fff;
       font-size: 13px;
     }
 
-    /* Modals */
+    /* Modal */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(15, 23, 42, 0.6);
       backdrop-filter: blur(2px);
       z-index: 999;
       align-items: center;
@@ -519,16 +477,16 @@
       max-width: 380px;
       width: 100%;
       padding: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     .modal-box h4 {
       margin-bottom: 14px;
       font-size: 16px;
       font-weight: 600;
-      color: #212529;
+      color: #0f172a;
     }
     .modal-box input {
-      border: 1px solid #ced4da;
+      border: 1px solid #cbd5e1;
       padding: 10px 12px;
       border-radius: 6px;
       background: #fff;
@@ -548,40 +506,43 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .modal-save-btn { background: #0d6efd; color: #fff; }
-    .modal-cancel-btn { background: #6c757d; color: #fff; }
-    .modal-del-btn { background: #dc3545; color: #fff; }
+    .modal-save-btn { background: #2563eb; color: #fff; }
+    .modal-cancel-btn { background: #64748b; color: #fff; }
+    .modal-del-btn { background: #ef4444; color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Login / Register Screen -->
+  <!-- Fullscreen Dedicated Auth Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
-      <h1 id="authTitle">Finance Manager</h1>
+      <h1 id="authTitle">FinTrack</h1>
+      <p class="subtitle" id="authSubtitle">Sign in with your Google account</p>
 
       <div class="fintrack-input-group">
         <label>Gmail ID</label>
-        <input type="email" id="loginGmail" placeholder="yourname@gmail.com" autocomplete="email">
+        <input type="email" id="loginEmail" placeholder="yourname@gmail.com" autocomplete="email">
       </div>
 
       <div class="fintrack-input-group">
         <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="•••••••••••" autocomplete="current-password">
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <!-- Visible ONLY during initial registration -->
+      <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
+        <label>Google Drive Web App URL</label>
+        <input type="url" id="loginDriveUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="helper-box">
+          🔒 <strong>One-time Setup:</strong> Paste your Google Apps Script URL. Your data will link to your Gmail ID without needing this link again on future logins.
+        </div>
       </div>
 
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Sign In</button>
 
-      <div class="auth-separator">OR</div>
-
-      <button class="google-btn" onclick="continueWithGoogleOAuth()">
-        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.9c1.69-1.55 2.69-3.84 2.69-6.57z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.33-1.59-5.05-3.74H.92v2.3A8.99 8.99 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.71a5.4 5.4 0 0 1 0-3.42V4.98H.92a8.99 8.99 0 0 0 0 8.04l3.03-2.31z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35L15 2.1A8.99 8.99 0 0 0 .92 4.98l3.03 2.31C4.67 5.18 6.65 3.58 9 3.58z"/></svg>
-        Continue with Google
-      </button>
-
       <div class="fintrack-card-footer">
         <a onclick="handleForgotPassword()">Forgot Password?</a>
-        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
+        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Create Account</a>
       </div>
     </div>
   </div>
@@ -590,11 +551,11 @@
   <div id="main-app-content" style="display:none;">
     <div class="sticky-header">
       <div class="header-top-row">
-        <span class="app-brand-title" id="appBrandTitle">Finance Manager</span>
+        <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
         <div class="header-user-actions">
-          <span id="syncIndicator" class="sync-status">☁ Auto Synced</span>
+          <span id="syncIndicator" class="sync-status">☁ Synced</span>
           <div id="userInfoPill" class="user-pill">
-            <span>👤</span> <span id="currentUserNameLabel">User</span>
+            <span>✉</span> <span id="currentUserNameLabel">user@gmail.com</span>
           </div>
           <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
           <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
@@ -611,8 +572,7 @@
 
     <!-- Dashboard Section -->
     <div id="dashboard-section" class="sheet-container">
-      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview & Dashboard</h3>
-      
+      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview</h3>
       <div class="dash-metrics-grid">
         <div class="metric-card">
           <span class="metric-label">Total Cash Income</span>
@@ -647,7 +607,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="manualSyncClick()">☁ Sync Cloud Now</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive</button>
         <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
       </div>
     </div>
@@ -690,14 +650,14 @@
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-        <button class="btn-sync-now" onclick="manualSyncClick()">☁ Sync Cloud</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
       </div>
 
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
-        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
+        <div style="font-weight: 600; margin-bottom: 10px; color: #475569;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
         <div class="overall-total-box">
-          <span>Total Available Balance (All Months):</span>
+          <span>Total Available Balance:</span>
           <span id="allMonthsTotalBal" class="num">0</span>
         </div>
       </div>
@@ -743,9 +703,9 @@
       <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
     </div>
 
-    <!-- Reports & Ledger Section -->
+    <!-- Reports Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
+      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statements</h3>
       
       <div class="filter-box">
         <div class="filter-group">
@@ -825,8 +785,8 @@
 
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
-        <h4>Edit Website / Header Name</h4>
-        <input type="text" id="modalAppNameInput" placeholder="Enter website title">
+        <h4>Edit Website Title</h4>
+        <input type="text" id="modalAppNameInput" placeholder="Enter title">
         <div class="modal-actions" style="justify-content: flex-end;">
           <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
           <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
@@ -836,31 +796,6 @@
   </div>
 
   <script>
-    // --- FIREBASE CONFIGURATION ---
-    // (Replace with your Firebase Project Config to connect to your own Firebase instance)
-    const firebaseConfig = {
-      apiKey: "AIzaSyD-YOUR_FIREBASE_API_KEY_HERE",
-      authDomain: "fintrack-ledger-sync.firebaseapp.com",
-      projectId: "fintrack-ledger-sync",
-      storageBucket: "fintrack-ledger-sync.appspot.com",
-      messagingSenderId: "109876543210",
-      appId: "1:109876543210:web:abcdef1234567890"
-    };
-
-    let auth, db;
-    let isFirebaseReady = false;
-
-    try {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      auth = firebase.auth();
-      db = firebase.firestore();
-      isFirebaseReady = true;
-    } catch(e) {
-      console.warn("Firebase native initialization skipped, running in zero-config Firestore mode.");
-    }
-
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
@@ -870,19 +805,15 @@
     let authMode = 'login';
     let syncTimer = null;
 
-    let currentUser = JSON.parse(localStorage.getItem('fintrack_active_user')) || null;
-    let appTitle = localStorage.getItem('cashbook_app_name') || "Finance Manager";
+    let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
+
+    let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
     document.getElementById('appBrandTitle').innerText = appTitle;
 
-    function getStorageKey(suffix) {
-      const uidKey = currentUser ? (currentUser.uid || btoa(currentUser.gmail).replace(/=/g, '')) : 'guest';
-      return `fintrack_${uidKey}_${suffix}`;
-    }
-
-    // Direct Firestore Database Partition Link (UID & Gmail secure key)
-    function getCloudApiUrl(userIdentifier) {
-      const docId = btoa(userIdentifier.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
-      return `https://firestore.googleapis.com/v1/projects/fintrack-ledger-sync/databases/(default)/documents/users/${docId}`;
+    function getUserStorageKey(suffix) {
+      const userPrefix = currentUser ? currentUser.email.replace(/[^a-zA-Z0-9]/g, '_') + '_' : 'guest_';
+      return `cashbook_${userPrefix}${suffix}`;
     }
 
     let sheets = [];
@@ -890,21 +821,11 @@
     let payables = [];
     let currentSheetIndex = 0;
 
-    /* Auth & Session State Observer */
-    if (isFirebaseReady) {
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          currentUser = {
-            uid: user.uid,
-            gmail: user.email,
-            displayName: user.displayName || user.email
-          };
-          localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-          checkAuthSession();
-        }
-      });
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    /* Auth Handlers */
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
@@ -912,9 +833,8 @@
       if (currentUser) {
         authContainer.style.display = 'none';
         mainApp.style.display = 'block';
-        document.getElementById('currentUserNameLabel').innerText = currentUser.gmail;
+        document.getElementById('currentUserNameLabel').innerText = currentUser.email;
         initUserData();
-        fetchFromCloud();
       } else {
         authContainer.style.display = 'flex';
         mainApp.style.display = 'none';
@@ -923,257 +843,88 @@
 
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
+      const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
+      const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
-        submitBtn.innerText = 'Register';
-        toggleLink.innerText = 'Sign In';
+        subtitle.innerText = 'Register with your Gmail & Google Drive';
+        submitBtn.innerText = 'Create Account';
+        driveField.style.display = 'block';
+        toggleLink.innerText = 'Already have an account? Sign In';
       } else {
+        subtitle.innerText = 'Sign in with your Google account';
         submitBtn.innerText = 'Sign In';
-        toggleLink.innerText = 'Register';
+        driveField.style.display = 'none';
+        toggleLink.innerText = 'Create Account';
       }
     }
 
     function handleAuthSubmit() {
-      const gmailVal = document.getElementById('loginGmail').value.trim().toLowerCase();
+      const emailVal = document.getElementById('loginEmail').value.trim().toLowerCase();
       const passVal = document.getElementById('loginPassword').value.trim();
+      const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
 
-      if (!gmailVal || !passVal) {
-        alert('Please enter your Gmail ID and password.');
+      if (!emailVal || !passVal) {
+        alert('Please fill in both Gmail ID and Password.');
         return;
       }
 
-      if (!gmailVal.includes('@')) {
-        alert('Please enter a valid Gmail address.');
+      if (!validateEmail(emailVal)) {
+        alert('Please enter a valid Gmail / Email address.');
         return;
       }
 
-      if (isFirebaseReady && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
-        if (authMode === 'register') {
-          auth.createUserWithEmailAndPassword(gmailVal, passVal)
-            .then((userCredential) => {
-              currentUser = { uid: userCredential.user.uid, gmail: userCredential.user.email };
-              localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-              checkAuthSession();
-            })
-            .catch((err) => alert(err.message));
-        } else {
-          auth.signInWithEmailAndPassword(gmailVal, passVal)
-            .then((userCredential) => {
-              currentUser = { uid: userCredential.user.uid, gmail: userCredential.user.email };
-              localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-              checkAuthSession();
-            })
-            .catch((err) => alert(err.message));
+      if (authMode === 'register') {
+        if (!driveUrlVal) {
+          alert('Please enter your Google Drive Web App Link during registration.');
+          return;
         }
-      } else {
-        currentUser = {
-          uid: 'uid_' + btoa(gmailVal).replace(/=/g, '').slice(0, 20),
-          gmail: gmailVal,
-          password: passVal
-        };
-        localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-        checkAuthSession();
-      }
-    }
 
-    function continueWithGoogleOAuth() {
-      if (isFirebaseReady && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider)
-          .then((result) => {
-            currentUser = {
-              uid: result.user.uid,
-              gmail: result.user.email,
-              displayName: result.user.displayName
-            };
-            localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-            checkAuthSession();
-          })
-          .catch((error) => {
-            console.error("Google Auth Error:", error);
-            promptFallbackAuth();
-          });
-      } else {
-        promptFallbackAuth();
-      }
-    }
+        const existing = usersList.find(u => u.email.toLowerCase() === emailVal);
+        if (existing) {
+          alert('This Gmail address is already registered. Please sign in.');
+          return;
+        }
 
-    function promptFallbackAuth() {
-      const email = prompt("Enter or confirm your Gmail address to securely sync with Google Cloud:", currentUser ? currentUser.gmail : "");
-      if (email && email.includes("@")) {
-        currentUser = {
-          uid: 'uid_' + btoa(email.toLowerCase().trim()).replace(/=/g, '').slice(0, 20),
-          gmail: email.toLowerCase().trim()
-        };
-        localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
+        const newUser = { email: emailVal, password: passVal, driveUrl: driveUrlVal };
+        usersList.push(newUser);
+        localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+        currentUser = newUser;
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+
         checkAuthSession();
+        syncWithGoogleDrive(true);
+      } else {
+        const found = usersList.find(u => u.email.toLowerCase() === emailVal && u.password === passVal);
+        if (!found) {
+          alert('Invalid Gmail ID or password. Please verify your credentials or register.');
+          return;
+        }
+
+        currentUser = found;
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+        checkAuthSession();
+        fetchDataFromGoogleDrive();
       }
     }
 
     function handleForgotPassword() {
-      const email = prompt("Enter your Gmail address to recover / connect your finance data:");
-      if (email && email.includes("@")) {
-        currentUser = {
-          uid: 'uid_' + btoa(email.toLowerCase().trim()).replace(/=/g, '').slice(0, 20),
-          gmail: email.toLowerCase().trim()
-        };
-        localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
-        checkAuthSession();
-      }
+      alert('To reset your account, re-register with your original Gmail ID and Google Drive Web App URL.');
     }
 
     function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
-        if (isFirebaseReady && auth.currentUser) {
-          auth.signOut();
-        }
         currentUser = null;
-        localStorage.removeItem('fintrack_active_user');
+        localStorage.removeItem('cashbook_active_user');
         checkAuthSession();
       }
     }
 
-    /* Cloud Sync Engine */
-    function debouncedCloudSync() {
-      clearTimeout(syncTimer);
-      syncTimer = setTimeout(() => {
-        syncWithCloud(false);
-      }, 1200);
-    }
-
-    function manualSyncClick() {
-      syncWithCloud(true);
-    }
-
-    function syncWithCloud(showNotify = false) {
-      if (!currentUser) return;
-
-      const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Syncing...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
-
-      const payload = {
-        sheets: sheets,
-        receivables: receivables,
-        payables: payables,
-        user: currentUser.gmail,
-        uid: currentUser.uid,
-        updatedAt: new Date().toISOString()
-      };
-
-      if (isFirebaseReady && db && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
-        db.collection("users").doc(currentUser.uid).set(payload, { merge: true })
-          .then(() => {
-            syncInd.innerText = '☁ Auto Synced';
-            syncInd.style.color = '#198754';
-            setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-            if (showNotify) alert('All data synced live to your Google Cloud Firestore account!');
-          })
-          .catch((e) => console.error("Firestore error:", e));
-      } else {
-        const firestoreDoc = {
-          fields: {
-            payloadData: {
-              stringValue: JSON.stringify(payload)
-            }
-          }
-        };
-
-        const targetKey = currentUser.uid || currentUser.gmail;
-        fetch(getCloudApiUrl(targetKey), {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(firestoreDoc)
-        })
-        .then(res => {
-          if (!res.ok) throw new Error('Network error');
-          return res.json();
-        })
-        .then(() => {
-          syncInd.innerText = '☁ Auto Synced';
-          syncInd.style.color = '#198754';
-          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-          if (showNotify) alert('Success! All data synchronized across mobile and computer browsers.');
-        })
-        .catch((err) => {
-          console.warn('Sync notice:', err);
-          syncInd.innerText = '☁ Local Cache Saved';
-          syncInd.style.color = '#dc3545';
-          if (showNotify) alert('Data saved locally. Will auto-sync when network reconnects.');
-        });
-      }
-    }
-
-    function fetchFromCloud() {
-      if (!currentUser) return;
-
-      const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Syncing Cloud...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
-
-      if (isFirebaseReady && db && !firebaseConfig.apiKey.includes("YOUR_FIREBASE")) {
-        db.collection("users").doc(currentUser.uid).get()
-          .then((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              if (data && data.sheets && data.sheets.length > 0) {
-                sheets = data.sheets;
-                receivables = data.receivables || [];
-                payables = data.payables || [];
-                currentSheetIndex = Math.max(0, sheets.length - 1);
-                saveAllData(false);
-                renderDashboard();
-                renderSheet();
-                renderDueTables();
-                syncInd.innerText = '☁ Auto Synced';
-                syncInd.style.color = '#198754';
-                setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-              }
-            } else {
-              syncInd.style.display = 'none';
-            }
-          })
-          .catch(() => { syncInd.style.display = 'none'; });
-      } else {
-        const targetKey = currentUser.uid || currentUser.gmail;
-        fetch(getCloudApiUrl(targetKey))
-        .then(res => {
-          if (!res.ok) throw new Error('No remote document yet');
-          return res.json();
-        })
-        .then(doc => {
-          if (doc && doc.fields && doc.fields.payloadData && doc.fields.payloadData.stringValue) {
-            const data = JSON.parse(doc.fields.payloadData.stringValue);
-            if (data && data.sheets && data.sheets.length > 0) {
-              sheets = data.sheets;
-              receivables = data.receivables || [];
-              payables = data.payables || [];
-              currentSheetIndex = Math.max(0, sheets.length - 1);
-              saveAllData(false);
-              renderDashboard();
-              renderSheet();
-              renderDueTables();
-              syncInd.innerText = '☁ Auto Synced';
-              syncInd.style.color = '#198754';
-              setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-            }
-          } else {
-            syncInd.style.display = 'none';
-          }
-        })
-        .catch(() => {
-          syncInd.style.display = 'none';
-        });
-      }
-    }
-
-    /* Core Data Operations */
+    /* Data Initialization */
     function initUserData() {
-      sheets = JSON.parse(localStorage.getItem(getStorageKey('sheets'))) || [
+      sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
         {
           name: currentMonthYear,
           rows: [
@@ -1181,8 +932,8 @@
           ]
         }
       ];
-      receivables = JSON.parse(localStorage.getItem(getStorageKey('receivables'))) || [];
-      payables = JSON.parse(localStorage.getItem(getStorageKey('payables'))) || [];
+      receivables = JSON.parse(localStorage.getItem(getUserStorageKey('receivables'))) || [];
+      payables = JSON.parse(localStorage.getItem(getUserStorageKey('payables'))) || [];
       currentSheetIndex = Math.max(0, sheets.length - 1);
 
       renderDashboard();
@@ -1190,14 +941,14 @@
       renderDueTables();
     }
 
-    function saveAllData(triggerSync = true) {
-      localStorage.setItem(getStorageKey('sheets'), JSON.stringify(sheets));
-      localStorage.setItem(getStorageKey('receivables'), JSON.stringify(receivables));
-      localStorage.setItem(getStorageKey('payables'), JSON.stringify(payables));
+    function saveAllData(shouldSync = true) {
+      localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
+      localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
+      localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
       renderDashboard();
 
-      if (triggerSync) {
-        debouncedCloudSync();
+      if (shouldSync && currentUser && currentUser.driveUrl) {
+        debouncedDriveSync();
       }
     }
 
@@ -1321,7 +1072,89 @@
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Modal Dialogs */
+    /* Drive Sync Logic */
+    function debouncedDriveSync() {
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(() => {
+        syncWithGoogleDrive(false);
+      }, 1500);
+    }
+
+    function syncWithGoogleDrive(showNotify = false) {
+      if (!currentUser || !currentUser.driveUrl) {
+        if (showNotify) alert('No Google Drive URL configured for this account.');
+        return;
+      }
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Syncing...';
+      syncInd.style.color = '#2563eb';
+      syncInd.style.display = 'inline-block';
+
+      const payload = {
+        action: 'save',
+        username: currentUser.email,
+        data: {
+          sheets: sheets,
+          receivables: receivables,
+          payables: payables,
+          updatedAt: new Date().toISOString()
+        }
+      };
+
+      fetch(currentUser.driveUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        syncInd.innerText = '☁ Synced to Drive';
+        syncInd.style.color = '#16a34a';
+        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        if (showNotify) alert('All data synced successfully to Google Drive!');
+      })
+      .catch((err) => {
+        console.error('Drive Sync Error:', err);
+        syncInd.innerText = '☁ Local Cache Saved';
+        syncInd.style.color = '#ef4444';
+        if (showNotify) alert('Saved locally. Please verify your connection.');
+      });
+    }
+
+    function fetchDataFromGoogleDrive() {
+      if (!currentUser || !currentUser.driveUrl) return;
+
+      const syncInd = document.getElementById('syncIndicator');
+      syncInd.innerText = '☁ Fetching from Drive...';
+      syncInd.style.color = '#2563eb';
+      syncInd.style.display = 'inline-block';
+
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.email)}`;
+
+      fetch(fetchUrl)
+      .then(res => res.json())
+      .then(resData => {
+        if (resData && resData.sheets) {
+          sheets = resData.sheets;
+          receivables = resData.receivables || [];
+          payables = resData.payables || [];
+          currentSheetIndex = Math.max(0, sheets.length - 1);
+          saveAllData(false);
+          renderDashboard();
+          renderSheet();
+          renderDueTables();
+          syncInd.innerText = '☁ Up to Date';
+          syncInd.style.color = '#16a34a';
+          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        }
+      })
+      .catch(() => {
+        syncInd.style.display = 'none';
+      });
+    }
+
+    /* Sheet Management Modals */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1351,7 +1184,7 @@
 
     function saveAppName() {
       const val = document.getElementById('modalAppNameInput').value.trim();
-      const finalTitle = val !== "" ? val : "Finance Manager";
+      const finalTitle = val !== "" ? val : "FinTrack";
       document.getElementById('appBrandTitle').innerText = finalTitle;
       localStorage.setItem('cashbook_app_name', finalTitle);
       closeModal('appNameModal');
@@ -1709,10 +1542,18 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
-    document.getElementById('loginGmail').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
-    document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
+    // Enter & Escape Key Listeners
+    document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') savePageModal();
+      if (e.key === 'Escape') closeModal('pageModal');
+    });
 
-    // Initialize application session
+    document.getElementById('modalAppNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') saveAppName();
+      if (e.key === 'Escape') closeModal('appNameModal');
+    });
+
+    // Run initialization
     checkAuthSession();
   </script>
 </body>
