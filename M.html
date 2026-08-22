@@ -530,17 +530,17 @@
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
 
-      <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
+      <div class="fintrack-input-group" id="driveLinkField">
         <input type="url" id="loginDriveUrl" placeholder="Google Drive Web App URL">
         <div class="helper-box">
-          📂 <strong>Drive Integration:</strong> Enter your Apps Script Web App link to load your data on mobile and desktop devices.
+          📂 <strong>Sync Link:</strong> Enter your Apps Script Web App URL to sync all data across mobile and desktop.
         </div>
       </div>
 
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
-        <a onclick="handleForgotPassword()">Forgot Password?</a>
+        <a onclick="handleForgotPassword()">Need Help?</a>
         <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
       </div>
     </div>
@@ -548,7 +548,7 @@
 
   <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
-    <!-- Sticky Top Header & Navigation -->
+    <!-- Sticky Navigation -->
     <div class="sticky-header">
       <div class="header-top-row">
         <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
@@ -648,14 +648,12 @@
         </table>
       </div>
 
-      <!-- Action Buttons Side-by-Side -->
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
         <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
       </div>
 
-      <!-- Month Balance Section -->
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
         <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
@@ -706,7 +704,7 @@
       <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
     </div>
 
-    <!-- Reports & Ledger Section -->
+    <!-- Reports Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
       
@@ -771,7 +769,7 @@
       </div>
     </div>
 
-    <!-- Modal Dialog for Page Rename / Add -->
+    <!-- Modal Rename / Add -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
@@ -786,7 +784,7 @@
       </div>
     </div>
 
-    <!-- Modal Dialog for Website / Brand Name -->
+    <!-- Modal Brand Name -->
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
         <h4>Edit Website / Header Name</h4>
@@ -809,8 +807,12 @@
     let authMode = 'login';
     let syncTimer = null;
 
-    let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
+    let savedDriveUrl = localStorage.getItem('cashbook_last_drive_url') || "";
+
+    if (savedDriveUrl) {
+      document.getElementById('loginDriveUrl').value = savedDriveUrl;
+    }
 
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
     document.getElementById('appBrandTitle').innerText = appTitle;
@@ -825,7 +827,6 @@
     let payables = [];
     let currentSheetIndex = 0;
 
-    /* Auth Screen Management */
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
@@ -846,17 +847,14 @@
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
-      const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
         subtitle.innerText = 'Create Account';
         submitBtn.innerText = 'Register & Connect Drive';
-        driveField.style.display = 'block';
         toggleLink.innerText = 'Login';
       } else {
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
-        driveField.style.display = 'none';
         toggleLink.innerText = 'Register';
       }
     }
@@ -870,55 +868,59 @@
         alert('Please enter username and password');
         return;
       }
-
-      if (authMode === 'register') {
-        if (!driveUrlVal) {
-          alert('Please enter your Google Drive Web App Link to sync and store data.');
-          return;
-        }
-
-        const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
-        if (existing) {
-          alert('Username already registered. Please log in.');
-          return;
-        }
-
-        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
-        usersList.push(newUser);
-        localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
-        currentUser = newUser;
-        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-
-        checkAuthSession();
-        syncWithGoogleDrive(true);
-      } else {
-        const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
-        if (!found) {
-          const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
-          if (remoteDriveUrl && remoteDriveUrl.trim()) {
-            const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
-            usersList.push(externalUser);
-            localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
-            currentUser = externalUser;
-            localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-            checkAuthSession();
-            fetchDataFromGoogleDrive(true);
-            return;
-          } else {
-            alert('Invalid credentials. Please register or verify password.');
-            return;
-          }
-        }
-
-        currentUser = found;
-        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-        checkAuthSession();
-        fetchDataFromGoogleDrive(true);
+      if (!driveUrlVal) {
+        alert('Please enter your Google Drive Web App URL to sync your account across devices.');
+        return;
       }
+
+      localStorage.setItem('cashbook_last_drive_url', driveUrlVal);
+      const submitBtn = document.getElementById('authSubmitBtn');
+      submitBtn.innerText = 'Connecting...';
+      submitBtn.disabled = true;
+
+      // Authenticate directly against Google Drive
+      const cacheBuster = `&_t=${Date.now()}`;
+      const authUrl = driveUrlVal + (driveUrlVal.includes('?') ? '&' : '?') + `action=auth&username=${encodeURIComponent(userVal)}&password=${encodeURIComponent(passVal)}&mode=${authMode}${cacheBuster}`;
+
+      fetch(authUrl, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(result => {
+        submitBtn.innerText = authMode === 'register' ? 'Register' : 'Login';
+        submitBtn.disabled = false;
+
+        if (result.status === 'success' || result.sheets) {
+          currentUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+          
+          if (result.sheets) {
+            sheets = result.sheets;
+            receivables = result.receivables || [];
+            payables = result.payables || [];
+            saveAllData(false);
+          }
+          checkAuthSession();
+          fetchDataFromGoogleDrive(false);
+        } else {
+          // If the script doesn't support action=auth yet, fall back to load
+          currentUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+          checkAuthSession();
+          fetchDataFromGoogleDrive(false);
+        }
+      })
+      .catch(() => {
+        submitBtn.innerText = authMode === 'register' ? 'Register' : 'Login';
+        submitBtn.disabled = false;
+        // Direct local login and fetch
+        currentUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+        checkAuthSession();
+        fetchDataFromGoogleDrive(false);
+      });
     }
 
     function handleForgotPassword() {
-      alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
+      alert('To access on a new device, just enter the same Username, Password, and Google Drive Web App URL you used when registering.');
     }
 
     function logoutUser() {
@@ -929,7 +931,6 @@
       }
     }
 
-    /* Core Data Operations */
     function initUserData() {
       sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
         {
@@ -1079,7 +1080,6 @@
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Reliable Cross-Device Sync Engine */
     function debouncedDriveSync() {
       clearTimeout(syncTimer);
       syncTimer = setTimeout(() => {
@@ -1101,6 +1101,7 @@
       const payload = {
         action: 'save',
         username: currentUser.username,
+        password: currentUser.password,
         data: {
           sheets: sheets,
           receivables: receivables,
@@ -1109,13 +1110,12 @@
         }
       };
 
-      // Plain text payload allows GAS to read e.postData.contents cleanly without CORS preflight failures
       fetch(currentUser.driveUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
-      .then(res => res.json().catch(() => ({ status: 'ok' })))
+      .then(res => res.json().catch(() => ({ status: 'success' })))
       .then(() => {
         syncInd.innerText = '☁ Synced to Drive';
         syncInd.style.color = '#198754';
@@ -1124,10 +1124,10 @@
       })
       .catch((err) => {
         console.error('Drive Sync Error:', err);
-        syncInd.innerText = '☁ Synced';
+        syncInd.innerText = '☁ Saved Locally';
         syncInd.style.color = '#198754';
         setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        if (showNotify) alert('Data saved locally & sync sent.');
+        if (showNotify) alert('Data saved.');
       });
     }
 
@@ -1139,27 +1139,30 @@
       syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      // Timestamp ensures browser cache bypass on mobile devices
       const cacheBuster = `&_t=${Date.now()}`;
       const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}${cacheBuster}`;
 
       fetch(fetchUrl, { cache: 'no-store' })
       .then(res => res.json())
       .then(resData => {
-        let loaded = false;
+        let incomingSheets = null;
+        let incomingRec = [];
+        let incomingPay = [];
+
         if (resData && resData.data && resData.data.sheets) {
-          sheets = resData.data.sheets;
-          receivables = resData.data.receivables || [];
-          payables = resData.data.payables || [];
-          loaded = true;
+          incomingSheets = resData.data.sheets;
+          incomingRec = resData.data.receivables || [];
+          incomingPay = resData.data.payables || [];
         } else if (resData && resData.sheets) {
-          sheets = resData.sheets;
-          receivables = resData.receivables || [];
-          payables = resData.payables || [];
-          loaded = true;
+          incomingSheets = resData.sheets;
+          incomingRec = resData.receivables || [];
+          incomingPay = resData.payables || [];
         }
 
-        if (loaded) {
+        if (incomingSheets && incomingSheets.length > 0) {
+          sheets = incomingSheets;
+          receivables = incomingRec;
+          payables = incomingPay;
           currentSheetIndex = Math.max(0, sheets.length - 1);
           saveAllData(false);
           renderDashboard();
@@ -1168,18 +1171,17 @@
           syncInd.innerText = '☁ Up to Date';
           syncInd.style.color = '#198754';
           setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-          if (showNotify) alert('Latest data retrieved from Google Drive!');
+          if (showNotify) alert('Latest data loaded from Google Drive!');
         } else {
           syncInd.style.display = 'none';
         }
       })
       .catch((err) => {
-        console.log('Drive Fetch Note:', err);
+        console.log('Fetch skipped / Offline mode.', err);
         syncInd.style.display = 'none';
       });
     }
 
-    /* Modal Handling */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1569,7 +1571,6 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
-    // Modal Enter & Escape Key Handlers
     document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') savePageModal();
       if (e.key === 'Escape') closeModal('pageModal');
@@ -1580,7 +1581,6 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    // Check login state and fetch latest synced data on page load
     checkAuthSession();
     if (currentUser) {
       fetchDataFromGoogleDrive(false);
