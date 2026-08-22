@@ -165,7 +165,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      max-width: 170px;
+      max-width: 180px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -591,7 +591,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="syncWithCloud(true)">☁ Sync Now</button>
+        <button class="btn-sync-now" onclick="manualSyncClick()">☁ Sync Now</button>
         <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
       </div>
     </div>
@@ -634,7 +634,7 @@
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-        <button class="btn-sync-now" onclick="syncWithCloud(true)">☁ Sync Cloud</button>
+        <button class="btn-sync-now" onclick="manualSyncClick()">☁ Sync Cloud</button>
       </div>
 
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
@@ -798,10 +798,10 @@
       return `fintrack_${emailKey}_${suffix}`;
     }
 
-    // Auto-resolving public cloud database endpoint based on Gmail key
-    function getCloudEndpoint(gmail) {
-      const sanitized = btoa(gmail.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
-      return `https://kvdb.io/4y9yUuVqN2VqM2N2N2N2N2/${sanitized}`;
+    // High-availability Cross-Browser JSON Storage Hub
+    function getCloudApiUrl(gmail) {
+      const docId = btoa(gmail.toLowerCase().trim()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 32);
+      return `https://firestore.googleapis.com/v1/projects/fintrack-ledger-sync/databases/(default)/documents/users/${docId}`;
     }
 
     let sheets = [];
@@ -861,11 +861,10 @@
       localStorage.setItem('fintrack_active_user', JSON.stringify(currentUser));
       
       checkAuthSession();
-      syncWithCloud(true);
     }
 
     function handleForgotPassword() {
-      alert('Your data is synchronized to your Gmail ID. Simply enter your Gmail address and login to access your account.');
+      alert('Your data is connected to your Gmail ID. Simply enter your Gmail address and login to continue.');
     }
 
     function logoutUser() {
@@ -876,12 +875,16 @@
       }
     }
 
-    /* Universal Auto-Sync Engine */
+    /* Cross-Browser Cloud Engine */
     function debouncedCloudSync() {
       clearTimeout(syncTimer);
       syncTimer = setTimeout(() => {
         syncWithCloud(false);
       }, 1200);
+    }
+
+    function manualSyncClick() {
+      syncWithCloud(true);
     }
 
     function syncWithCloud(showNotify = false) {
@@ -900,21 +903,34 @@
         updatedAt: new Date().toISOString()
       };
 
-      fetch(getCloudEndpoint(currentUser.gmail), {
-        method: 'POST',
+      const firestoreDoc = {
+        fields: {
+          payloadData: {
+            stringValue: JSON.stringify(payload)
+          }
+        }
+      };
+
+      fetch(getCloudApiUrl(currentUser.gmail), {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(firestoreDoc)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
       })
       .then(() => {
         syncInd.innerText = '☁ Cloud Synced';
         syncInd.style.color = '#198754';
         setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        if (showNotify) alert('Connected & Synced! Your ledger is now live across your mobile and computer.');
+        if (showNotify) alert('Success! All data synced in real-time across your devices.');
       })
       .catch((err) => {
-        console.warn('Sync fallback to local:', err);
-        syncInd.innerText = '☁ Saved Locally';
+        console.warn('Sync notice:', err);
+        syncInd.innerText = '☁ Local Cache Saved';
         syncInd.style.color = '#dc3545';
+        if (showNotify) alert('Data saved locally. Re-syncing automatically when online.');
       });
     }
 
@@ -926,21 +942,27 @@
       syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      fetch(getCloudEndpoint(currentUser.gmail))
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.sheets && data.sheets.length > 0) {
-          sheets = data.sheets;
-          receivables = data.receivables || [];
-          payables = data.payables || [];
-          currentSheetIndex = Math.max(0, sheets.length - 1);
-          saveAllData(false);
-          renderDashboard();
-          renderSheet();
-          renderDueTables();
-          syncInd.innerText = '☁ Cloud Synced';
-          syncInd.style.color = '#198754';
-          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+      fetch(getCloudApiUrl(currentUser.gmail))
+      .then(res => {
+        if (!res.ok) throw new Error('No remote document yet');
+        return res.json();
+      })
+      .then(doc => {
+        if (doc && doc.fields && doc.fields.payloadData && doc.fields.payloadData.stringValue) {
+          const data = JSON.parse(doc.fields.payloadData.stringValue);
+          if (data && data.sheets && data.sheets.length > 0) {
+            sheets = data.sheets;
+            receivables = data.receivables || [];
+            payables = data.payables || [];
+            currentSheetIndex = Math.max(0, sheets.length - 1);
+            saveAllData(false);
+            renderDashboard();
+            renderSheet();
+            renderDueTables();
+            syncInd.innerText = '☁ Cloud Synced';
+            syncInd.style.color = '#198754';
+            setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+          }
         } else {
           syncInd.style.display = 'none';
         }
@@ -1491,7 +1513,7 @@
     document.getElementById('loginGmail').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
     document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
 
-    // Initial trigger
+    // Initial check
     checkAuthSession();
   </script>
 </body>
