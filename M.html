@@ -530,13 +530,6 @@
         <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
 
-      <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
-        <input type="url" id="loginDriveUrl" placeholder="Google Drive Web App URL">
-        <div class="helper-box">
-          📂 <strong>Drive Integration:</strong> Enter your Apps Script Web App link to load your data on mobile and desktop devices.
-        </div>
-      </div>
-
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
@@ -847,17 +840,14 @@
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
-      const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
         subtitle.innerText = 'Create Account';
-        submitBtn.innerText = 'Register & Connect Drive';
-        driveField.style.display = 'block';
+        submitBtn.innerText = 'Register';
         toggleLink.innerText = 'Login';
       } else {
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
-        driveField.style.display = 'none';
         toggleLink.innerText = 'Register';
       }
     }
@@ -865,7 +855,6 @@
     function handleAuthSubmit() {
       const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
-      const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
 
       if (!userVal || !passVal) {
         alert('Please enter username and password');
@@ -873,44 +862,25 @@
       }
 
       if (authMode === 'register') {
-        if (!driveUrlVal) {
-          alert('Please enter your Google Drive Web App Link to sync and store data.');
-          return;
-        }
-
         const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
         if (existing) {
           alert('Username already registered. Please log in.');
           return;
         }
 
-        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+        const newUser = { username: userVal, password: passVal, driveUrl: '' };
         usersList.push(newUser);
         localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
         currentUser = newUser;
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
 
         checkAuthSession();
-        syncWithGoogleDrive(true);
       } else {
-        // Login Flow
+        // Login Flow - username & password only, no Drive URL prompt
         const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
         if (!found) {
-          // Allow cross-device instant sign in using Drive URL
-          const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
-          if (remoteDriveUrl && remoteDriveUrl.trim()) {
-            const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
-            usersList.push(externalUser);
-            localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
-            currentUser = externalUser;
-            localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-            checkAuthSession();
-            fetchDataFromGoogleDrive();
-            return;
-          } else {
-            alert('Invalid credentials. Please register or verify password.');
-            return;
-          }
+          alert('Invalid credentials. Please register or verify password.');
+          return;
         }
 
         currentUser = found;
