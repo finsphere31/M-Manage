@@ -795,7 +795,12 @@
     </div>
   </div>
 
+
+  
   <script>
+     const MASTER_BACKEND_URL =
+      "https://script.google.com/macros/s/AKfycbxyOG7v3Hv8NZ9tyIcs0McF7sbzy3gozWH4Aq8ACFs87fBmht8UY7HjGw07y2WSGfa-/exec";
+
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
@@ -1555,6 +1560,78 @@
 
     // Run initialization
     checkAuthSession();
+
+    /* Updated Universal Cross-Device Auth Logic */
+
+async function handleAuthSubmit() {
+  const emailVal = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const passVal = document.getElementById('loginPassword').value.trim();
+
+  if (!emailVal || !passVal) {
+    alert('Please enter both Gmail ID and Password.');
+    return;
+  }
+
+  if (!validateEmail(emailVal)) {
+    alert('Please enter a valid Gmail / Email address.');
+    return;
+  }
+
+  const submitBtn = document.getElementById('authSubmitBtn');
+  submitBtn.disabled = true;
+  submitBtn.innerText = 'Connecting...';
+
+  try {
+    if (authMode === 'register') {
+      // Register on Cloud Backend
+      await fetch(MASTER_BACKEND_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register',
+          email: emailVal,
+          password: passVal
+        })
+      });
+
+      currentUser = { email: emailVal };
+      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+      checkAuthSession();
+      syncWithGoogleDrive(true);
+    } else {
+      // Multi-device Cloud Login
+      const loginUrl = `${MASTER_BACKEND_URL}?action=login&email=${encodeURIComponent(emailVal)}&password=${encodeURIComponent(passVal)}`;
+      const res = await fetch(loginUrl);
+      const resData = await res.json();
+
+      if (resData.status === 'error') {
+        alert(resData.message || 'Invalid Gmail ID or Password');
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Sign In';
+        return;
+      }
+
+      currentUser = { email: emailVal };
+      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+
+      if (resData.data && resData.data.sheets) {
+        sheets = resData.data.sheets;
+        receivables = resData.data.receivables || [];
+        payables = resData.data.payables || [];
+        saveAllData(false);
+      }
+
+      checkAuthSession();
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Connection failed. Please check your internet connection or backend URL.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = authMode === 'register' ? 'Create Account' : 'Sign In';
+  }
+}
   </script>
 </body>
 </html>
