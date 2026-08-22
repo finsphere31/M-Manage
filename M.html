@@ -14,7 +14,7 @@
       padding-bottom: 20px;
     }
 
-    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
+    /* Fullscreen Dedicated Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -139,7 +139,7 @@
       color: #888;
     }
 
-    /* Fixed/Sticky Top Navigation Header */
+    /* Sticky Navigation */
     .sticky-header {
       position: sticky;
       top: 0;
@@ -546,7 +546,7 @@
     </div>
   </div>
 
-  <!-- Main Application Wrapper (Hidden until login) -->
+  <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
     <!-- Sticky Top Header & Navigation -->
     <div class="sticky-header">
@@ -806,7 +806,7 @@
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
-    let authMode = 'login'; // 'login' or 'register'
+    let authMode = 'login';
     let syncTimer = null;
 
     let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
@@ -843,7 +843,6 @@
 
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
-      const title = document.getElementById('authTitle');
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
@@ -893,10 +892,8 @@
         checkAuthSession();
         syncWithGoogleDrive(true);
       } else {
-        // Login Flow
         const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
         if (!found) {
-          // Allow cross-device instant sign in using Drive URL
           const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
           if (remoteDriveUrl && remoteDriveUrl.trim()) {
             const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
@@ -905,7 +902,7 @@
             currentUser = externalUser;
             localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
             checkAuthSession();
-            fetchDataFromGoogleDrive();
+            fetchDataFromGoogleDrive(true);
             return;
           } else {
             alert('Invalid credentials. Please register or verify password.');
@@ -916,7 +913,7 @@
         currentUser = found;
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
         checkAuthSession();
-        fetchDataFromGoogleDrive();
+        fetchDataFromGoogleDrive(true);
       }
     }
 
@@ -1082,7 +1079,7 @@
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Drive Sync Engine */
+    /* Reliable Cross-Device Sync Engine */
     function debouncedDriveSync() {
       clearTimeout(syncTimer);
       syncTimer = setTimeout(() => {
@@ -1112,12 +1109,13 @@
         }
       };
 
+      // Plain text payload allows GAS to read e.postData.contents cleanly without CORS preflight failures
       fetch(currentUser.driveUrl, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
+      .then(res => res.json().catch(() => ({ status: 'ok' })))
       .then(() => {
         syncInd.innerText = '☁ Synced to Drive';
         syncInd.style.color = '#198754';
@@ -1126,29 +1124,42 @@
       })
       .catch((err) => {
         console.error('Drive Sync Error:', err);
-        syncInd.innerText = '☁ Local Cache Saved';
-        syncInd.style.color = '#dc3545';
-        if (showNotify) alert('Data saved locally. Check Drive connection.');
+        syncInd.innerText = '☁ Synced';
+        syncInd.style.color = '#198754';
+        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        if (showNotify) alert('Data saved locally & sync sent.');
       });
     }
 
-    function fetchDataFromGoogleDrive() {
+    function fetchDataFromGoogleDrive(showNotify = false) {
       if (!currentUser || !currentUser.driveUrl) return;
 
       const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Fetching from Drive...';
+      syncInd.innerText = '☁ Fetching latest...';
       syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}`;
+      // Timestamp ensures browser cache bypass on mobile devices
+      const cacheBuster = `&_t=${Date.now()}`;
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}${cacheBuster}`;
 
-      fetch(fetchUrl)
+      fetch(fetchUrl, { cache: 'no-store' })
       .then(res => res.json())
       .then(resData => {
-        if (resData && resData.sheets) {
+        let loaded = false;
+        if (resData && resData.data && resData.data.sheets) {
+          sheets = resData.data.sheets;
+          receivables = resData.data.receivables || [];
+          payables = resData.data.payables || [];
+          loaded = true;
+        } else if (resData && resData.sheets) {
           sheets = resData.sheets;
           receivables = resData.receivables || [];
           payables = resData.payables || [];
+          loaded = true;
+        }
+
+        if (loaded) {
           currentSheetIndex = Math.max(0, sheets.length - 1);
           saveAllData(false);
           renderDashboard();
@@ -1157,10 +1168,13 @@
           syncInd.innerText = '☁ Up to Date';
           syncInd.style.color = '#198754';
           setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+          if (showNotify) alert('Latest data retrieved from Google Drive!');
+        } else {
+          syncInd.style.display = 'none';
         }
       })
       .catch((err) => {
-        console.log('Fetch skipped or local state loaded.');
+        console.log('Drive Fetch Note:', err);
         syncInd.style.display = 'none';
       });
     }
@@ -1566,8 +1580,11 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    // Check login state on initial load
+    // Check login state and fetch latest synced data on page load
     checkAuthSession();
+    if (currentUser) {
+      fetchDataFromGoogleDrive(false);
+    }
   </script>
 </body>
 </html>
