@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FinTrack - Professional Money Management</title>
+  <title>FinTrack - Money Management</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f4f6f9;
+      background: #f0f2f5;
       color: #212529;
       -webkit-text-size-adjust: 100%;
-      padding-bottom: 24px;
+      padding-bottom: 20px;
     }
 
-    /* Auth Screen */
+    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
     #auth-screen-container {
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      background-color: #2b3a4a;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -29,61 +29,54 @@
       background: #ffffff;
       border-radius: 16px;
       width: 100%;
-      max-width: 400px;
-      padding: 36px 28px 30px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      max-width: 360px;
+      padding: 36px 24px 30px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
     .fintrack-card h1 {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.5px;
+      color: #0b1320;
       margin-bottom: 4px;
+      letter-spacing: -0.5px;
     }
     .fintrack-card p.subtitle {
-      font-size: 13.5px;
-      color: #64748b;
+      font-size: 14px;
+      color: #6c757d;
       margin-bottom: 24px;
     }
     .fintrack-input-group {
-      margin-bottom: 15px;
+      margin-bottom: 14px;
       text-align: left;
-    }
-    .fintrack-input-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 6px;
     }
     .fintrack-input-group input {
       width: 100%;
       padding: 12px 14px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #ced4da;
       border-radius: 8px;
       font-size: 14px;
-      color: #1e293b;
+      color: #212529;
       background: #fff;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s;
     }
     .fintrack-input-group input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      border-color: #1e70bf;
+      box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
     }
     .fintrack-btn {
       width: 100%;
-      padding: 13px;
-      background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+      padding: 12px;
+      background: linear-gradient(180deg, #2482cb 0%, #175d9e 100%);
       color: #ffffff;
       font-size: 15px;
       font-weight: 600;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      margin-top: 8px;
+      box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
       transition: opacity 0.15s;
     }
     .fintrack-btn:hover {
@@ -92,26 +85,23 @@
     .fintrack-card-footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 22px;
+      margin-top: 20px;
       font-size: 13px;
     }
     .fintrack-card-footer a {
-      color: #2563eb;
+      color: #2482cb;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
     }
-    .fintrack-card-footer a:hover {
-      text-decoration: underline;
-    }
     .helper-box {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      background: #f1f8ff;
+      border: 1px solid #cce5ff;
       border-radius: 6px;
-      padding: 9px 11px;
-      font-size: 11.5px;
-      color: #1e40af;
-      margin-top: 8px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #004085;
+      margin-top: 10px;
       text-align: left;
       line-height: 1.4;
     }
@@ -124,8 +114,8 @@
       margin-bottom: 18px;
     }
     .metric-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
       border-radius: 10px;
       padding: 14px;
       display: flex;
@@ -133,31 +123,32 @@
       gap: 4px;
     }
     .metric-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6c757d;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .metric-val {
       font-size: 20px;
       font-weight: 700;
-      color: #0f172a;
+      color: #212529;
     }
     .metric-sub {
-      font-size: 11.5px;
-      color: #94a3b8;
+      font-size: 12px;
+      color: #888;
     }
 
-    /* Top Sticky Header */
+    /* Fixed/Sticky Top Navigation Header */
     .sticky-header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: #f4f6f9;
+      background: #f0f2f5;
       padding: 10px 12px 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
+    
     .header-top-row {
       display: flex;
       justify-content: space-between;
@@ -167,38 +158,34 @@
     .app-brand-title {
       font-size: 17px;
       font-weight: 700;
-      color: #0f172a;
+      color: #1a1a1a;
       letter-spacing: -0.2px;
     }
     .header-user-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .user-pill {
       font-size: 12px;
       font-weight: 600;
-      background: #e0f2fe;
-      color: #0369a1;
+      background: #e7f1ff;
+      color: #0d6efd;
       padding: 4px 10px;
       border-radius: 20px;
-      border: 1px solid #bae6fd;
+      border: 1px solid #b6d4fe;
       display: flex;
       align-items: center;
       gap: 5px;
-      max-width: 180px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .sync-status {
       font-size: 11px;
-      font-weight: 600;
-      color: #16a34a;
+      font-weight: 500;
+      color: #198754;
       display: none;
     }
     .logout-btn-header {
-      background: #ef4444;
+      background: #dc3545;
       color: #fff;
       border: none;
       font-size: 12px;
@@ -210,15 +197,15 @@
     .three-dots-btn {
       background: none;
       border: none;
-      font-size: 20px;
+      font-size: 22px;
       line-height: 1;
       cursor: pointer;
-      color: #475569;
-      padding: 4px 6px;
+      color: #495057;
+      padding: 4px 8px;
       border-radius: 6px;
     }
     .three-dots-btn:hover {
-      background: #e2e8f0;
+      background: #e2e6ea;
     }
 
     .nav-tabs {
@@ -229,32 +216,32 @@
       padding-bottom: 4px;
     }
     .nav-tabs button {
-      padding: 8px 16px;
-      border: 1px solid #cbd5e1;
+      padding: 9px 16px;
+      border: 1px solid #ced4da;
       background: #ffffff;
       cursor: pointer;
       font-weight: 600;
       border-radius: 8px;
       white-space: nowrap;
-      font-size: 13.5px;
-      color: #475569;
+      font-size: 14px;
+      color: #495057;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
       flex-shrink: 0;
     }
     .nav-tabs button.active {
-      background: #2563eb;
+      background: #0d6efd;
       color: #ffffff;
-      border-color: #2563eb;
-      box-shadow: 0 2px 5px rgba(37,99,235,0.3);
+      border-color: #0d6efd;
+      box-shadow: 0 2px 4px rgba(13,110,253,0.3);
     }
 
     .sheet-container {
       background: #ffffff;
-      padding: 16px;
-      border: 1px solid #e2e8f0;
+      padding: 14px;
+      border: 1px solid #e9ecef;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       max-width: 1100px;
       margin: 10px 12px;
     }
@@ -268,27 +255,33 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 12px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #dee2e6;
       padding-bottom: 10px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .current-page-badge {
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 600;
-      color: #2563eb;
-      background: #eff6ff;
-      padding: 7px 14px;
+      color: #0d6efd;
+      background: #e7f1ff;
+      padding: 8px 16px;
       border-radius: 8px;
-      border: 1px solid #bfdbfe;
+      border: 1px solid #b6d4fe;
       white-space: nowrap;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+    .current-page-badge:hover {
+      background: #d0e2ff;
     }
     .plus-btn {
       padding: 6px 14px;
-      background: #16a34a;
+      background: #198754;
       color: white;
       border: none;
       font-size: 20px;
@@ -297,15 +290,17 @@
       border-radius: 8px;
       font-weight: bold;
       flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
-    /* Scroll Area & Tables */
+    /* Scroll Area */
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
       max-height: 60vh;
+      -webkit-overflow-scrolling: touch;
       margin-bottom: 14px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #dee2e6;
       border-radius: 8px;
     }
     table {
@@ -314,67 +309,75 @@
       min-width: 580px;
     }
     th, td {
-      border: 1px solid #e2e8f0;
+      border: 1px solid #dee2e6;
       padding: 8px 10px;
       text-align: left;
-      font-size: 13.5px;
+      font-size: 14px;
     }
     th {
-      background: #f8fafc;
+      background: #f8f9fa;
       font-weight: 600;
-      color: #475569;
+      color: #495057;
       position: sticky;
       top: 0;
       z-index: 2;
+      box-shadow: 0 1px 0 #dee2e6;
     }
     input, select {
       width: 100%;
       border: 1px solid transparent;
       outline: none;
       background: transparent;
-      font-size: 13.5px;
+      font-size: 14px;
       padding: 4px 6px;
       border-radius: 6px;
       color: inherit;
     }
     input:focus, select:focus {
       background: #ffffff;
-      border-color: #93c5fd;
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
     }
     .num { text-align: right; }
-    .exp-num { color: #ef4444 !important; font-weight: 600; }
+    
+    .exp-num {
+      color: #dc3545 !important;
+      font-weight: 600;
+    }
+    
     .total-row {
-      background: #f8fafc;
+      background: #f8f9fa;
       font-weight: bold;
-      color: #0f172a;
+      color: #212529;
       position: sticky;
       bottom: 0;
       z-index: 2;
+      box-shadow: 0 -1px 0 #dee2e6;
     }
     .action-btn {
-      background: #ef4444;
+      background: #dc3545;
       color: #fff;
       border: none;
-      padding: 4px 8px;
+      padding: 5px 9px;
       cursor: pointer;
       border-radius: 6px;
       font-size: 12px;
       font-weight: bold;
     }
     .add-row-btn {
-      padding: 8px 16px;
-      background: #0284c7;
-      color: #ffffff;
+      padding: 9px 18px;
+      background: #0dcaf0;
+      color: #212529;
       border: none;
       cursor: pointer;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 13.5px;
+      font-size: 14px;
+      display: inline-block;
     }
     .btn-toggle-bal {
-      padding: 8px 16px;
-      background: #64748b;
+      padding: 9px 16px;
+      background: #6c757d;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -383,8 +386,8 @@
       font-weight: 600;
     }
     .btn-sync-now {
-      padding: 8px 16px;
-      background: #16a34a;
+      padding: 9px 16px;
+      background: #198754;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -396,8 +399,8 @@
       margin-top: 16px;
       padding: 14px;
       border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
+      border: 1px solid #ced4da;
+      background: #f8f9fa;
     }
     .month-bal-list {
       display: flex;
@@ -406,39 +409,39 @@
       margin-bottom: 12px;
     }
     .month-bal-item {
-      padding: 10px 14px;
+      padding: 11px 15px;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #e9ecef;
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13.5px;
+      font-size: 14px;
       cursor: pointer;
     }
     .overall-total-box {
-      border-top: 2px solid #e2e8f0;
+      border-top: 2px solid #dee2e6;
       padding-top: 12px;
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .text-green { color: #16a34a; font-weight: 600; }
-    .text-red { color: #ef4444; font-weight: 600; }
+    .text-green { color: #198754; font-weight: 600; }
+    .text-red { color: #dc3545; font-weight: 600; }
 
-    /* Filter Grid */
+    /* Filter Grid for Reports */
     .filter-box {
       margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
-      background: #f8fafc;
+      background: #f8f9fa;
       padding: 12px;
       border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #dee2e6;
     }
     .filter-group {
       display: flex;
@@ -447,24 +450,24 @@
       flex: 1 1 180px;
     }
     .filter-group label {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: #475569;
+      color: #495057;
     }
     .filter-box select, .filter-box input {
-      border: 1px solid #cbd5e1;
+      border: 1px solid #ced4da;
       padding: 7px 10px;
       border-radius: 6px;
       background: #fff;
       font-size: 13px;
     }
 
-    /* Modal */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(2px);
       z-index: 999;
       align-items: center;
@@ -477,16 +480,16 @@
       max-width: 380px;
       width: 100%;
       padding: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
     .modal-box h4 {
       margin-bottom: 14px;
       font-size: 16px;
       font-weight: 600;
-      color: #0f172a;
+      color: #212529;
     }
     .modal-box input {
-      border: 1px solid #cbd5e1;
+      border: 1px solid #ced4da;
       padding: 10px 12px;
       border-radius: 6px;
       background: #fff;
@@ -506,56 +509,53 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .modal-save-btn { background: #2563eb; color: #fff; }
-    .modal-cancel-btn { background: #64748b; color: #fff; }
-    .modal-del-btn { background: #ef4444; color: #fff; }
+    .modal-save-btn { background: #0d6efd; color: #fff; }
+    .modal-cancel-btn { background: #6c757d; color: #fff; }
+    .modal-del-btn { background: #dc3545; color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Dedicated Auth Screen -->
+  <!-- Fullscreen Login / Register Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
       <h1 id="authTitle">FinTrack</h1>
-      <p class="subtitle" id="authSubtitle">Sign in with your Google account</p>
+      <p class="subtitle" id="authSubtitle">Please Login</p>
 
       <div class="fintrack-input-group">
-        <label>Gmail ID</label>
-        <input type="email" id="loginEmail" placeholder="yourname@gmail.com" autocomplete="email">
+        <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
 
       <div class="fintrack-input-group">
-        <label>Password</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
       </div>
 
-      <!-- Visible ONLY during initial registration -->
       <div class="fintrack-input-group" id="driveLinkField" style="display:none;">
-        <label>Google Drive Web App URL</label>
-        <input type="url" id="loginDriveUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        <input type="url" id="loginDriveUrl" placeholder="Google Drive Web App URL">
         <div class="helper-box">
-          🔒 <strong>One-time Setup:</strong> Paste your Google Apps Script URL. Your data will link to your Gmail ID without needing this link again on future logins.
+          📂 <strong>Drive Integration:</strong> Enter your Apps Script Web App link to load your data on mobile and desktop devices.
         </div>
       </div>
 
-      <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Sign In</button>
+      <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
         <a onclick="handleForgotPassword()">Forgot Password?</a>
-        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Create Account</a>
+        <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
       </div>
     </div>
   </div>
 
-  <!-- Main Application Wrapper -->
+  <!-- Main Application Wrapper (Hidden until login) -->
   <div id="main-app-content" style="display:none;">
+    <!-- Sticky Top Header & Navigation -->
     <div class="sticky-header">
       <div class="header-top-row">
         <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
         <div class="header-user-actions">
           <span id="syncIndicator" class="sync-status">☁ Synced</span>
           <div id="userInfoPill" class="user-pill">
-            <span>✉</span> <span id="currentUserNameLabel">user@gmail.com</span>
+            <span>👤</span> <span id="currentUserNameLabel">User</span>
           </div>
           <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
           <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
@@ -572,7 +572,8 @@
 
     <!-- Dashboard Section -->
     <div id="dashboard-section" class="sheet-container">
-      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview</h3>
+      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview & Dashboard</h3>
+      
       <div class="dash-metrics-grid">
         <div class="metric-card">
           <span class="metric-label">Total Cash Income</span>
@@ -607,7 +608,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive Now</button>
         <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
       </div>
     </div>
@@ -647,17 +648,19 @@
         </table>
       </div>
 
+      <!-- Action Buttons Side-by-Side -->
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
         <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
       </div>
 
+      <!-- Month Balance Section -->
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
-        <div style="font-weight: 600; margin-bottom: 10px; color: #475569;">Month-Wise Balance (Click to open):</div>
+        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
         <div class="overall-total-box">
-          <span>Total Available Balance:</span>
+          <span>Total Available Balance (All Months):</span>
           <span id="allMonthsTotalBal" class="num">0</span>
         </div>
       </div>
@@ -703,9 +706,9 @@
       <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
     </div>
 
-    <!-- Reports Section -->
+    <!-- Reports & Ledger Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statements</h3>
+      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
       
       <div class="filter-box">
         <div class="filter-group">
@@ -768,7 +771,7 @@
       </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Modal Dialog for Page Rename / Add -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
@@ -783,10 +786,11 @@
       </div>
     </div>
 
+    <!-- Modal Dialog for Website / Brand Name -->
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
-        <h4>Edit Website Title</h4>
-        <input type="text" id="modalAppNameInput" placeholder="Enter title">
+        <h4>Edit Website / Header Name</h4>
+        <input type="text" id="modalAppNameInput" placeholder="Enter website title">
         <div class="modal-actions" style="justify-content: flex-end;">
           <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
           <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
@@ -795,19 +799,14 @@
     </div>
   </div>
 
-
-  
   <script>
-     const MASTER_BACKEND_URL =
-      "https://script.google.com/macros/s/AKfycbxyOG7v3Hv8NZ9tyIcs0McF7sbzy3gozWH4Aq8ACFs87fBmht8UY7HjGw07y2WSGfa-/exec";
-
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
-    let authMode = 'login';
+    let authMode = 'login'; // 'login' or 'register'
     let syncTimer = null;
 
     let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
@@ -817,7 +816,7 @@
     document.getElementById('appBrandTitle').innerText = appTitle;
 
     function getUserStorageKey(suffix) {
-      const userPrefix = currentUser ? currentUser.email.replace(/[^a-zA-Z0-9]/g, '_') + '_' : 'guest_';
+      const userPrefix = currentUser ? currentUser.username + '_' : 'guest_';
       return `cashbook_${userPrefix}${suffix}`;
     }
 
@@ -826,11 +825,7 @@
     let payables = [];
     let currentSheetIndex = 0;
 
-    function validateEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    /* Auth Handlers */
+    /* Auth Screen Management */
     function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
@@ -838,7 +833,7 @@
       if (currentUser) {
         authContainer.style.display = 'none';
         mainApp.style.display = 'block';
-        document.getElementById('currentUserNameLabel').innerText = currentUser.email;
+        document.getElementById('currentUserNameLabel').innerText = currentUser.username;
         initUserData();
       } else {
         authContainer.style.display = 'flex';
@@ -848,52 +843,48 @@
 
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
+      const title = document.getElementById('authTitle');
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
       const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
-        subtitle.innerText = 'Register with your Gmail & Google Drive';
-        submitBtn.innerText = 'Create Account';
+        subtitle.innerText = 'Create Account';
+        submitBtn.innerText = 'Register & Connect Drive';
         driveField.style.display = 'block';
-        toggleLink.innerText = 'Already have an account? Sign In';
+        toggleLink.innerText = 'Login';
       } else {
-        subtitle.innerText = 'Sign in with your Google account';
-        submitBtn.innerText = 'Sign In';
+        subtitle.innerText = 'Please Login';
+        submitBtn.innerText = 'Login';
         driveField.style.display = 'none';
-        toggleLink.innerText = 'Create Account';
+        toggleLink.innerText = 'Register';
       }
     }
 
     function handleAuthSubmit() {
-      const emailVal = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
       const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
 
-      if (!emailVal || !passVal) {
-        alert('Please fill in both Gmail ID and Password.');
-        return;
-      }
-
-      if (!validateEmail(emailVal)) {
-        alert('Please enter a valid Gmail / Email address.');
+      if (!userVal || !passVal) {
+        alert('Please enter username and password');
         return;
       }
 
       if (authMode === 'register') {
         if (!driveUrlVal) {
-          alert('Please enter your Google Drive Web App Link during registration.');
+          alert('Please enter your Google Drive Web App Link to sync and store data.');
           return;
         }
 
-        const existing = usersList.find(u => u.email.toLowerCase() === emailVal);
+        const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
         if (existing) {
-          alert('This Gmail address is already registered. Please sign in.');
+          alert('Username already registered. Please log in.');
           return;
         }
 
-        const newUser = { email: emailVal, password: passVal, driveUrl: driveUrlVal };
+        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
         usersList.push(newUser);
         localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
         currentUser = newUser;
@@ -902,10 +893,24 @@
         checkAuthSession();
         syncWithGoogleDrive(true);
       } else {
-        const found = usersList.find(u => u.email.toLowerCase() === emailVal && u.password === passVal);
+        // Login Flow
+        const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
         if (!found) {
-          alert('Invalid Gmail ID or password. Please verify your credentials or register.');
-          return;
+          // Allow cross-device instant sign in using Drive URL
+          const remoteDriveUrl = prompt('Device not yet paired with this account. If registered on another device, paste your Google Drive Web App Link:');
+          if (remoteDriveUrl && remoteDriveUrl.trim()) {
+            const externalUser = { username: userVal, password: passVal, driveUrl: remoteDriveUrl.trim() };
+            usersList.push(externalUser);
+            localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
+            currentUser = externalUser;
+            localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+            checkAuthSession();
+            fetchDataFromGoogleDrive();
+            return;
+          } else {
+            alert('Invalid credentials. Please register or verify password.');
+            return;
+          }
         }
 
         currentUser = found;
@@ -916,7 +921,7 @@
     }
 
     function handleForgotPassword() {
-      alert('To reset your account, re-register with your original Gmail ID and Google Drive Web App URL.');
+      alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
     }
 
     function logoutUser() {
@@ -927,7 +932,7 @@
       }
     }
 
-    /* Data Initialization */
+    /* Core Data Operations */
     function initUserData() {
       sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
         {
@@ -1077,7 +1082,7 @@
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Drive Sync Logic */
+    /* Drive Sync Engine */
     function debouncedDriveSync() {
       clearTimeout(syncTimer);
       syncTimer = setTimeout(() => {
@@ -1087,18 +1092,18 @@
 
     function syncWithGoogleDrive(showNotify = false) {
       if (!currentUser || !currentUser.driveUrl) {
-        if (showNotify) alert('No Google Drive URL configured for this account.');
+        if (showNotify) alert('No Google Drive connection configured.');
         return;
       }
 
       const syncInd = document.getElementById('syncIndicator');
       syncInd.innerText = '☁ Syncing...';
-      syncInd.style.color = '#2563eb';
+      syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
       const payload = {
         action: 'save',
-        username: currentUser.email,
+        username: currentUser.username,
         data: {
           sheets: sheets,
           receivables: receivables,
@@ -1115,15 +1120,15 @@
       })
       .then(() => {
         syncInd.innerText = '☁ Synced to Drive';
-        syncInd.style.color = '#16a34a';
+        syncInd.style.color = '#198754';
         setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
         if (showNotify) alert('All data synced successfully to Google Drive!');
       })
       .catch((err) => {
         console.error('Drive Sync Error:', err);
         syncInd.innerText = '☁ Local Cache Saved';
-        syncInd.style.color = '#ef4444';
-        if (showNotify) alert('Saved locally. Please verify your connection.');
+        syncInd.style.color = '#dc3545';
+        if (showNotify) alert('Data saved locally. Check Drive connection.');
       });
     }
 
@@ -1132,10 +1137,10 @@
 
       const syncInd = document.getElementById('syncIndicator');
       syncInd.innerText = '☁ Fetching from Drive...';
-      syncInd.style.color = '#2563eb';
+      syncInd.style.color = '#0d6efd';
       syncInd.style.display = 'inline-block';
 
-      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.email)}`;
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}`;
 
       fetch(fetchUrl)
       .then(res => res.json())
@@ -1150,16 +1155,17 @@
           renderSheet();
           renderDueTables();
           syncInd.innerText = '☁ Up to Date';
-          syncInd.style.color = '#16a34a';
+          syncInd.style.color = '#198754';
           setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log('Fetch skipped or local state loaded.');
         syncInd.style.display = 'none';
       });
     }
 
-    /* Sheet Management Modals */
+    /* Modal Handling */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1342,7 +1348,9 @@
       document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
       document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
 
-      if (section === 'dashboard') renderDashboard();
+      if (section === 'dashboard') {
+        renderDashboard();
+      }
       if (section === 'ledger') {
         populateLedgerAccounts();
         handleReportTypeChange();
@@ -1547,7 +1555,7 @@
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
-    // Enter & Escape Key Listeners
+    // Modal Enter & Escape Key Handlers
     document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') savePageModal();
       if (e.key === 'Escape') closeModal('pageModal');
@@ -1558,80 +1566,8 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    // Run initialization
+    // Check login state on initial load
     checkAuthSession();
-
-    /* Updated Universal Cross-Device Auth Logic */
-
-async function handleAuthSubmit() {
-  const emailVal = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const passVal = document.getElementById('loginPassword').value.trim();
-
-  if (!emailVal || !passVal) {
-    alert('Please enter both Gmail ID and Password.');
-    return;
-  }
-
-  if (!validateEmail(emailVal)) {
-    alert('Please enter a valid Gmail / Email address.');
-    return;
-  }
-
-  const submitBtn = document.getElementById('authSubmitBtn');
-  submitBtn.disabled = true;
-  submitBtn.innerText = 'Connecting...';
-
-  try {
-    if (authMode === 'register') {
-      // Register on Cloud Backend
-      await fetch(MASTER_BACKEND_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'register',
-          email: emailVal,
-          password: passVal
-        })
-      });
-
-      currentUser = { email: emailVal };
-      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-      checkAuthSession();
-      syncWithGoogleDrive(true);
-    } else {
-      // Multi-device Cloud Login
-      const loginUrl = `${MASTER_BACKEND_URL}?action=login&email=${encodeURIComponent(emailVal)}&password=${encodeURIComponent(passVal)}`;
-      const res = await fetch(loginUrl);
-      const resData = await res.json();
-
-      if (resData.status === 'error') {
-        alert(resData.message || 'Invalid Gmail ID or Password');
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Sign In';
-        return;
-      }
-
-      currentUser = { email: emailVal };
-      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-
-      if (resData.data && resData.data.sheets) {
-        sheets = resData.data.sheets;
-        receivables = resData.data.receivables || [];
-        payables = resData.data.payables || [];
-        saveAllData(false);
-      }
-
-      checkAuthSession();
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Connection failed. Please check your internet connection or backend URL.');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerText = authMode === 'register' ? 'Create Account' : 'Sign In';
-  }
-}
   </script>
 </body>
 </html>
