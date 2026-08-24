@@ -150,7 +150,7 @@
       border-radius: 8px;
       cursor: pointer;
       margin-top: 6px;
-      box-shadow: 0 4px 10px rgba(233, 93, 158, 0.3);
+      box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
       transition: opacity 0.15s;
     }
     .fintrack-btn:hover { opacity: 0.95; }
@@ -319,9 +319,7 @@
       z-index: 1001;
       overflow: hidden;
     }
-    .header-dropdown-menu.show {
-      display: block;
-    }
+    .header-dropdown-menu.show { display: block; }
     .header-dropdown-item {
       width: 100%;
       text-align: left;
@@ -591,9 +589,9 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(2px);
-      z-index: 9999;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 99999;
       align-items: center;
       justify-content: center;
       padding: 16px;
@@ -604,14 +602,14 @@
       max-width: 360px;
       width: 100%;
       padding: 22px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
       text-align: center;
     }
     .modal-box h3 {
       font-size: 22px;
       font-weight: 800;
-      color: #0d6efd;
-      margin-bottom: 10px;
+      color: #0080ff;
+      margin-bottom: 8px;
     }
     .modal-box h4 {
       margin-bottom: 12px;
@@ -621,9 +619,9 @@
       text-align: left;
     }
     .modal-box p.modal-desc {
-      font-size: 13px;
+      font-size: 12.5px;
       color: #6c757d;
-      line-height: 1.4;
+      line-height: 1.45;
       margin-bottom: 16px;
     }
     .modal-input-field {
@@ -635,6 +633,10 @@
       margin-bottom: 14px;
       font-size: 13.5px;
       text-align: left;
+      outline: none;
+    }
+    .modal-input-field:focus {
+      border-color: #0080ff;
     }
     .modal-actions {
       display: flex;
@@ -672,7 +674,7 @@
         <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
 
-      <!-- Gmail ID Field (Visible on Register & Forgot Password) -->
+      <!-- Gmail ID Field (Visible on Register) -->
       <div class="fintrack-input-group" id="gmailInputGroup" style="display: none;">
         <input type="email" id="userEmail" placeholder="Gmail / Email Address" autocomplete="email">
       </div>
@@ -731,7 +733,7 @@
       </div>
     </div>
 
-    <!-- Dashboard Section (2 items per row on mobile) -->
+    <!-- Dashboard Section -->
     <div id="dashboard-section" class="sheet-container">
       <h3 style="margin-bottom: 10px; font-size: 16px;">Financial Overview & Dashboard</h3>
       
@@ -929,69 +931,70 @@
         </table>
       </div>
     </div>
+  </div>
 
-    <!-- Modals -->
-    <!-- Page Rename Modal -->
-    <div class="modal-overlay" id="pageModal">
-      <div class="modal-box">
-        <h4 id="modalHeading">Edit Page Name</h4>
-        <input type="text" class="modal-input-field" id="modalPageNameInput" placeholder="Enter page name">
-        <div class="modal-actions">
-          <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
-          <div style="display:flex; gap:6px;">
-            <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
-            <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
-          </div>
+  <!-- ALL MODALS AT ROOT LEVEL (Accessible Before & After Login) -->
+
+  <!-- Page Rename Modal -->
+  <div class="modal-overlay" id="pageModal">
+    <div class="modal-box">
+      <h4 id="modalHeading">Edit Page Name</h4>
+      <input type="text" class="modal-input-field" id="modalPageNameInput" placeholder="Enter page name">
+      <div class="modal-actions">
+        <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
+        <div style="display:flex; gap:6px;">
+          <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
+          <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Website / App Name Modal -->
-    <div class="modal-overlay" id="appNameModal">
-      <div class="modal-box">
-        <h4>Edit Website / Header Name</h4>
-        <input type="text" class="modal-input-field" id="modalAppNameInput" placeholder="Enter website title">
-        <div class="modal-actions" style="justify-content: flex-end; gap:6px;">
-          <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
-          <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
-        </div>
+  <!-- App Title Modal -->
+  <div class="modal-overlay" id="appNameModal">
+    <div class="modal-box">
+      <h4>Edit Website / Header Name</h4>
+      <input type="text" class="modal-input-field" id="modalAppNameInput" placeholder="Enter website title">
+      <div class="modal-actions" style="justify-content: flex-end; gap:6px;">
+        <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
+        <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
       </div>
     </div>
+  </div>
 
-    <!-- Reset / Change Password Modal (Inside App) -->
-    <div class="modal-overlay" id="changePasswordModal">
-      <div class="modal-box">
-        <h4 style="color:#0d6efd; font-size:18px;">Reset / Change Password</h4>
-        <p class="modal-desc" style="text-align: left; margin-bottom: 12px;">Enter your new desired password below.</p>
-        
-        <div class="fintrack-input-group">
-          <div class="pwd-input-wrapper">
-            <input type="password" id="newPasswordInput" placeholder="New Password (min 6 chars)">
-            <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('newPasswordInput', this)">👁</button>
-          </div>
-        </div>
-        
-        <div class="modal-actions" style="margin-top: 16px; gap: 8px;">
-          <button class="modal-btn modal-cancel-btn" onclick="closeModal('changePasswordModal')">Cancel</button>
-          <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Update Password</button>
+  <!-- Reset / Change Password Modal -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal-box">
+      <h4 style="color:#0080ff; font-size:18px;">Set New Password</h4>
+      <p class="modal-desc" style="text-align: left; margin-bottom: 12px;">Enter your new desired password below.</p>
+      
+      <div class="fintrack-input-group">
+        <div class="pwd-input-wrapper">
+          <input type="password" id="newPasswordInput" placeholder="New Password (min 6 chars)">
+          <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('newPasswordInput', this)">👁</button>
         </div>
       </div>
+      
+      <div class="modal-actions" style="margin-top: 16px; gap: 8px;">
+        <button class="modal-btn modal-cancel-btn" onclick="closeModal('changePasswordModal')">Cancel</button>
+        <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Save New Password</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Forgot Password Modal (Styled Exactly Like Image) -->
-    <div class="modal-overlay" id="forgotModal">
-      <div class="modal-box">
-        <h3>Forgot Your Password?</h3>
-        <p class="modal-desc">
-          To reset your password, enter the registered e-mail address and we will send you password reset instructions on your e-mail!
-        </p>
-        <div style="position: relative; margin-bottom: 16px;">
-          <input type="email" id="forgotEmailInput" class="modal-input-field" placeholder="✉  E-Mail" style="margin-bottom: 0;">
-        </div>
-        <button class="modal-btn modal-save-btn" style="background: #0099ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleSendPasswordResetEmail()">Reset Password</button>
-        <div style="margin-top: 14px;">
-          <a onclick="closeModal('forgotModal')" style="color: #6c757d; font-size: 13px; text-decoration: underline; cursor: pointer;">Cancel</a>
-        </div>
+  <!-- Forgot Password Modal (Styled Directly as Requested) -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+      <h3>Forgot Your Password?</h3>
+      <p class="modal-desc">
+        To reset your password, enter the registered e-mail address and we will send you password reset instructions on your e-mail!
+      </p>
+      <div style="position: relative; margin-bottom: 14px;">
+        <input type="email" id="forgotEmailInput" class="modal-input-field" placeholder="✉  E-Mail" style="margin-bottom: 0;">
+      </div>
+      <button class="modal-btn modal-save-btn" style="background: #0080ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleSendPasswordResetEmail()">Reset Password</button>
+      <div style="margin-top: 14px;">
+        <a onclick="closeModal('forgotModal')" style="color: #6c757d; font-size: 13px; text-decoration: underline; cursor: pointer;">Cancel</a>
       </div>
     </div>
   </div>
@@ -1352,8 +1355,10 @@
       }
 
       try {
+        // Clean URL to pass directly to Supabase
+        const currentCleanUrl = window.location.origin + window.location.pathname;
         const { error } = await fintrackSupabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.href
+          redirectTo: currentCleanUrl
         });
         if (error) throw error;
         closeModal('forgotModal');
@@ -1363,7 +1368,7 @@
       }
     }
 
-    /* Change Password Modal (inside dashboard) */
+    /* Change Password Modal */
     function openChangePasswordModal() {
       document.getElementById('newPasswordInput').value = '';
       document.getElementById('changePasswordModal').style.display = 'flex';
@@ -1380,7 +1385,6 @@
         const { error } = await fintrackSupabase.auth.updateUser({ password: newPassword });
         if (error) throw error;
         
-        // Update saved remembered credentials if exists
         if (localStorage.getItem('fintrack_remember_pass')) {
           localStorage.setItem('fintrack_remember_pass', newPassword);
         }
@@ -1392,7 +1396,7 @@
       }
     }
 
-    /* 3 dots Dropdown handler */
+    /* Dropdown 3 dots */
     function toggleHeaderDropdown(e) {
       e.stopPropagation();
       const menu = document.getElementById('headerDropdownMenu');
@@ -1974,6 +1978,15 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
+    /* ===================== RECOVERY LINK LISTENER ===================== */
+    // Automatically triggers when opening the reset link from email
+    fintrackSupabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        openChangePasswordModal();
+      }
+    });
+
+    // Check auth on boot
     checkAuthSession();
   </script>
 </body>
