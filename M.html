@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FinTrack - Money Management</title>
@@ -15,7 +15,6 @@
       padding-bottom: 20px;
     }
 
-    /* Fullscreen Dedicated Auth Screen Styled exactly like FinTrack card */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -80,9 +79,7 @@
       box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
       transition: opacity 0.15s;
     }
-    .fintrack-btn:hover {
-      opacity: 0.95;
-    }
+    .fintrack-btn:hover { opacity: 0.95; }
     .fintrack-card-footer {
       display: flex;
       justify-content: space-between;
@@ -95,19 +92,7 @@
       font-weight: 500;
       cursor: pointer;
     }
-    .helper-box {
-      background: #f1f8ff;
-      border: 1px solid #cce5ff;
-      border-radius: 6px;
-      padding: 8px 10px;
-      font-size: 11px;
-      color: #004085;
-      margin-top: 10px;
-      text-align: left;
-      line-height: 1.4;
-    }
 
-    /* Dashboard Metric Cards */
     .dash-metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -135,12 +120,8 @@
       font-weight: 700;
       color: #212529;
     }
-    .metric-sub {
-      font-size: 12px;
-      color: #888;
-    }
+    .metric-sub { font-size: 12px; color: #888; }
 
-    /* Fixed/Sticky Top Navigation Header */
     .sticky-header {
       position: sticky;
       top: 0;
@@ -149,7 +130,6 @@
       padding: 10px 12px 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
-    
     .header-top-row {
       display: flex;
       justify-content: space-between;
@@ -205,9 +185,7 @@
       padding: 4px 8px;
       border-radius: 6px;
     }
-    .three-dots-btn:hover {
-      background: #e2e6ea;
-    }
+    .three-dots-btn:hover { background: #e2e6ea; }
 
     .nav-tabs {
       display: flex;
@@ -277,9 +255,7 @@
       user-select: none;
       transition: background 0.15s ease;
     }
-    .current-page-badge:hover {
-      background: #d0e2ff;
-    }
+    .current-page-badge:hover { background: #d0e2ff; }
     .plus-btn {
       padding: 6px 14px;
       background: #198754;
@@ -294,7 +270,6 @@
       box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
-    /* Scroll Area */
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
@@ -340,12 +315,7 @@
       box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
     }
     .num { text-align: right; }
-    
-    .exp-num {
-      color: #dc3545 !important;
-      font-weight: 600;
-    }
-    
+    .exp-num { color: #dc3545 !important; font-weight: 600; }
     .total-row {
       background: #f8f9fa;
       font-weight: bold;
@@ -432,7 +402,6 @@
     .text-green { color: #198754; font-weight: 600; }
     .text-red { color: #dc3545; font-weight: 600; }
 
-    /* Filter Grid for Reports */
     .filter-box {
       margin-bottom: 14px;
       display: flex;
@@ -463,7 +432,6 @@
       font-size: 13px;
     }
 
-    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -528,7 +496,7 @@
       </div>
 
       <div class="fintrack-input-group">
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <input type="password" id="loginPassword" placeholder="Password (min 6 chars)" autocomplete="current-password">
       </div>
       
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
@@ -540,9 +508,8 @@
     </div>
   </div>
 
-  <!-- Main Application Wrapper (Hidden until login) -->
+  <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
-    <!-- Sticky Top Header & Navigation -->
     <div class="sticky-header">
       <div class="header-top-row">
         <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
@@ -602,7 +569,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync with Drive Now</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Now</button>
         <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
       </div>
     </div>
@@ -642,14 +609,12 @@
         </table>
       </div>
 
-      <!-- Action Buttons Side-by-Side -->
       <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Drive</button>
+        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Supabase</button>
       </div>
 
-      <!-- Month Balance Section -->
       <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
         <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
@@ -765,7 +730,7 @@
       </div>
     </div>
 
-    <!-- Modal Dialog for Page Rename / Add -->
+    <!-- Modals -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
@@ -780,7 +745,6 @@
       </div>
     </div>
 
-    <!-- Modal Dialog for Website / Brand Name -->
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
         <h4>Edit Website / Header Name</h4>
@@ -793,231 +757,131 @@
     </div>
   </div>
 
-  
-<script>
-/* ===================== FINTRACK SUPABASE MIGRATION =====================
-   Replace the two values below with:
-   Supabase -> Project Settings -> API
-*/
-const SUPABASE_URL = 
-"https://esnjmwnnigxhglfxfkyz.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
-const fintrackSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    /* ===================== SUPABASE CONFIGURATION ===================== */
+    const SUPABASE_URL = "https://esnjmwnnigxhglfxfkyz.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
+    const fintrackSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let fintrackAuthUser = null;
-let fintrackSaveTimer = null;
+    let fintrackAuthUser = null;
+    let fintrackSaveTimer = null;
+    let autoSyncInterval = null;
 
-function supabaseConfigured() {
-  return SUPABASE_URL && SUPABASE_ANON_KEY &&
-    !SUPABASE_URL.includes("YOUR_SUPABASE") &&
-    !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
-}
-
-async function fintrackGetSession() {
-  if (!supabaseConfigured()) return null;
-  const { data } = await fintrackSupabase.auth.getSession();
-  fintrackAuthUser = data?.session?.user || null;
-  return fintrackAuthUser;
-}
-
-function fintrackEmail(username) {
-  const value = String(username || "").trim();
-  return value.includes("@") ? value : `${value}@fintrack.local`;
-}
-
-async function fintrackRegister(username, password) {
-  const { data, error } = await fintrackSupabase.auth.signUp({
-    email: fintrackEmail(username),
-    password,
-    options: { data: { username: String(username).trim() } }
-  });
-  if (error) throw error;
-  fintrackAuthUser = data.user || null;
-  return data;
-}
-
-async function fintrackLogin(username, password) {
-  const { data, error } = await fintrackSupabase.auth.signInWithPassword({
-    email: fintrackEmail(username),
-    password
-  });
-  if (error) throw error;
-  fintrackAuthUser = data.user || null;
-  return data;
-}
-
-async function fintrackLogout() {
-  await fintrackSupabase.auth.signOut();
-  fintrackAuthUser = null;
-}
-
-async function saveToSupabase(showError = true) {
-  if (!fintrackAuthUser) return false;
-
-  const row = {
-    user_id: fintrackAuthUser.id,
-    sheets: Array.isArray(sheets) ? sheets : [],
-    receivables: Array.isArray(receivables) ? receivables : [],
-    payables: Array.isArray(payables) ? payables : [],
-    app_name: appTitle || "FinTrack",
-    updated_at: new Date().toISOString()
-  };
-
-  const { error } = await fintrackSupabase
-    .from("fintrack_data")
-    .upsert(row, { onConflict: "user_id" });
-
-  if (error) {
-    console.error("Supabase save error:", error);
-    if (showError) console.warn("FinTrack online save failed:", error.message);
-    return false;
-  }
-
-  const indicator = document.getElementById("syncIndicator");
-  if (indicator) {
-    indicator.innerText = "☁ Saved";
-    indicator.style.color = "#198754";
-    indicator.style.display = "inline-block";
-    clearTimeout(window.__fintrackSyncHide);
-    window.__fintrackSyncHide = setTimeout(() => {
-      indicator.style.display = "none";
-    }, 1800);
-  }
-  return true;
-}
-
-async function loadFromSupabase() {
-  if (!fintrackAuthUser) return false;
-
-  const { data, error } = await fintrackSupabase
-    .from("fintrack_data")
-    .select("sheets,receivables,payables,app_name,updated_at")
-    .eq("user_id", fintrackAuthUser.id)
-    .maybeSingle();
-
-  if (error) {
-    console.error("Supabase load error:", error);
-    return false;
-  }
-
-  if (data) {
-    sheets = Array.isArray(data.sheets) ? data.sheets : [];
-    receivables = Array.isArray(data.receivables) ? data.receivables : [];
-    payables = Array.isArray(data.payables) ? data.payables : [];
-    if (data.app_name) {
-      appTitle = data.app_name;
-      const brand = document.getElementById("appBrandTitle");
-      if (brand) brand.innerText = appTitle;
+    function fintrackEmail(username) {
+      const value = String(username || "").trim();
+      return value.includes("@") ? value : `${value}@fintrack.local`;
     }
-  }
 
-  renderDashboard();
-  if (typeof renderSheet === "function") renderSheet();
-  if (typeof renderDueTables === "function") renderDueTables();
-  if (typeof renderBalances === "function" && isBalPanelVisible) renderBalances();
-  return true;
-}
+    async function fintrackRegister(username, password) {
+      const { data, error } = await fintrackSupabase.auth.signUp({
+        email: fintrackEmail(username),
+        password: password,
+        options: { data: { username: String(username).trim() } }
+      });
+      if (error) throw error;
+      fintrackAuthUser = data.user || null;
+      return data;
+    }
 
-function scheduleSupabaseSave() {
-  clearTimeout(fintrackSaveTimer);
-  fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
-}
+    async function fintrackLogin(username, password) {
+      const { data, error } = await fintrackSupabase.auth.signInWithPassword({
+        email: fintrackEmail(username),
+        password: password
+      });
+      if (error) throw error;
+      fintrackAuthUser = data.user || null;
+      return data;
+    }
 
-/* Replace the app's central save operation with local cache + online save. */
-window.__fintrackOriginalSaveAllData = window.saveAllData;
-window.saveAllData = function(showNotify = false) {
-  try {
-    localStorage.setItem(getUserStorageKey("sheets"), JSON.stringify(sheets || []));
-    localStorage.setItem(getUserStorageKey("receivables"), JSON.stringify(receivables || []));
-    localStorage.setItem(getUserStorageKey("payables"), JSON.stringify(payables || []));
-  } catch (e) {
-    console.warn("Local cache save failed", e);
-  }
-  scheduleSupabaseSave();
-};
+    async function fintrackLogout() {
+      await fintrackSupabase.auth.signOut();
+      fintrackAuthUser = null;
+    }
 
-/* Legacy function names remain available so existing UI buttons do not break. */
-window.syncWithGoogleDrive = function(showNotify = false) {
-  return saveToSupabase(showNotify);
-};
-window.fetchDataFromGoogleDrive = function(silent = false) {
-  return loadFromSupabase();
-};
-window.debouncedDriveSync = function() {
-  scheduleSupabaseSave();
-};
+    async function saveToSupabase(showError = true) {
+      if (!fintrackAuthUser) return false;
 
-async function finishSupabaseLogin(username, password) {
-  if (!supabaseConfigured()) {
-    alert("Please configure SUPABASE_URL and SUPABASE_ANON_KEY in FinTrack.html first.");
-    return false;
-  }
-  try {
-    await fintrackLogin(username, password);
-    await loadFromSupabase();
-    return true;
-  } catch (e) {
-    alert(e.message || "Login failed.");
-    return false;
-  }
-}
+      const row = {
+        user_id: fintrackAuthUser.id,
+        sheets: Array.isArray(sheets) ? sheets : [],
+        receivables: Array.isArray(receivables) ? receivables : [],
+        payables: Array.isArray(payables) ? payables : [],
+        app_name: appTitle || "FinTrack",
+        updated_at: new Date().toISOString()
+      };
 
-async function finishSupabaseRegister(username, password) {
-  if (!supabaseConfigured()) {
-    alert("Please configure SUPABASE_URL and SUPABASE_ANON_KEY in FinTrack.html first.");
-    return false;
-  }
-  try {
-    await fintrackRegister(username, password);
-    await saveToSupabase(false);
-    return true;
-  } catch (e) {
-    alert(e.message || "Registration failed.");
-    return false;
-  }
-}
+      const { error } = await fintrackSupabase
+        .from("fintrack_data")
+        .upsert(row, { onConflict: "user_id" });
 
-/* Multi-device refresh: pull newer state periodically when user is idle. */
-let fintrackPullTimer = null;
-function startSupabaseAutoSync() {
-  clearInterval(fintrackPullTimer);
-  if (!fintrackAuthUser) return;
-  fintrackPullTimer = setInterval(async () => {
-    const active = document.activeElement;
-    if (active && ["INPUT","TEXTAREA","SELECT"].includes(active.tagName)) return;
-    await loadFromSupabase();
-  }, 20000);
-}
-function stopSupabaseAutoSync() {
-  clearInterval(fintrackPullTimer);
-  fintrackPullTimer = null;
-}
+      if (error) {
+        console.error("Supabase save error:", error);
+        if (showError) alert("Save failed: " + error.message);
+        return false;
+      }
 
-if (supabaseConfigured()) {
-  fintrackSupabase.auth.onAuthStateChange((_event, session) => {
-    fintrackAuthUser = session?.user || null;
-    if (fintrackAuthUser) startSupabaseAutoSync();
-    else stopSupabaseAutoSync();
-  });
-}
+      const indicator = document.getElementById("syncIndicator");
+      if (indicator) {
+        indicator.innerText = "☁ Saved";
+        indicator.style.color = "#198754";
+        indicator.style.display = "inline-block";
+        clearTimeout(window.__fintrackSyncHide);
+        window.__fintrackSyncHide = setTimeout(() => {
+          indicator.style.display = "none";
+        }, 1800);
+      }
+      return true;
+    }
 
-window.addEventListener("beforeunload", () => {
-  if (fintrackAuthUser) saveToSupabase(false);
-});
-</script>
+    async function loadFromSupabase() {
+      if (!fintrackAuthUser) return false;
 
-<script>
+      const { data, error } = await fintrackSupabase
+        .from("fintrack_data")
+        .select("sheets,receivables,payables,app_name,updated_at")
+        .eq("user_id", fintrackAuthUser.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Supabase load error:", error);
+        return false;
+      }
+
+      if (data) {
+        if (data.sheets && data.sheets.length > 0) sheets = data.sheets;
+        receivables = Array.isArray(data.receivables) ? data.receivables : [];
+        payables = Array.isArray(data.payables) ? data.payables : [];
+        if (data.app_name) {
+          appTitle = data.app_name;
+          const brand = document.getElementById("appBrandTitle");
+          if (brand) brand.innerText = appTitle;
+        }
+      }
+
+      renderDashboard();
+      renderSheet();
+      renderDueTables();
+      if (isBalPanelVisible) renderBalances();
+      return true;
+    }
+
+    function scheduleSupabaseSave() {
+      clearTimeout(fintrackSaveTimer);
+      fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
+    }
+
+    window.syncWithGoogleDrive = function(showNotify = false) {
+      return saveToSupabase(showNotify);
+    };
+
+    /* ===================== CORE APP LOGIC ===================== */
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
 
     let isBalPanelVisible = false;
     let isCreatingNew = false;
-    let authMode = 'login'; // 'login' or 'register'
-    let syncTimer = null;
-    let autoSyncInterval = null;
-
-    let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
+    let authMode = 'login';
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
 
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
@@ -1028,35 +892,51 @@ window.addEventListener("beforeunload", () => {
       return `cashbook_${userPrefix}${suffix}`;
     }
 
-    let sheets = [];
+    let sheets = [
+      {
+        name: currentMonthYear,
+        rows: [{ date: today, particular: "", income: 0, exp: 0 }]
+      }
+    ];
     let receivables = [];
     let payables = [];
     let currentSheetIndex = 0;
 
-    /* Auth Screen Management */
-    function checkAuthSession() {
+    async function checkAuthSession() {
       const authContainer = document.getElementById('auth-screen-container');
       const mainApp = document.getElementById('main-app-content');
 
-      if (currentUser) {
+      const { data } = await fintrackSupabase.auth.getSession();
+      const sessionUser = data?.session?.user;
+
+      if (sessionUser) {
+        fintrackAuthUser = sessionUser;
+        currentUser = { username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0] };
+        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+        
         authContainer.style.display = 'none';
         mainApp.style.display = 'block';
         document.getElementById('currentUserNameLabel').innerText = currentUser.username;
+        
         initUserData();
+        await loadFromSupabase();
         startAutoSync();
       } else {
+        fintrackAuthUser = null;
+        currentUser = null;
+        localStorage.removeItem('cashbook_active_user');
         authContainer.style.display = 'flex';
         mainApp.style.display = 'none';
         stopAutoSync();
       }
     }
 
-    /* Live Sync: keep mobile/desktop up to date without manual refresh */
     function startAutoSync() {
       stopAutoSync();
-      // Poll Drive every 20 seconds for fresh data from other devices
       autoSyncInterval = setInterval(() => {
-        fetchDataFromGoogleDrive(true);
+        const active = document.activeElement;
+        if (active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName)) return;
+        loadFromSupabase();
       }, 20000);
     }
 
@@ -1067,86 +947,88 @@ window.addEventListener("beforeunload", () => {
       }
     }
 
-    // Instantly refresh the moment the app/tab comes back into view
-    // (e.g. switching back to the browser on mobile after editing on desktop)
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && currentUser) {
-        fetchDataFromGoogleDrive(true);
-      }
-    });
-
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
       const title = document.getElementById('authTitle');
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
-      const driveField = document.getElementById('driveLinkField');
 
       if (authMode === 'register') {
-        subtitle.innerText = 'Create Account';
+        title.innerText = 'FinTrack';
+        subtitle.innerText = 'Create an Account';
         submitBtn.innerText = 'Register';
-        driveField.style.display = 'block';
-        toggleLink.innerText = 'Login';
+        toggleLink.innerText = 'Have an account? Login';
       } else {
+        title.innerText = 'FinTrack';
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
-        driveField.style.display = 'none';
-        toggleLink.innerText = 'Register';
+        toggleLink.innerText = 'New user? Register';
       }
     }
 
     async function handleAuthSubmit() {
-  const userVal = document.getElementById('loginUsername').value.trim();
-  const passVal = document.getElementById('loginPassword').value.trim();
+      const userVal = document.getElementById('loginUsername').value.trim();
+      const passVal = document.getElementById('loginPassword').value.trim();
 
-  if (!userVal || !passVal) {
-    alert('Please enter username and password');
-    return;
-  }
+      if (!userVal || !passVal) {
+        alert('Please enter both username and password');
+        return;
+      }
+      if (passVal.length < 6) {
+        alert('Password must be at least 6 characters long');
+        return;
+      }
 
-  if (authMode === 'register') {
-    const success = await finishSupabaseRegister(userVal, passVal);
-    if (success) {
-      currentUser = { username: userVal };
-      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-      checkAuthSession();
+      const btn = document.getElementById('authSubmitBtn');
+      btn.innerText = 'Processing...';
+      btn.disabled = true;
+
+      try {
+        if (authMode === 'register') {
+          await fintrackRegister(userVal, passVal);
+          currentUser = { username: userVal };
+          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+          await saveToSupabase(false);
+          await checkAuthSession();
+        } else {
+          await fintrackLogin(userVal, passVal);
+          currentUser = { username: userVal };
+          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+          await checkAuthSession();
+        }
+      } catch (err) {
+        alert(err.message || 'Authentication error occurred');
+      } finally {
+        btn.innerText = authMode === 'register' ? 'Register' : 'Login';
+        btn.disabled = false;
+      }
     }
-  } else {
-    const success = await finishSupabaseLogin(userVal, passVal);
-    if (success) {
-      currentUser = { username: userVal };
-      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-      checkAuthSession();
-    }
-  }
-
 
     function handleForgotPassword() {
-      alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
+      alert('To reset your credentials, please register with a new username or contact your database administrator.');
     }
 
-    function logoutUser() {
+    async function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
-        stopAutoSync();
-        currentUser = null;
-        localStorage.removeItem('cashbook_active_user');
+        await fintrackLogout();
         checkAuthSession();
       }
     }
 
-    /* Core Data Operations */
     function initUserData() {
-      sheets = JSON.parse(localStorage.getItem(getUserStorageKey('sheets'))) || [
-        {
-          name: currentMonthYear,
-          rows: [
-            { date: today, particular: "", income: 0, exp: 0 }
-          ]
-        }
-      ];
-      receivables = JSON.parse(localStorage.getItem(getUserStorageKey('receivables'))) || [];
-      payables = JSON.parse(localStorage.getItem(getUserStorageKey('payables'))) || [];
+      const localSheets = localStorage.getItem(getUserStorageKey('sheets'));
+      if (localSheets) {
+        try { sheets = JSON.parse(localSheets); } catch (e) {}
+      }
+      const localRec = localStorage.getItem(getUserStorageKey('receivables'));
+      if (localRec) {
+        try { receivables = JSON.parse(localRec); } catch (e) {}
+      }
+      const localPay = localStorage.getItem(getUserStorageKey('payables'));
+      if (localPay) {
+        try { payables = JSON.parse(localPay); } catch (e) {}
+      }
       currentSheetIndex = Math.max(0, sheets.length - 1);
 
       renderDashboard();
@@ -1154,15 +1036,16 @@ window.addEventListener("beforeunload", () => {
       renderDueTables();
     }
 
-    function saveAllData(shouldSync = true) {
-      localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
-      localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
-      localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
-      renderDashboard();
-
-      if (shouldSync && currentUser && currentUser.driveUrl) {
-        debouncedDriveSync();
+    function saveAllData() {
+      try {
+        localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
+        localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
+        localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
+      } catch (e) {
+        console.warn('Local save error', e);
       }
+      renderDashboard();
+      scheduleSupabaseSave();
     }
 
     function updateBadge() {
@@ -1177,10 +1060,12 @@ window.addEventListener("beforeunload", () => {
       let totalExp = 0;
 
       sheets.forEach(s => {
-        s.rows.forEach(r => {
-          totalInc += parseFloat(r.income) || 0;
-          totalExp += parseFloat(r.exp) || 0;
-        });
+        if (s.rows) {
+          s.rows.forEach(r => {
+            totalInc += parseFloat(r.income) || 0;
+            totalExp += parseFloat(r.exp) || 0;
+          });
+        }
       });
 
       const netCash = totalInc - totalExp;
@@ -1208,7 +1093,7 @@ window.addEventListener("beforeunload", () => {
       const tbody = document.getElementById('sheetTableBody');
       tbody.innerHTML = '';
       if (!sheets[currentSheetIndex]) return;
-      const currentRows = sheets[currentSheetIndex].rows;
+      const currentRows = sheets[currentSheetIndex].rows || [];
 
       currentRows.forEach((row, i) => {
         const tr = document.createElement('tr');
@@ -1240,7 +1125,7 @@ window.addEventListener("beforeunload", () => {
 
     function calculateCashTotals() {
       if (!sheets[currentSheetIndex]) return;
-      const currentRows = sheets[currentSheetIndex].rows;
+      const currentRows = sheets[currentSheetIndex].rows || [];
       let runningBal = 0;
       let totalInc = 0;
       let totalExp = 0;
@@ -1267,6 +1152,7 @@ window.addEventListener("beforeunload", () => {
     }
 
     function addRow() {
+      if (!sheets[currentSheetIndex].rows) sheets[currentSheetIndex].rows = [];
       sheets[currentSheetIndex].rows.push({
         date: today,
         particular: '',
@@ -1285,121 +1171,6 @@ window.addEventListener("beforeunload", () => {
       if (isBalPanelVisible) renderBalances();
     }
 
-    /* Drive Sync Engine */
-    function debouncedDriveSync() {
-      clearTimeout(syncTimer);
-      syncTimer = setTimeout(() => {
-        syncWithGoogleDrive(false);
-      }, 1500);
-    }
-
-    function syncWithGoogleDrive(showNotify = false) {
-      if (!currentUser || !currentUser.driveUrl) {
-        if (showNotify) alert('No Google Drive connection configured.');
-        return;
-      }
-
-      const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Syncing...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
-
-      const payload = {
-        action: 'save',
-        username: currentUser.username,
-        data: {
-          sheets: sheets,
-          receivables: receivables,
-          payables: payables,
-          updatedAt: new Date().toISOString()
-        }
-      };
-
-      fetch(currentUser.driveUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(() => {
-        syncInd.innerText = '☁ Synced to Drive';
-        syncInd.style.color = '#198754';
-        setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        if (showNotify) alert('All data synced successfully to Google Drive!');
-      })
-      .catch((err) => {
-        console.error('Drive Sync Error:', err);
-        syncInd.innerText = '☁ Local Cache Saved';
-        syncInd.style.color = '#dc3545';
-        if (showNotify) alert('Data saved locally. Check Drive connection.');
-      });
-    }
-
-    function fetchDataFromGoogleDrive(silent = false) {
-      if (!currentUser || !currentUser.driveUrl) return;
-
-      // Skip a silent background pull while the user is actively typing,
-      // so live sync never interrupts an in-progress entry.
-      if (silent) {
-        const active = document.activeElement;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA')) {
-          return;
-        }
-      }
-
-      const syncInd = document.getElementById('syncIndicator');
-      if (!silent) {
-        syncInd.innerText = '☁ Fetching from Drive...';
-        syncInd.style.color = '#0d6efd';
-        syncInd.style.display = 'inline-block';
-      }
-
-      // Cache-bust: mobile browsers / the Apps Script exec URL can cache GET
-      // responses for a few minutes, which was causing the stale-data delay.
-      const cacheBuster = Date.now();
-      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}&_=${cacheBuster}`;
-
-      fetch(fetchUrl, { cache: 'no-store' })
-      .then(res => res.json())
-      .then(resData => {
-        if (resData && resData.sheets) {
-          const incomingUpdatedAt = resData.updatedAt || null;
-          const lastKnownRemoteUpdatedAt = localStorage.getItem(getUserStorageKey('lastRemoteUpdatedAt'));
-
-          // If we already have this exact version, skip the re-render entirely.
-          if (silent && incomingUpdatedAt && incomingUpdatedAt === lastKnownRemoteUpdatedAt) {
-            syncInd.style.display = 'none';
-            return;
-          }
-
-          sheets = resData.sheets;
-          receivables = resData.receivables || [];
-          payables = resData.payables || [];
-          currentSheetIndex = Math.max(0, sheets.length - 1);
-          saveAllData(false);
-          renderDashboard();
-          renderSheet();
-          renderDueTables();
-
-          if (incomingUpdatedAt) {
-            localStorage.setItem(getUserStorageKey('lastRemoteUpdatedAt'), incomingUpdatedAt);
-          }
-
-          syncInd.innerText = '☁ Up to Date';
-          syncInd.style.color = '#198754';
-          syncInd.style.display = 'inline-block';
-          setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
-        } else if (!silent) {
-          syncInd.style.display = 'none';
-        }
-      })
-      .catch((err) => {
-        console.log('Fetch skipped or local state loaded.');
-        if (!silent) syncInd.style.display = 'none';
-      });
-    }
-
-    /* Modal Handling */
     function openRenameModal() {
       isCreatingNew = false;
       document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
@@ -1431,7 +1202,9 @@ window.addEventListener("beforeunload", () => {
       const val = document.getElementById('modalAppNameInput').value.trim();
       const finalTitle = val !== "" ? val : "FinTrack";
       document.getElementById('appBrandTitle').innerText = finalTitle;
+      appTitle = finalTitle;
       localStorage.setItem('cashbook_app_name', finalTitle);
+      saveAllData();
       closeModal('appNameModal');
     }
 
@@ -1444,7 +1217,7 @@ window.addEventListener("beforeunload", () => {
       const finalName = inputVal !== "" ? inputVal : `Page ${sheets.length + 1}`;
 
       if (isCreatingNew) {
-        const previousRows = sheets[sheets.length - 1].rows;
+        const previousRows = sheets[sheets.length - 1].rows || [];
         const copiedRows = previousRows.map(r => ({
           date: today,
           particular: r.particular,
@@ -1454,7 +1227,7 @@ window.addEventListener("beforeunload", () => {
 
         sheets.push({
           name: finalName,
-          rows: copiedRows
+          rows: copiedRows.length > 0 ? copiedRows : [{ date: today, particular: '', income: 0, exp: 0 }]
         });
         currentSheetIndex = sheets.length - 1;
       } else {
@@ -1502,7 +1275,7 @@ window.addEventListener("beforeunload", () => {
 
       sheets.forEach((sheet, idx) => {
         let sheetBal = 0;
-        sheet.rows.forEach(r => {
+        (sheet.rows || []).forEach(r => {
           sheetBal += (parseFloat(r.income) || 0) - (parseFloat(r.exp) || 0);
         });
 
@@ -1582,9 +1355,7 @@ window.addEventListener("beforeunload", () => {
       document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
       document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
 
-      if (section === 'dashboard') {
-        renderDashboard();
-      }
+      if (section === 'dashboard') renderDashboard();
       if (section === 'ledger') {
         populateLedgerAccounts();
         handleReportTypeChange();
@@ -1597,7 +1368,7 @@ window.addEventListener("beforeunload", () => {
       select.innerHTML = '<option value="ALL">-- View All Entries --</option>';
 
       const accounts = new Set();
-      sheets.forEach(s => s.rows.forEach(r => { if(r.particular && r.particular.trim()) accounts.add(r.particular.trim()); }));
+      sheets.forEach(s => (s.rows || []).forEach(r => { if(r.particular && r.particular.trim()) accounts.add(r.particular.trim()); }));
       receivables.forEach(r => { if(r.name && r.name.trim()) accounts.add(r.name.trim()); });
       payables.forEach(p => { if(p.name && p.name.trim()) accounts.add(p.name.trim()); });
 
@@ -1654,7 +1425,7 @@ window.addEventListener("beforeunload", () => {
       const entries = [];
 
       sheets.forEach(s => {
-        s.rows.forEach(r => {
+        (s.rows || []).forEach(r => {
           entries.push({
             date: r.date || '',
             source: `Cashbook (${s.name})`,
@@ -1789,7 +1560,6 @@ window.addEventListener("beforeunload", () => {
       balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
     }
 
-    // Modal Enter & Escape Key Handlers
     document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') savePageModal();
       if (e.key === 'Escape') closeModal('pageModal');
@@ -1800,7 +1570,7 @@ window.addEventListener("beforeunload", () => {
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    // Check login state on initial load
+    // Boot up
     checkAuthSession();
   </script>
 </body>
