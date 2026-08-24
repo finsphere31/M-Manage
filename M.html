@@ -1106,7 +1106,7 @@ window.addEventListener("beforeunload", () => {
     function handleAuthSubmit() {
       const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
-      const driveUrlVal = document.getElementById('loginDriveUrl').value.trim();
+      
 
       if (!userVal || !passVal) {
         alert('Please enter username and password');
@@ -1115,10 +1115,7 @@ window.addEventListener("beforeunload", () => {
 
       if (authMode === 'register') {
         // Registration requires username, password, AND Google Sheet/Drive URL (all compulsory)
-        if (!driveUrlVal) {
-          alert('Please enter your Google Drive Web App Link to sync and store data.');
-          return;
-        }
+        
 
         const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
         if (existing) {
@@ -1126,7 +1123,7 @@ window.addEventListener("beforeunload", () => {
           return;
         }
 
-        const newUser = { username: userVal, password: passVal, driveUrl: driveUrlVal };
+        const newUser = { username: userVal, password: passVal };
         usersList.push(newUser);
         localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
         currentUser = newUser;
