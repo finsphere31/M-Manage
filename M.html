@@ -1096,50 +1096,31 @@ window.addEventListener("beforeunload", () => {
       }
     }
 
-    function handleAuthSubmit() {
-      const userVal = document.getElementById('loginUsername').value.trim();
-      const passVal = document.getElementById('loginPassword').value.trim();
-      
+    async function handleAuthSubmit() {
+  const userVal = document.getElementById('loginUsername').value.trim();
+  const passVal = document.getElementById('loginPassword').value.trim();
 
-      if (!userVal || !passVal) {
-        alert('Please enter username and password');
-        return;
-      }
+  if (!userVal || !passVal) {
+    alert('Please enter username and password');
+    return;
+  }
 
-      if (authMode === 'register') {
-        // Registration requires username, password, AND Google Sheet/Drive URL (all compulsory)
-        
-
-        const existing = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
-        if (existing) {
-          alert('Username already registered. Please log in.');
-          return;
-        }
-
-        const newUser = { username: userVal, password: passVal };
-        usersList.push(newUser);
-        localStorage.setItem('cashbook_users_list', JSON.stringify(usersList));
-        currentUser = newUser;
-        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-
-        checkAuthSession();
-        syncWithGoogleDrive(true);
-      } else {
-        // Login Flow — only username + password required.
-        // The Drive URL was already captured at registration and is stored
-        // on the user record, so we never ask for it again at login.
-        const found = usersList.find(u => u.username.toLowerCase() === userVal.toLowerCase() && u.password === passVal);
-        if (!found) {
-          alert('Invalid username or password.');
-          return;
-        }
-
-        currentUser = found;
-        localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-        checkAuthSession();
-        fetchDataFromGoogleDrive();
-      }
+  if (authMode === 'register') {
+    const success = await finishSupabaseRegister(userVal, passVal);
+    if (success) {
+      currentUser = { username: userVal };
+      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+      checkAuthSession();
     }
+  } else {
+    const success = await finishSupabaseLogin(userVal, passVal);
+    if (success) {
+      currentUser = { username: userVal };
+      localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+      checkAuthSession();
+    }
+  }
+
 
     function handleForgotPassword() {
       alert('If you forgot your password, you can recover or reset it by re-registering with your existing Google Drive Web App link.');
