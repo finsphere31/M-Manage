@@ -15,6 +15,45 @@
       padding-bottom: 20px;
     }
 
+    /* Toast Notification */
+    #fintrack-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      z-index: 99999;
+      min-width: 290px;
+      max-width: 90vw;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #fintrack-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #fintrack-toast.success {
+      background: linear-gradient(135deg, #198754, #146c43);
+      border: 1px solid #0f5132;
+    }
+    #fintrack-toast.error {
+      background: linear-gradient(135deg, #dc3545, #b02a37);
+      border: 1px solid #842029;
+    }
+
+    /* Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
@@ -23,36 +62,36 @@
       align-items: center;
       justify-content: center;
       z-index: 10000;
-      padding: 20px;
+      padding: 16px;
     }
     .fintrack-card {
       background: #ffffff;
       border-radius: 16px;
       width: 100%;
       max-width: 360px;
-      padding: 36px 24px 30px;
+      padding: 30px 22px 24px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
     .fintrack-card h1 {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: #0b1320;
       margin-bottom: 4px;
       letter-spacing: -0.5px;
     }
     .fintrack-card p.subtitle {
-      font-size: 14px;
+      font-size: 13px;
       color: #6c757d;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .fintrack-input-group {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       text-align: left;
     }
     .fintrack-input-group input {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 13px;
       border: 1px solid #ced4da;
       border-radius: 8px;
       font-size: 14px;
@@ -67,7 +106,7 @@
     }
     .fintrack-btn {
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       background: linear-gradient(180deg, #2482cb 0%, #175d9e 100%);
       color: #ffffff;
       font-size: 15px;
@@ -75,7 +114,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 6px;
       box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
       transition: opacity 0.15s;
     }
@@ -83,8 +122,8 @@
     .fintrack-card-footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
-      font-size: 13px;
+      margin-top: 18px;
+      font-size: 12.5px;
     }
     .fintrack-card-footer a {
       color: #2482cb;
@@ -93,51 +132,90 @@
       cursor: pointer;
     }
 
+    /* Dashboard Metrics: 2 columns on mobile, auto-fit on desktop */
     .dash-metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    @media (min-width: 680px) {
+      .dash-metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
     }
     .metric-card {
       background: #f8f9fa;
       border: 1px solid #dee2e6;
-      border-radius: 10px;
-      padding: 14px;
+      border-radius: 8px;
+      padding: 10px 8px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
+      min-width: 0;
+    }
+    @media (min-width: 680px) {
+      .metric-card {
+        padding: 14px;
+        border-radius: 10px;
+        gap: 4px;
+      }
     }
     .metric-label {
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 10.5px;
+      font-weight: 700;
       color: #6c757d;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (min-width: 680px) {
+      .metric-label { font-size: 12px; letter-spacing: 0.5px; }
     }
     .metric-val {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       color: #212529;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .metric-sub { font-size: 12px; color: #888; }
+    @media (min-width: 680px) {
+      .metric-val { font-size: 20px; }
+    }
+    .metric-sub {
+      font-size: 10px;
+      color: #888;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (min-width: 680px) {
+      .metric-sub { font-size: 12px; }
+    }
 
+    /* Sticky Top Header */
     .sticky-header {
       position: sticky;
       top: 0;
       z-index: 100;
       background: #f0f2f5;
-      padding: 10px 12px 6px;
+      padding: 8px 10px 4px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
     .header-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .app-brand-title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.2px;
@@ -145,19 +223,23 @@
     .header-user-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
     .user-pill {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       background: #e7f1ff;
       color: #0d6efd;
-      padding: 4px 10px;
-      border-radius: 20px;
+      padding: 3px 8px;
+      border-radius: 16px;
       border: 1px solid #b6d4fe;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      max-width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .sync-status {
       font-size: 11px;
@@ -169,40 +251,42 @@
       background: #dc3545;
       color: #fff;
       border: none;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 5px 10px;
-      border-radius: 6px;
+      padding: 4px 8px;
+      border-radius: 5px;
       cursor: pointer;
     }
     .three-dots-btn {
       background: none;
       border: none;
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1;
       cursor: pointer;
       color: #495057;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 5px;
     }
     .three-dots-btn:hover { background: #e2e6ea; }
 
     .nav-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 4px;
     }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tabs { -ms-overflow-style: none; scrollbar-width: none; }
     .nav-tabs button {
-      padding: 9px 16px;
+      padding: 7px 12px;
       border: 1px solid #ced4da;
       background: #ffffff;
       cursor: pointer;
       font-weight: 600;
-      border-radius: 8px;
+      border-radius: 6px;
       white-space: nowrap;
-      font-size: 14px;
+      font-size: 12.5px;
       color: #495057;
       transition: all 0.2s ease;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -217,12 +301,15 @@
 
     .sheet-container {
       background: #ffffff;
-      padding: 14px;
+      padding: 10px;
       border: 1px solid #e9ecef;
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       max-width: 1100px;
-      margin: 10px 12px;
+      margin: 8px;
+    }
+    @media (min-width: 680px) {
+      .sheet-container { padding: 14px; border-radius: 10px; margin: 10px 12px; }
     }
     @media (min-width: 1124px) {
       .sheet-container { margin: 10px auto; }
@@ -232,42 +319,38 @@
     .top-action-bar {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
       border-bottom: 1px solid #dee2e6;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
     .current-page-badge {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #0d6efd;
       background: #e7f1ff;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
       border: 1px solid #b6d4fe;
       white-space: nowrap;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       user-select: none;
-      transition: background 0.15s ease;
     }
-    .current-page-badge:hover { background: #d0e2ff; }
     .plus-btn {
-      padding: 6px 14px;
+      padding: 5px 12px;
       background: #198754;
       color: white;
       border: none;
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: bold;
       flex-shrink: 0;
-      box-shadow: 0 2px 4px rgba(25,135,84,0.25);
     }
 
     .table-scroll {
@@ -275,20 +358,20 @@
       overflow-y: auto;
       max-height: 60vh;
       -webkit-overflow-scrolling: touch;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       border: 1px solid #dee2e6;
-      border-radius: 8px;
+      border-radius: 6px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 580px;
+      min-width: 520px;
     }
     th, td {
       border: 1px solid #dee2e6;
-      padding: 8px 10px;
+      padding: 6px 8px;
       text-align: left;
-      font-size: 14px;
+      font-size: 13px;
     }
     th {
       background: #f8f9fa;
@@ -304,9 +387,9 @@
       border: 1px solid transparent;
       outline: none;
       background: transparent;
-      font-size: 14px;
-      padding: 4px 6px;
-      border-radius: 6px;
+      font-size: 13px;
+      padding: 3px 5px;
+      border-radius: 4px;
       color: inherit;
     }
     input:focus, select:focus {
@@ -329,71 +412,70 @@
       background: #dc3545;
       color: #fff;
       border: none;
-      padding: 5px 9px;
+      padding: 4px 8px;
       cursor: pointer;
-      border-radius: 6px;
-      font-size: 12px;
+      border-radius: 4px;
+      font-size: 11px;
       font-weight: bold;
     }
     .add-row-btn {
-      padding: 9px 18px;
+      padding: 8px 14px;
       background: #0dcaf0;
       color: #212529;
       border: none;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
-      font-size: 14px;
-      display: inline-block;
+      font-size: 13px;
     }
     .btn-toggle-bal {
-      padding: 9px 16px;
+      padding: 8px 12px;
       background: #6c757d;
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
     }
     .btn-sync-now {
-      padding: 9px 16px;
+      padding: 8px 12px;
       background: #198754;
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
     }
     .bal-summary-panel {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 8px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 6px;
       border: 1px solid #ced4da;
       background: #f8f9fa;
     }
     .month-bal-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      margin-bottom: 10px;
     }
     .month-bal-item {
-      padding: 11px 15px;
+      padding: 9px 12px;
       background: #ffffff;
       border: 1px solid #e9ecef;
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
     }
     .overall-total-box {
       border-top: 2px solid #dee2e6;
-      padding-top: 12px;
-      font-size: 15px;
+      padding-top: 10px;
+      font-size: 14px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
@@ -403,33 +485,33 @@
     .text-red { color: #dc3545; font-weight: 600; }
 
     .filter-box {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
       background: #f8f9fa;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 10px;
+      border-radius: 6px;
       border: 1px solid #dee2e6;
     }
     .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      flex: 1 1 180px;
+      gap: 3px;
+      flex: 1 1 140px;
     }
     .filter-group label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: #495057;
     }
     .filter-box select, .filter-box input {
       border: 1px solid #ced4da;
-      padding: 7px 10px;
-      border-radius: 6px;
+      padding: 6px 8px;
+      border-radius: 5px;
       background: #fff;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     .modal-overlay {
@@ -445,25 +527,25 @@
     }
     .modal-box {
       background: #ffffff;
-      border-radius: 10px;
-      max-width: 380px;
+      border-radius: 8px;
+      max-width: 360px;
       width: 100%;
-      padding: 20px;
+      padding: 18px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
     .modal-box h4 {
-      margin-bottom: 14px;
-      font-size: 16px;
+      margin-bottom: 12px;
+      font-size: 15px;
       font-weight: 600;
       color: #212529;
     }
     .modal-box input {
       border: 1px solid #ced4da;
-      padding: 10px 12px;
-      border-radius: 6px;
+      padding: 8px 10px;
+      border-radius: 5px;
       background: #fff;
-      margin-bottom: 16px;
-      font-size: 14px;
+      margin-bottom: 14px;
+      font-size: 13px;
     }
     .modal-actions {
       display: flex;
@@ -471,10 +553,10 @@
       gap: 8px;
     }
     .modal-btn {
-      padding: 8px 16px;
+      padding: 7px 14px;
       border: none;
-      border-radius: 6px;
-      font-size: 13px;
+      border-radius: 5px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
@@ -484,6 +566,12 @@
   </style>
 </head>
 <body>
+
+  <!-- Dynamic Styled Toast Popup -->
+  <div id="fintrack-toast">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Notification</span>
+  </div>
 
   <!-- Fullscreen Login / Register Screen -->
   <div id="auth-screen-container">
@@ -531,46 +619,46 @@
       </div>
     </div>
 
-    <!-- Dashboard Section -->
+    <!-- Dashboard Section (2 items per row on mobile) -->
     <div id="dashboard-section" class="sheet-container">
-      <h3 style="margin-bottom: 14px; font-size: 18px;">Financial Overview & Dashboard</h3>
+      <h3 style="margin-bottom: 10px; font-size: 16px;">Financial Overview & Dashboard</h3>
       
       <div class="dash-metrics-grid">
         <div class="metric-card">
-          <span class="metric-label">Total Cash Income</span>
+          <span class="metric-label">Income</span>
           <span class="metric-val text-green" id="dashTotalIncome">0</span>
-          <span class="metric-sub">Across all cashbook sheets</span>
+          <span class="metric-sub">Total cashbook</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Total Expenses</span>
+          <span class="metric-label">Expenses</span>
           <span class="metric-val text-red" id="dashTotalExp">0</span>
-          <span class="metric-sub">All logged spending</span>
+          <span class="metric-sub">Total logged</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Available Cash Balance</span>
+          <span class="metric-label">Cash Balance</span>
           <span class="metric-val" id="dashNetCash">0</span>
-          <span class="metric-sub">Current in-hand liquidity</span>
+          <span class="metric-sub">In-hand liquidity</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Receivables (Due In)</span>
+          <span class="metric-label">Receivables</span>
           <span class="metric-val text-green" id="dashDueIn">0</span>
-          <span class="metric-sub">Pending debtor collections</span>
+          <span class="metric-sub">Due in</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Payables (Due Out)</span>
+          <span class="metric-label">Payables</span>
           <span class="metric-val text-red" id="dashDueOut">0</span>
-          <span class="metric-sub">Pending creditor payments</span>
+          <span class="metric-sub">Due out</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Projected Net Worth</span>
+          <span class="metric-label">Projected Net</span>
           <span class="metric-val" id="dashProjectedNet">0</span>
-          <span class="metric-sub">Cash + Due In - Due Out</span>
+          <span class="metric-sub">Net balance</span>
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Now</button>
-        <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Cashbook Sheet →</button>
+        <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Sheet →</button>
       </div>
     </div>
 
@@ -579,9 +667,9 @@
       <div class="top-action-bar">
         <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
           <span id="badgePageTitle">Active Page</span>
-          <span style="font-size: 12px; opacity: 0.7;">✎</span>
+          <span style="font-size: 11px; opacity: 0.7;">✎</span>
         </div>
-        <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy whole previous page and add new">+</button>
+        <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy previous page and add new">+</button>
       </div>
 
       <div class="table-scroll">
@@ -609,14 +697,14 @@
         </table>
       </div>
 
-      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
         <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
         <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
         <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Supabase</button>
       </div>
 
-      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top: 14px;">
-        <div style="font-weight: 600; margin-bottom: 10px; color: #495057;">Month-Wise Balance (Click to open):</div>
+      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none;">
+        <div style="font-weight: 600; margin-bottom: 8px; color: #495057;">Month-Wise Balance (Click to open):</div>
         <div class="month-bal-list" id="monthBalList"></div>
         <div class="overall-total-box">
           <span>Total Available Balance (All Months):</span>
@@ -627,7 +715,7 @@
 
     <!-- Receivables Section -->
     <div id="receivables-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Receivable (Due In)</h3>
+      <h3 style="margin-bottom: 10px; font-size: 16px;">Accounts Receivable (Due In)</h3>
       <div class="table-scroll">
         <table>
           <thead>
@@ -647,7 +735,7 @@
 
     <!-- Payables Section -->
     <div id="payables-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
+      <h3 style="margin-bottom: 10px; font-size: 16px;">Accounts Payable (Due Out)</h3>
       <div class="table-scroll">
         <table>
           <thead>
@@ -667,7 +755,7 @@
 
     <!-- Reports & Ledger Section -->
     <div id="ledger-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 12px; font-size: 18px;">Reports & Statement Center</h3>
+      <h3 style="margin-bottom: 10px; font-size: 16px;">Reports & Statement Center</h3>
       
       <div class="filter-box">
         <div class="filter-group">
@@ -737,7 +825,7 @@
         <input type="text" id="modalPageNameInput" placeholder="Enter page name">
         <div class="modal-actions">
           <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:6px;">
             <button class="modal-btn modal-cancel-btn" onclick="closeModal('pageModal')">Cancel</button>
             <button class="modal-btn modal-save-btn" onclick="savePageModal()">Save</button>
           </div>
@@ -758,6 +846,26 @@
   </div>
 
   <script>
+    /* ===================== TOAST NOTIFICATION UTILITY ===================== */
+    let toastTimer = null;
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('fintrack-toast');
+      const msg = document.getElementById('toast-msg');
+      const icon = document.getElementById('toast-icon');
+
+      clearTimeout(toastTimer);
+      toast.className = '';
+      toast.classList.add(type === 'success' ? 'success' : 'error');
+
+      icon.innerText = type === 'success' ? '✓' : '✕';
+      msg.innerText = message;
+
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
     /* ===================== SUPABASE CONFIGURATION ===================== */
     const SUPABASE_URL = "https://esnjmwnnigxhglfxfkyz.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
@@ -779,6 +887,11 @@
         options: { data: { username: String(username).trim() } }
       });
       if (error) throw error;
+      
+      // If Supabase has user already registered without confirmation or duplicate identity
+      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        throw new Error("USER_EXISTS");
+      }
       fintrackAuthUser = data.user || null;
       return data;
     }
@@ -816,9 +929,11 @@
 
       if (error) {
         console.error("Supabase save error:", error);
-        if (showError) alert("Save failed: " + error.message);
+        if (showError) showToast("Save failed: " + error.message, "error");
         return false;
       }
+
+      if (showError) showToast("All data synced successfully!", "success");
 
       const indicator = document.getElementById("syncIndicator");
       if (indicator) {
@@ -972,11 +1087,11 @@
       const passVal = document.getElementById('loginPassword').value.trim();
 
       if (!userVal || !passVal) {
-        alert('Please enter both username and password');
+        showToast("Please enter both username and password", "error");
         return;
       }
       if (passVal.length < 6) {
-        alert('Password must be at least 6 characters long');
+        showToast("Password must be at least 6 characters long", "error");
         return;
       }
 
@@ -990,15 +1105,30 @@
           currentUser = { username: userVal };
           localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
           await saveToSupabase(false);
+          showToast("Registration successful! Welcome.", "success");
           await checkAuthSession();
         } else {
           await fintrackLogin(userVal, passVal);
           currentUser = { username: userVal };
           localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+          showToast("Login successful!", "success");
           await checkAuthSession();
         }
       } catch (err) {
-        alert(err.message || 'Authentication error occurred');
+        const errorMsg = (err.message || "").toLowerCase();
+        if (authMode === 'login') {
+          if (errorMsg.includes("invalid login credentials") || errorMsg.includes("invalid_grant")) {
+            showToast("Invalid credentials. Please check password or register first.", "error");
+          } else {
+            showToast(err.message || "Login failed. Please register first.", "error");
+          }
+        } else {
+          if (err.message === "USER_EXISTS" || errorMsg.includes("already registered") || errorMsg.includes("user already exists")) {
+            showToast("Username already registered. Please login.", "error");
+          } else {
+            showToast(err.message || "Registration failed. Try another username.", "error");
+          }
+        }
       } finally {
         btn.innerText = authMode === 'register' ? 'Register' : 'Login';
         btn.disabled = false;
@@ -1006,12 +1136,13 @@
     }
 
     function handleForgotPassword() {
-      alert('To reset your credentials, please register with a new username or contact your database administrator.');
+      showToast("To reset, register with a new username or contact admin.", "error");
     }
 
     async function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
         await fintrackLogout();
+        showToast("Logged out successfully", "success");
         checkAuthSession();
       }
     }
@@ -1205,6 +1336,7 @@
       appTitle = finalTitle;
       localStorage.setItem('cashbook_app_name', finalTitle);
       saveAllData();
+      showToast("App title updated!", "success");
       closeModal('appNameModal');
     }
 
@@ -1230,8 +1362,10 @@
           rows: copiedRows.length > 0 ? copiedRows : [{ date: today, particular: '', income: 0, exp: 0 }]
         });
         currentSheetIndex = sheets.length - 1;
+        showToast("New page created", "success");
       } else {
         sheets[currentSheetIndex].name = finalName;
+        showToast("Page renamed", "success");
       }
 
       saveAllData();
@@ -1249,6 +1383,7 @@
         saveAllData();
         renderSheet();
         if (isBalPanelVisible) renderBalances();
+        showToast("Page deleted", "success");
         closeModal('pageModal');
       }
     }
@@ -1570,7 +1705,6 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    // Boot up
     checkAuthSession();
   </script>
 </body>
