@@ -88,6 +88,7 @@
     .fintrack-input-group {
       margin-bottom: 12px;
       text-align: left;
+      position: relative;
     }
     .fintrack-input-group input {
       width: 100%;
@@ -104,6 +105,40 @@
       border-color: #1e70bf;
       box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
     }
+    .pwd-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .pwd-input-wrapper input {
+      padding-right: 40px;
+    }
+    .pwd-toggle-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: #6c757d;
+      user-select: none;
+      padding: 4px;
+    }
+    .auth-checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #495057;
+      text-align: left;
+    }
+    .auth-checkbox-row input {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      accent-color: #1e70bf;
+    }
     .fintrack-btn {
       width: 100%;
       padding: 11px;
@@ -115,7 +150,7 @@
       border-radius: 8px;
       cursor: pointer;
       margin-top: 6px;
-      box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
+      box-shadow: 0 4px 10px rgba(233, 93, 158, 0.3);
       transition: opacity 0.15s;
     }
     .fintrack-btn:hover { opacity: 0.95; }
@@ -132,7 +167,7 @@
       cursor: pointer;
     }
 
-    /* Dashboard Metrics: 2 columns on mobile, auto-fit on desktop */
+    /* Dashboard Metrics: 2 items per line on mobile */
     .dash-metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -224,6 +259,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      position: relative;
     }
     .user-pill {
       font-size: 11px;
@@ -268,6 +304,42 @@
       border-radius: 5px;
     }
     .three-dots-btn:hover { background: #e2e6ea; }
+
+    /* Dropdown menu for 3 dots */
+    .header-dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 32px;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      width: 175px;
+      z-index: 1001;
+      overflow: hidden;
+    }
+    .header-dropdown-menu.show {
+      display: block;
+    }
+    .header-dropdown-item {
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: #212529;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-dropdown-item:hover {
+      background: #f8f9fa;
+      color: #0d6efd;
+    }
 
     .nav-tabs {
       display: flex;
@@ -514,38 +586,55 @@
       font-size: 12px;
     }
 
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(2px);
-      z-index: 999;
+      z-index: 9999;
       align-items: center;
       justify-content: center;
       padding: 16px;
     }
     .modal-box {
       background: #ffffff;
-      border-radius: 8px;
+      border-radius: 12px;
       max-width: 360px;
       width: 100%;
-      padding: 18px;
+      padding: 22px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .modal-box h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0d6efd;
+      margin-bottom: 10px;
     }
     .modal-box h4 {
       margin-bottom: 12px;
       font-size: 15px;
       font-weight: 600;
       color: #212529;
+      text-align: left;
     }
-    .modal-box input {
+    .modal-box p.modal-desc {
+      font-size: 13px;
+      color: #6c757d;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+    .modal-input-field {
+      width: 100%;
       border: 1px solid #ced4da;
-      padding: 8px 10px;
-      border-radius: 5px;
+      padding: 10px 12px;
+      border-radius: 6px;
       background: #fff;
       margin-bottom: 14px;
-      font-size: 13px;
+      font-size: 13.5px;
+      text-align: left;
     }
     .modal-actions {
       display: flex;
@@ -553,14 +642,14 @@
       gap: 8px;
     }
     .modal-btn {
-      padding: 7px 14px;
+      padding: 8px 16px;
       border: none;
-      border-radius: 5px;
-      font-size: 12px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
     }
-    .modal-save-btn { background: #0d6efd; color: #fff; }
+    .modal-save-btn { background: #0d6efd; color: #fff; width: 100%; }
     .modal-cancel-btn { background: #6c757d; color: #fff; }
     .modal-del-btn { background: #dc3545; color: #fff; }
   </style>
@@ -583,14 +672,27 @@
         <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
 
-      <div class="fintrack-input-group">
-        <input type="password" id="loginPassword" placeholder="Password (min 6 chars)" autocomplete="current-password">
+      <!-- Gmail ID Field (Visible on Register & Forgot Password) -->
+      <div class="fintrack-input-group" id="gmailInputGroup" style="display: none;">
+        <input type="email" id="userEmail" placeholder="Gmail / Email Address" autocomplete="email">
+      </div>
+
+      <div class="fintrack-input-group" id="passwordInputGroup">
+        <div class="pwd-input-wrapper">
+          <input type="password" id="loginPassword" placeholder="Password (min 6 chars)" autocomplete="current-password">
+          <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)">👁</button>
+        </div>
+      </div>
+
+      <div class="auth-checkbox-row" id="rememberMeContainer">
+        <input type="checkbox" id="rememberMeCheckbox">
+        <label for="rememberMeCheckbox">Remember Me</label>
       </div>
       
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
-        <a onclick="handleForgotPassword()">Forgot Password?</a>
+        <a id="forgotPwdLink" onclick="openForgotModal()">Forgot Password?</a>
         <a id="authModeToggleLink" onclick="toggleAuthModeView()">Register</a>
       </div>
     </div>
@@ -607,7 +709,17 @@
             <span>👤</span> <span id="currentUserNameLabel">User</span>
           </div>
           <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
-          <button class="three-dots-btn" onclick="openAppNameModal()" title="Edit App Name">⋮</button>
+          <button class="three-dots-btn" onclick="toggleHeaderDropdown(event)" title="Options">⋮</button>
+          
+          <!-- Dropdown menu -->
+          <div class="header-dropdown-menu" id="headerDropdownMenu">
+            <button class="header-dropdown-item" onclick="openAppNameModal(); hideHeaderDropdown();">
+              ✏️ Edit App Name
+            </button>
+            <button class="header-dropdown-item" onclick="openChangePasswordModal(); hideHeaderDropdown();">
+              🔒 Reset Password
+            </button>
+          </div>
         </div>
       </div>
       <div class="nav-tabs">
@@ -819,10 +931,11 @@
     </div>
 
     <!-- Modals -->
+    <!-- Page Rename Modal -->
     <div class="modal-overlay" id="pageModal">
       <div class="modal-box">
         <h4 id="modalHeading">Edit Page Name</h4>
-        <input type="text" id="modalPageNameInput" placeholder="Enter page name">
+        <input type="text" class="modal-input-field" id="modalPageNameInput" placeholder="Enter page name">
         <div class="modal-actions">
           <button class="modal-btn modal-del-btn" id="modalDeleteBtn" onclick="deleteCurrentSheet()">Delete</button>
           <div style="display:flex; gap:6px;">
@@ -833,13 +946,51 @@
       </div>
     </div>
 
+    <!-- Website / App Name Modal -->
     <div class="modal-overlay" id="appNameModal">
       <div class="modal-box">
         <h4>Edit Website / Header Name</h4>
-        <input type="text" id="modalAppNameInput" placeholder="Enter website title">
-        <div class="modal-actions" style="justify-content: flex-end;">
+        <input type="text" class="modal-input-field" id="modalAppNameInput" placeholder="Enter website title">
+        <div class="modal-actions" style="justify-content: flex-end; gap:6px;">
           <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
           <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset / Change Password Modal (Inside App) -->
+    <div class="modal-overlay" id="changePasswordModal">
+      <div class="modal-box">
+        <h4 style="color:#0d6efd; font-size:18px;">Reset / Change Password</h4>
+        <p class="modal-desc" style="text-align: left; margin-bottom: 12px;">Enter your new desired password below.</p>
+        
+        <div class="fintrack-input-group">
+          <div class="pwd-input-wrapper">
+            <input type="password" id="newPasswordInput" placeholder="New Password (min 6 chars)">
+            <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('newPasswordInput', this)">👁</button>
+          </div>
+        </div>
+        
+        <div class="modal-actions" style="margin-top: 16px; gap: 8px;">
+          <button class="modal-btn modal-cancel-btn" onclick="closeModal('changePasswordModal')">Cancel</button>
+          <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forgot Password Modal (Styled Exactly Like Image) -->
+    <div class="modal-overlay" id="forgotModal">
+      <div class="modal-box">
+        <h3>Forgot Your Password?</h3>
+        <p class="modal-desc">
+          To reset your password, enter the registered e-mail address and we will send you password reset instructions on your e-mail!
+        </p>
+        <div style="position: relative; margin-bottom: 16px;">
+          <input type="email" id="forgotEmailInput" class="modal-input-field" placeholder="✉  E-Mail" style="margin-bottom: 0;">
+        </div>
+        <button class="modal-btn modal-save-btn" style="background: #0099ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleSendPasswordResetEmail()">Reset Password</button>
+        <div style="margin-top: 14px;">
+          <a onclick="closeModal('forgotModal')" style="color: #6c757d; font-size: 13px; text-decoration: underline; cursor: pointer;">Cancel</a>
         </div>
       </div>
     </div>
@@ -866,6 +1017,18 @@
       }, 3500);
     }
 
+    /* ===================== PASSWORD VISIBILITY TOGGLE ===================== */
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = '🙈';
+      } else {
+        input.type = 'password';
+        btn.innerText = '👁';
+      }
+    }
+
     /* ===================== SUPABASE CONFIGURATION ===================== */
     const SUPABASE_URL = "https://esnjmwnnigxhglfxfkyz.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
@@ -875,20 +1038,21 @@
     let fintrackSaveTimer = null;
     let autoSyncInterval = null;
 
-    function fintrackEmail(username) {
+    function fintrackEmail(username, customEmail = null) {
+      if (customEmail && customEmail.trim().includes("@")) return customEmail.trim();
       const value = String(username || "").trim();
       return value.includes("@") ? value : `${value}@fintrack.local`;
     }
 
-    async function fintrackRegister(username, password) {
+    async function fintrackRegister(username, password, email) {
+      const finalEmail = (email && email.trim()) ? email.trim() : fintrackEmail(username);
       const { data, error } = await fintrackSupabase.auth.signUp({
-        email: fintrackEmail(username),
+        email: finalEmail,
         password: password,
         options: { data: { username: String(username).trim() } }
       });
       if (error) throw error;
       
-      // If Supabase has user already registered without confirmation or duplicate identity
       if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
         throw new Error("USER_EXISTS");
       }
@@ -1026,7 +1190,10 @@
 
       if (sessionUser) {
         fintrackAuthUser = sessionUser;
-        currentUser = { username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0] };
+        currentUser = { 
+          username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0],
+          email: sessionUser.email 
+        };
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
         
         authContainer.style.display = 'none';
@@ -1043,6 +1210,7 @@
         authContainer.style.display = 'flex';
         mainApp.style.display = 'none';
         stopAutoSync();
+        loadSavedCredentials();
       }
     }
 
@@ -1068,30 +1236,56 @@
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
+      const gmailGroup = document.getElementById('gmailInputGroup');
+      const rememberGroup = document.getElementById('rememberMeContainer');
+      const forgotLink = document.getElementById('forgotPwdLink');
 
       if (authMode === 'register') {
         title.innerText = 'FinTrack';
         subtitle.innerText = 'Create an Account';
         submitBtn.innerText = 'Register';
         toggleLink.innerText = 'Have an account? Login';
+        gmailGroup.style.display = 'block';
+        rememberGroup.style.display = 'none';
+        forgotLink.style.display = 'none';
       } else {
         title.innerText = 'FinTrack';
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
         toggleLink.innerText = 'New user? Register';
+        gmailGroup.style.display = 'none';
+        rememberGroup.style.display = 'flex';
+        forgotLink.style.display = 'inline';
+        loadSavedCredentials();
+      }
+    }
+
+    function loadSavedCredentials() {
+      const savedUser = localStorage.getItem('fintrack_remember_user');
+      const savedPass = localStorage.getItem('fintrack_remember_pass');
+      if (savedUser && savedPass) {
+        document.getElementById('loginUsername').value = savedUser;
+        document.getElementById('loginPassword').value = savedPass;
+        document.getElementById('rememberMeCheckbox').checked = true;
       }
     }
 
     async function handleAuthSubmit() {
       const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const rememberMe = document.getElementById('rememberMeCheckbox').checked;
 
       if (!userVal || !passVal) {
-        showToast("Please enter both username and password", "error");
+        showToast("Please enter username and password", "error");
         return;
       }
       if (passVal.length < 6) {
         showToast("Password must be at least 6 characters long", "error");
+        return;
+      }
+      if (authMode === 'register' && !emailVal) {
+        showToast("Please enter your Gmail / Email ID", "error");
         return;
       }
 
@@ -1101,8 +1295,8 @@
 
       try {
         if (authMode === 'register') {
-          await fintrackRegister(userVal, passVal);
-          currentUser = { username: userVal };
+          await fintrackRegister(userVal, passVal, emailVal);
+          currentUser = { username: userVal, email: emailVal };
           localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
           await saveToSupabase(false);
           showToast("Registration successful! Welcome.", "success");
@@ -1111,6 +1305,15 @@
           await fintrackLogin(userVal, passVal);
           currentUser = { username: userVal };
           localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
+
+          if (rememberMe) {
+            localStorage.setItem('fintrack_remember_user', userVal);
+            localStorage.setItem('fintrack_remember_pass', passVal);
+          } else {
+            localStorage.removeItem('fintrack_remember_user');
+            localStorage.removeItem('fintrack_remember_pass');
+          }
+
           showToast("Login successful!", "success");
           await checkAuthSession();
         }
@@ -1135,9 +1338,75 @@
       }
     }
 
-    function handleForgotPassword() {
-      showToast("To reset, register with a new username or contact admin.", "error");
+    /* Forgot Password Functionality */
+    function openForgotModal() {
+      document.getElementById('forgotEmailInput').value = '';
+      document.getElementById('forgotModal').style.display = 'flex';
     }
+
+    async function handleSendPasswordResetEmail() {
+      const email = document.getElementById('forgotEmailInput').value.trim();
+      if (!email || !email.includes('@')) {
+        showToast("Please enter a valid email address", "error");
+        return;
+      }
+
+      try {
+        const { error } = await fintrackSupabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.href
+        });
+        if (error) throw error;
+        closeModal('forgotModal');
+        showToast("Password reset link sent to your email!", "success");
+      } catch (err) {
+        showToast(err.message || "Failed to send reset email.", "error");
+      }
+    }
+
+    /* Change Password Modal (inside dashboard) */
+    function openChangePasswordModal() {
+      document.getElementById('newPasswordInput').value = '';
+      document.getElementById('changePasswordModal').style.display = 'flex';
+    }
+
+    async function handleUpdatePassword() {
+      const newPassword = document.getElementById('newPasswordInput').value.trim();
+      if (!newPassword || newPassword.length < 6) {
+        showToast("Password must be at least 6 characters long", "error");
+        return;
+      }
+
+      try {
+        const { error } = await fintrackSupabase.auth.updateUser({ password: newPassword });
+        if (error) throw error;
+        
+        // Update saved remembered credentials if exists
+        if (localStorage.getItem('fintrack_remember_pass')) {
+          localStorage.setItem('fintrack_remember_pass', newPassword);
+        }
+
+        closeModal('changePasswordModal');
+        showToast("Password updated successfully!", "success");
+      } catch (err) {
+        showToast(err.message || "Failed to update password", "error");
+      }
+    }
+
+    /* 3 dots Dropdown handler */
+    function toggleHeaderDropdown(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('headerDropdownMenu');
+      menu.classList.toggle('show');
+    }
+
+    function hideHeaderDropdown() {
+      const menu = document.getElementById('headerDropdownMenu');
+      if (menu) menu.classList.remove('show');
+    }
+
+    document.addEventListener('click', () => {
+      hideHeaderDropdown();
+    });
 
     async function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
