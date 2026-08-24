@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FinTrack - Money Management</title>
@@ -686,7 +687,7 @@
       <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
     </div>
 
-    -- Payables Section -->
+    <!-- Payables Section -->
     <div id="payables-section" class="sheet-container" style="display:none;">
       <h3 style="margin-bottom: 12px; font-size: 18px;">Accounts Payable (Due Out)</h3>
       <div class="table-scroll">
@@ -799,7 +800,220 @@
     </div>
   </div>
 
-  <script>
+  
+<script>
+/* ===================== FINTRACK SUPABASE MIGRATION =====================
+   Replace the two values below with:
+   Supabase -> Project Settings -> API
+*/
+const SUPABASE_URL = 
+"https://esnjmwnnigxhglfxfkyz.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
+const fintrackSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let fintrackAuthUser = null;
+let fintrackSaveTimer = null;
+
+function supabaseConfigured() {
+  return SUPABASE_URL && SUPABASE_ANON_KEY &&
+    !SUPABASE_URL.includes("YOUR_SUPABASE") &&
+    !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE");
+}
+
+async function fintrackGetSession() {
+  if (!supabaseConfigured()) return null;
+  const { data } = await fintrackSupabase.auth.getSession();
+  fintrackAuthUser = data?.session?.user || null;
+  return fintrackAuthUser;
+}
+
+function fintrackEmail(username) {
+  const value = String(username || "").trim();
+  return value.includes("@") ? value : `${value}@fintrack.local`;
+}
+
+async function fintrackRegister(username, password) {
+  const { data, error } = await fintrackSupabase.auth.signUp({
+    email: fintrackEmail(username),
+    password,
+    options: { data: { username: String(username).trim() } }
+  });
+  if (error) throw error;
+  fintrackAuthUser = data.user || null;
+  return data;
+}
+
+async function fintrackLogin(username, password) {
+  const { data, error } = await fintrackSupabase.auth.signInWithPassword({
+    email: fintrackEmail(username),
+    password
+  });
+  if (error) throw error;
+  fintrackAuthUser = data.user || null;
+  return data;
+}
+
+async function fintrackLogout() {
+  await fintrackSupabase.auth.signOut();
+  fintrackAuthUser = null;
+}
+
+async function saveToSupabase(showError = true) {
+  if (!fintrackAuthUser) return false;
+
+  const row = {
+    user_id: fintrackAuthUser.id,
+    sheets: Array.isArray(sheets) ? sheets : [],
+    receivables: Array.isArray(receivables) ? receivables : [],
+    payables: Array.isArray(payables) ? payables : [],
+    app_name: appTitle || "FinTrack",
+    updated_at: new Date().toISOString()
+  };
+
+  const { error } = await fintrackSupabase
+    .from("fintrack_data")
+    .upsert(row, { onConflict: "user_id" });
+
+  if (error) {
+    console.error("Supabase save error:", error);
+    if (showError) console.warn("FinTrack online save failed:", error.message);
+    return false;
+  }
+
+  const indicator = document.getElementById("syncIndicator");
+  if (indicator) {
+    indicator.innerText = "☁ Saved";
+    indicator.style.color = "#198754";
+    indicator.style.display = "inline-block";
+    clearTimeout(window.__fintrackSyncHide);
+    window.__fintrackSyncHide = setTimeout(() => {
+      indicator.style.display = "none";
+    }, 1800);
+  }
+  return true;
+}
+
+async function loadFromSupabase() {
+  if (!fintrackAuthUser) return false;
+
+  const { data, error } = await fintrackSupabase
+    .from("fintrack_data")
+    .select("sheets,receivables,payables,app_name,updated_at")
+    .eq("user_id", fintrackAuthUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Supabase load error:", error);
+    return false;
+  }
+
+  if (data) {
+    sheets = Array.isArray(data.sheets) ? data.sheets : [];
+    receivables = Array.isArray(data.receivables) ? data.receivables : [];
+    payables = Array.isArray(data.payables) ? data.payables : [];
+    if (data.app_name) {
+      appTitle = data.app_name;
+      const brand = document.getElementById("appBrandTitle");
+      if (brand) brand.innerText = appTitle;
+    }
+  }
+
+  renderDashboard();
+  if (typeof renderSheet === "function") renderSheet();
+  if (typeof renderDueTables === "function") renderDueTables();
+  if (typeof renderBalances === "function" && isBalPanelVisible) renderBalances();
+  return true;
+}
+
+function scheduleSupabaseSave() {
+  clearTimeout(fintrackSaveTimer);
+  fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
+}
+
+/* Replace the app's central save operation with local cache + online save. */
+window.__fintrackOriginalSaveAllData = window.saveAllData;
+window.saveAllData = function(showNotify = false) {
+  try {
+    localStorage.setItem(getUserStorageKey("sheets"), JSON.stringify(sheets || []));
+    localStorage.setItem(getUserStorageKey("receivables"), JSON.stringify(receivables || []));
+    localStorage.setItem(getUserStorageKey("payables"), JSON.stringify(payables || []));
+  } catch (e) {
+    console.warn("Local cache save failed", e);
+  }
+  scheduleSupabaseSave();
+};
+
+/* Legacy function names remain available so existing UI buttons do not break. */
+window.syncWithGoogleDrive = function(showNotify = false) {
+  return saveToSupabase(showNotify);
+};
+window.fetchDataFromGoogleDrive = function(silent = false) {
+  return loadFromSupabase();
+};
+window.debouncedDriveSync = function() {
+  scheduleSupabaseSave();
+};
+
+async function finishSupabaseLogin(username, password) {
+  if (!supabaseConfigured()) {
+    alert("Please configure SUPABASE_URL and SUPABASE_ANON_KEY in FinTrack.html first.");
+    return false;
+  }
+  try {
+    await fintrackLogin(username, password);
+    await loadFromSupabase();
+    return true;
+  } catch (e) {
+    alert(e.message || "Login failed.");
+    return false;
+  }
+}
+
+async function finishSupabaseRegister(username, password) {
+  if (!supabaseConfigured()) {
+    alert("Please configure SUPABASE_URL and SUPABASE_ANON_KEY in FinTrack.html first.");
+    return false;
+  }
+  try {
+    await fintrackRegister(username, password);
+    await saveToSupabase(false);
+    return true;
+  } catch (e) {
+    alert(e.message || "Registration failed.");
+    return false;
+  }
+}
+
+/* Multi-device refresh: pull newer state periodically when user is idle. */
+let fintrackPullTimer = null;
+function startSupabaseAutoSync() {
+  clearInterval(fintrackPullTimer);
+  if (!fintrackAuthUser) return;
+  fintrackPullTimer = setInterval(async () => {
+    const active = document.activeElement;
+    if (active && ["INPUT","TEXTAREA","SELECT"].includes(active.tagName)) return;
+    await loadFromSupabase();
+  }, 20000);
+}
+function stopSupabaseAutoSync() {
+  clearInterval(fintrackPullTimer);
+  fintrackPullTimer = null;
+}
+
+if (supabaseConfigured()) {
+  fintrackSupabase.auth.onAuthStateChange((_event, session) => {
+    fintrackAuthUser = session?.user || null;
+    if (fintrackAuthUser) startSupabaseAutoSync();
+    else stopSupabaseAutoSync();
+  });
+}
+
+window.addEventListener("beforeunload", () => {
+  if (fintrackAuthUser) saveToSupabase(false);
+});
+</script>
+
+<script>
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
@@ -808,6 +1022,7 @@
     let isCreatingNew = false;
     let authMode = 'login'; // 'login' or 'register'
     let syncTimer = null;
+    let autoSyncInterval = null;
 
     let usersList = JSON.parse(localStorage.getItem('cashbook_users_list')) || [];
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
@@ -835,11 +1050,37 @@
         mainApp.style.display = 'block';
         document.getElementById('currentUserNameLabel').innerText = currentUser.username;
         initUserData();
+        startAutoSync();
       } else {
         authContainer.style.display = 'flex';
         mainApp.style.display = 'none';
+        stopAutoSync();
       }
     }
+
+    /* Live Sync: keep mobile/desktop up to date without manual refresh */
+    function startAutoSync() {
+      stopAutoSync();
+      // Poll Drive every 20 seconds for fresh data from other devices
+      autoSyncInterval = setInterval(() => {
+        fetchDataFromGoogleDrive(true);
+      }, 20000);
+    }
+
+    function stopAutoSync() {
+      if (autoSyncInterval) {
+        clearInterval(autoSyncInterval);
+        autoSyncInterval = null;
+      }
+    }
+
+    // Instantly refresh the moment the app/tab comes back into view
+    // (e.g. switching back to the browser on mobile after editing on desktop)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && currentUser) {
+        fetchDataFromGoogleDrive(true);
+      }
+    });
 
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
@@ -916,6 +1157,7 @@
 
     function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
+        stopAutoSync();
         currentUser = null;
         localStorage.removeItem('cashbook_active_user');
         checkAuthSession();
@@ -1122,20 +1364,43 @@
       });
     }
 
-    function fetchDataFromGoogleDrive() {
+    function fetchDataFromGoogleDrive(silent = false) {
       if (!currentUser || !currentUser.driveUrl) return;
 
+      // Skip a silent background pull while the user is actively typing,
+      // so live sync never interrupts an in-progress entry.
+      if (silent) {
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA')) {
+          return;
+        }
+      }
+
       const syncInd = document.getElementById('syncIndicator');
-      syncInd.innerText = '☁ Fetching from Drive...';
-      syncInd.style.color = '#0d6efd';
-      syncInd.style.display = 'inline-block';
+      if (!silent) {
+        syncInd.innerText = '☁ Fetching from Drive...';
+        syncInd.style.color = '#0d6efd';
+        syncInd.style.display = 'inline-block';
+      }
 
-      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}`;
+      // Cache-bust: mobile browsers / the Apps Script exec URL can cache GET
+      // responses for a few minutes, which was causing the stale-data delay.
+      const cacheBuster = Date.now();
+      const fetchUrl = currentUser.driveUrl + (currentUser.driveUrl.includes('?') ? '&' : '?') + `action=get&username=${encodeURIComponent(currentUser.username)}&_=${cacheBuster}`;
 
-      fetch(fetchUrl)
+      fetch(fetchUrl, { cache: 'no-store' })
       .then(res => res.json())
       .then(resData => {
         if (resData && resData.sheets) {
+          const incomingUpdatedAt = resData.updatedAt || null;
+          const lastKnownRemoteUpdatedAt = localStorage.getItem(getUserStorageKey('lastRemoteUpdatedAt'));
+
+          // If we already have this exact version, skip the re-render entirely.
+          if (silent && incomingUpdatedAt && incomingUpdatedAt === lastKnownRemoteUpdatedAt) {
+            syncInd.style.display = 'none';
+            return;
+          }
+
           sheets = resData.sheets;
           receivables = resData.receivables || [];
           payables = resData.payables || [];
@@ -1144,14 +1409,22 @@
           renderDashboard();
           renderSheet();
           renderDueTables();
+
+          if (incomingUpdatedAt) {
+            localStorage.setItem(getUserStorageKey('lastRemoteUpdatedAt'), incomingUpdatedAt);
+          }
+
           syncInd.innerText = '☁ Up to Date';
           syncInd.style.color = '#198754';
+          syncInd.style.display = 'inline-block';
           setTimeout(() => { syncInd.style.display = 'none'; }, 3000);
+        } else if (!silent) {
+          syncInd.style.display = 'none';
         }
       })
       .catch((err) => {
         console.log('Fetch skipped or local state loaded.');
-        syncInd.style.display = 'none';
+        if (!silent) syncInd.style.display = 'none';
       });
     }
 
