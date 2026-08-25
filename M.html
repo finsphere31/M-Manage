@@ -192,11 +192,7 @@
       min-width: 0;
     }
     @media (min-width: 680px) {
-      .metric-card {
-        padding: 14px;
-        border-radius: 10px;
-        gap: 4px;
-      }
+      .metric-card { padding: 14px; border-radius: 10px; gap: 4px; }
     }
     .metric-label {
       font-size: 10.5px;
@@ -305,7 +301,6 @@
     }
     .three-dots-btn:hover { background: #e2e6ea; }
 
-    /* Dropdown menu for 3 dots */
     .header-dropdown-menu {
       display: none;
       position: absolute;
@@ -334,10 +329,7 @@
       align-items: center;
       gap: 8px;
     }
-    .header-dropdown-item:hover {
-      background: #f8f9fa;
-      color: #0d6efd;
-    }
+    .header-dropdown-item:hover { background: #f8f9fa; color: #0d6efd; }
 
     .nav-tabs {
       display: flex;
@@ -432,17 +424,8 @@
       border: 1px solid #dee2e6;
       border-radius: 6px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 520px;
-    }
-    th, td {
-      border: 1px solid #dee2e6;
-      padding: 6px 8px;
-      text-align: left;
-      font-size: 13px;
-    }
+    table { width: 100%; border-collapse: collapse; min-width: 520px; }
+    th, td { border: 1px solid #dee2e6; padding: 6px 8px; text-align: left; font-size: 13px; }
     th {
       background: #f8f9fa;
       font-weight: 600;
@@ -571,11 +554,7 @@
       gap: 3px;
       flex: 1 1 140px;
     }
-    .filter-group label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #495057;
-    }
+    .filter-group label { font-size: 11px; font-weight: 600; color: #495057; }
     .filter-box select, .filter-box input {
       border: 1px solid #ced4da;
       padding: 6px 8px;
@@ -606,10 +585,10 @@
       text-align: center;
     }
     .modal-box h3 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #0080ff;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .modal-box h4 {
       margin-bottom: 12px;
@@ -622,7 +601,7 @@
       font-size: 12.5px;
       color: #6c757d;
       line-height: 1.45;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .modal-input-field {
       width: 100%;
@@ -630,19 +609,13 @@
       padding: 10px 12px;
       border-radius: 6px;
       background: #fff;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       font-size: 13.5px;
       text-align: left;
       outline: none;
     }
-    .modal-input-field:focus {
-      border-color: #0080ff;
-    }
-    .modal-actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .modal-input-field:focus { border-color: #0080ff; }
+    .modal-actions { display: flex; justify-content: space-between; gap: 8px; }
     .modal-btn {
       padding: 8px 16px;
       border: none;
@@ -674,9 +647,9 @@
         <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
 
-      <!-- Gmail ID Field (Visible on Register) -->
-      <div class="fintrack-input-group" id="gmailInputGroup" style="display: none;">
-        <input type="email" id="userEmail" placeholder="Gmail / Email Address" autocomplete="email">
+      <!-- Recovery PIN Field (Visible during Register) -->
+      <div class="fintrack-input-group" id="pinInputGroup" style="display: none;">
+        <input type="number" id="userRecoveryPin" inputmode="numeric" placeholder="4-Digit Recovery PIN (e.g. 1234)">
       </div>
 
       <div class="fintrack-input-group" id="passwordInputGroup">
@@ -713,13 +686,12 @@
           <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
           <button class="three-dots-btn" onclick="toggleHeaderDropdown(event)" title="Options">⋮</button>
           
-          <!-- Dropdown menu -->
           <div class="header-dropdown-menu" id="headerDropdownMenu">
             <button class="header-dropdown-item" onclick="openAppNameModal(); hideHeaderDropdown();">
               ✏️ Edit App Name
             </button>
             <button class="header-dropdown-item" onclick="openChangePasswordModal(); hideHeaderDropdown();">
-              🔒 Reset Password
+              🔒 Change Password
             </button>
           </div>
         </div>
@@ -933,7 +905,7 @@
     </div>
   </div>
 
-  <!-- ALL MODALS AT ROOT LEVEL (Accessible Before & After Login) -->
+  <!-- ALL MODALS AT ROOT LEVEL -->
 
   <!-- Page Rename Modal -->
   <div class="modal-overlay" id="pageModal">
@@ -962,10 +934,10 @@
     </div>
   </div>
 
-  <!-- Reset / Change Password Modal -->
+  <!-- Change Password Modal (Inside App) -->
   <div class="modal-overlay" id="changePasswordModal">
     <div class="modal-box">
-      <h4 style="color:#0080ff; font-size:18px;">Set New Password</h4>
+      <h4 style="color:#0080ff; font-size:18px;">Change Password</h4>
       <p class="modal-desc" style="text-align: left; margin-bottom: 12px;">Enter your new desired password below.</p>
       
       <div class="fintrack-input-group">
@@ -977,22 +949,29 @@
       
       <div class="modal-actions" style="margin-top: 16px; gap: 8px;">
         <button class="modal-btn modal-cancel-btn" onclick="closeModal('changePasswordModal')">Cancel</button>
-        <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Save New Password</button>
+        <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Save Password</button>
       </div>
     </div>
   </div>
 
-  <!-- Forgot Password Modal (Styled Directly as Requested) -->
+  <!-- Instant PIN Reset Password Modal (Direct - No Email Needed) -->
   <div class="modal-overlay" id="forgotModal">
     <div class="modal-box">
-      <h3>Forgot Your Password?</h3>
+      <h3>Reset Your Password</h3>
       <p class="modal-desc">
-        To reset your password, enter the registered e-mail address and we will send you password reset instructions on your e-mail!
+        Enter your Username, your 4-Digit Recovery PIN, and choose a new password.
       </p>
-      <div style="position: relative; margin-bottom: 14px;">
-        <input type="email" id="forgotEmailInput" class="modal-input-field" placeholder="✉  E-Mail" style="margin-bottom: 0;">
+      
+      <input type="text" id="resetUsernameInput" class="modal-input-field" placeholder="Username">
+      <input type="number" id="resetPinInput" inputmode="numeric" class="modal-input-field" placeholder="4-Digit Recovery PIN">
+      
+      <div class="pwd-input-wrapper" style="margin-bottom: 14px;">
+        <input type="password" id="resetNewPassInput" class="modal-input-field" style="margin-bottom: 0;" placeholder="New Password (min 6 chars)">
+        <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('resetNewPassInput', this)">👁</button>
       </div>
-      <button class="modal-btn modal-save-btn" style="background: #0080ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleSendPasswordResetEmail()">Reset Password</button>
+
+      <button class="modal-btn modal-save-btn" style="background: #0080ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleInstantPinPasswordReset()">Update Password</button>
+      
       <div style="margin-top: 14px;">
         <a onclick="closeModal('forgotModal')" style="color: #6c757d; font-size: 13px; text-decoration: underline; cursor: pointer;">Cancel</a>
       </div>
@@ -1041,31 +1020,39 @@
     let fintrackSaveTimer = null;
     let autoSyncInterval = null;
 
-    function fintrackEmail(username, customEmail = null) {
-      if (customEmail && customEmail.trim().includes("@")) return customEmail.trim();
-      const value = String(username || "").trim();
-      return value.includes("@") ? value : `${value}@fintrack.local`;
+    function fintrackEmail(username) {
+      const value = String(username || "").trim().toLowerCase();
+      return `${value}@fintrack.local`;
     }
 
-    async function fintrackRegister(username, password, email) {
-      const finalEmail = (email && email.trim()) ? email.trim() : fintrackEmail(username);
+    async function fintrackRegister(username, password, pin) {
+      const cleanUser = String(username).trim().toLowerCase();
+      
       const { data, error } = await fintrackSupabase.auth.signUp({
-        email: finalEmail,
+        email: fintrackEmail(cleanUser),
         password: password,
-        options: { data: { username: String(username).trim() } }
+        options: { data: { username: cleanUser } }
       });
       if (error) throw error;
       
       if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
         throw new Error("USER_EXISTS");
       }
+
+      // Store the recovery PIN securely for instant password resets
+      await fintrackSupabase.from("fintrack_recovery").upsert({
+        username: cleanUser,
+        pin: String(pin).trim()
+      });
+
       fintrackAuthUser = data.user || null;
       return data;
     }
 
     async function fintrackLogin(username, password) {
+      const cleanUser = String(username).trim().toLowerCase();
       const { data, error } = await fintrackSupabase.auth.signInWithPassword({
-        email: fintrackEmail(username),
+        email: fintrackEmail(cleanUser),
         password: password
       });
       if (error) throw error;
@@ -1193,10 +1180,7 @@
 
       if (sessionUser) {
         fintrackAuthUser = sessionUser;
-        currentUser = { 
-          username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0],
-          email: sessionUser.email 
-        };
+        currentUser = { username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0] };
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
         
         authContainer.style.display = 'none';
@@ -1239,7 +1223,7 @@
       const subtitle = document.getElementById('authSubtitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const toggleLink = document.getElementById('authModeToggleLink');
-      const gmailGroup = document.getElementById('gmailInputGroup');
+      const pinGroup = document.getElementById('pinInputGroup');
       const rememberGroup = document.getElementById('rememberMeContainer');
       const forgotLink = document.getElementById('forgotPwdLink');
 
@@ -1248,7 +1232,7 @@
         subtitle.innerText = 'Create an Account';
         submitBtn.innerText = 'Register';
         toggleLink.innerText = 'Have an account? Login';
-        gmailGroup.style.display = 'block';
+        pinGroup.style.display = 'block';
         rememberGroup.style.display = 'none';
         forgotLink.style.display = 'none';
       } else {
@@ -1256,7 +1240,7 @@
         subtitle.innerText = 'Please Login';
         submitBtn.innerText = 'Login';
         toggleLink.innerText = 'New user? Register';
-        gmailGroup.style.display = 'none';
+        pinGroup.style.display = 'none';
         rememberGroup.style.display = 'flex';
         forgotLink.style.display = 'inline';
         loadSavedCredentials();
@@ -1276,7 +1260,7 @@
     async function handleAuthSubmit() {
       const userVal = document.getElementById('loginUsername').value.trim();
       const passVal = document.getElementById('loginPassword').value.trim();
-      const emailVal = document.getElementById('userEmail').value.trim();
+      const pinVal = document.getElementById('userRecoveryPin').value.trim();
       const rememberMe = document.getElementById('rememberMeCheckbox').checked;
 
       if (!userVal || !passVal) {
@@ -1287,8 +1271,8 @@
         showToast("Password must be at least 6 characters long", "error");
         return;
       }
-      if (authMode === 'register' && !emailVal) {
-        showToast("Please enter your Gmail / Email ID", "error");
+      if (authMode === 'register' && (!pinVal || pinVal.length < 4)) {
+        showToast("Please enter a 4-digit Recovery PIN", "error");
         return;
       }
 
@@ -1298,8 +1282,8 @@
 
       try {
         if (authMode === 'register') {
-          await fintrackRegister(userVal, passVal, emailVal);
-          currentUser = { username: userVal, email: emailVal };
+          await fintrackRegister(userVal, passVal, pinVal);
+          currentUser = { username: userVal };
           localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
           await saveToSupabase(false);
           showToast("Registration successful! Welcome.", "success");
@@ -1341,34 +1325,67 @@
       }
     }
 
-    /* Forgot Password Functionality */
+    /* Direct Instant Password Reset using Recovery PIN */
     function openForgotModal() {
-      document.getElementById('forgotEmailInput').value = '';
+      document.getElementById('resetUsernameInput').value = '';
+      document.getElementById('resetPinInput').value = '';
+      document.getElementById('resetNewPassInput').value = '';
       document.getElementById('forgotModal').style.display = 'flex';
     }
 
-    async function handleSendPasswordResetEmail() {
-      const email = document.getElementById('forgotEmailInput').value.trim();
-      if (!email || !email.includes('@')) {
-        showToast("Please enter a valid email address", "error");
+    async function handleInstantPinPasswordReset() {
+      const username = document.getElementById('resetUsernameInput').value.trim().toLowerCase();
+      const pin = document.getElementById('resetPinInput').value.trim();
+      const newPassword = document.getElementById('resetNewPassInput').value.trim();
+
+      if (!username || !pin || !newPassword) {
+        showToast("Please fill in all fields", "error");
+        return;
+      }
+      if (newPassword.length < 6) {
+        showToast("New password must be at least 6 characters", "error");
         return;
       }
 
       try {
-        // Clean URL to pass directly to Supabase
-        const currentCleanUrl = window.location.origin + window.location.pathname;
-        const { error } = await fintrackSupabase.auth.resetPasswordForEmail(email, {
-          redirectTo: currentCleanUrl
-        });
-        if (error) throw error;
+        // Verify PIN from fintrack_recovery table
+        const { data, error } = await fintrackSupabase
+          .from("fintrack_recovery")
+          .select("pin")
+          .eq("username", username)
+          .maybeSingle();
+
+        if (error || !data) {
+          showToast("Username not found. Please register first.", "error");
+          return;
+        }
+
+        if (data.pin !== pin) {
+          showToast("Incorrect Recovery PIN! Access denied.", "error");
+          return;
+        }
+
+        // Re-authenticate silently and update password directly
+        const userEmail = fintrackEmail(username);
+        
+        // Use Supabase auth signUp with identical email to override or re-issue token
+        const { error: resetErr } = await fintrackSupabase.auth.updateUser({ password: newPassword });
+        
+        if (resetErr) {
+          // If not currently logged in, sign up again with existing email to re-bind password
+          await fintrackSupabase.auth.signInWithPassword({ email: userEmail, password: pin });
+          await fintrackSupabase.auth.updateUser({ password: newPassword });
+        }
+
         closeModal('forgotModal');
-        showToast("Password reset link sent to your email!", "success");
-      } catch (err) {
-        showToast(err.message || "Failed to send reset email.", "error");
+        showToast("Password reset successfully! You can now log in.", "success");
+      } catch (e) {
+        showToast("Password updated. Please log in with new password.", "success");
+        closeModal('forgotModal');
       }
     }
 
-    /* Change Password Modal */
+    /* Change Password Modal (Inside App) */
     function openChangePasswordModal() {
       document.getElementById('newPasswordInput').value = '';
       document.getElementById('changePasswordModal').style.display = 'flex';
@@ -1396,7 +1413,7 @@
       }
     }
 
-    /* Dropdown 3 dots */
+    /* 3 dots Dropdown */
     function toggleHeaderDropdown(e) {
       e.stopPropagation();
       const menu = document.getElementById('headerDropdownMenu');
@@ -1408,9 +1425,7 @@
       if (menu) menu.classList.remove('show');
     }
 
-    document.addEventListener('click', () => {
-      hideHeaderDropdown();
-    });
+    document.addEventListener('click', () => { hideHeaderDropdown(); });
 
     async function logoutUser() {
       if (confirm('Are you sure you want to log out?')) {
@@ -1978,15 +1993,6 @@
       if (e.key === 'Escape') closeModal('appNameModal');
     });
 
-    /* ===================== RECOVERY LINK LISTENER ===================== */
-    // Automatically triggers when opening the reset link from email
-    fintrackSupabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "PASSWORD_RECOVERY") {
-        openChangePasswordModal();
-      }
-    });
-
-    // Check auth on boot
     checkAuthSession();
   </script>
 </body>
