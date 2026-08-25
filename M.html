@@ -5,6 +5,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FinTrack - Money Management</title>
+
+  <!-- PWA & Mobile App Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FinTrack">
+  <meta name="theme-color" content="#2b3a4a">
+
+  <!-- Embedded PWA Web Manifest -->
+  <link rel="manifest" href='data:application/manifest+json,{
+    "name": "FinTrack - Money Management",
+    "short_name": "FinTrack",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#2b3a4a",
+    "theme_color": "#2b3a4a",
+    "icons": [
+      {
+        "src": "https://cdn-icons-png.flaticon.com/512/2953/2953363.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }'>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -167,7 +194,7 @@
       cursor: pointer;
     }
 
-    /* Dashboard Metrics: 2 items per line on mobile */
+    /* Dashboard Metrics */
     .dash-metrics-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -687,6 +714,9 @@
           <button class="three-dots-btn" onclick="toggleHeaderDropdown(event)" title="Options">⋮</button>
           
           <div class="header-dropdown-menu" id="headerDropdownMenu">
+            <button class="header-dropdown-item" id="installAppBtn" onclick="installFinTrackApp(); hideHeaderDropdown();" style="color: #198754; font-weight: 700;">
+              📲 Install App
+            </button>
             <button class="header-dropdown-item" onclick="openAppNameModal(); hideHeaderDropdown();">
               ✏️ Edit App Name
             </button>
@@ -954,7 +984,7 @@
     </div>
   </div>
 
-  <!-- Instant PIN Reset Password Modal (Direct - No Email Needed) -->
+  <!-- Instant PIN Reset Password Modal -->
   <div class="modal-overlay" id="forgotModal">
     <div class="modal-box">
       <h3>Reset Your Password</h3>
@@ -1039,7 +1069,6 @@
         throw new Error("USER_EXISTS");
       }
 
-      // Store the recovery PIN securely for instant password resets
       await fintrackSupabase.from("fintrack_recovery").upsert({
         username: cleanUser,
         pin: String(pin).trim()
@@ -1348,7 +1377,6 @@
       }
 
       try {
-        // Verify PIN from fintrack_recovery table
         const { data, error } = await fintrackSupabase
           .from("fintrack_recovery")
           .select("pin")
@@ -1365,14 +1393,10 @@
           return;
         }
 
-        // Re-authenticate silently and update password directly
         const userEmail = fintrackEmail(username);
-        
-        // Use Supabase auth signUp with identical email to override or re-issue token
         const { error: resetErr } = await fintrackSupabase.auth.updateUser({ password: newPassword });
         
         if (resetErr) {
-          // If not currently logged in, sign up again with existing email to re-bind password
           await fintrackSupabase.auth.signInWithPassword({ email: userEmail, password: pin });
           await fintrackSupabase.auth.updateUser({ password: newPassword });
         }
@@ -1768,22 +1792,44 @@
       renderDueTables();
     }
 
-    function switchSection(section, btn) {
-      document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    // Navigation history tracking stack
+let navigationHistory = ['dashboard'];
 
-      document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'block' : 'none';
-      document.getElementById('sheet-section').style.display = section === 'sheet' ? 'block' : 'none';
-      document.getElementById('receivables-section').style.display = section === 'receivables' ? 'block' : 'none';
-      document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
-      document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
+function switchSection(section, btn, fromHistory = false) {
+  const previousSection = navigationHistory[navigationHistory.length - 1];
 
-      if (section === 'dashboard') renderDashboard();
-      if (section === 'ledger') {
-        populateLedgerAccounts();
-        handleReportTypeChange();
-      }
-    }
+  // Update tabs styling
+  const buttons = document.querySelectorAll('.nav-tabs button');
+  buttons.forEach(b => b.classList.remove('active'));
+
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    // Find matching button if triggered programmatically
+    const targetBtn = Array.from(buttons).find(b => 
+      b.getAttribute('onclick')?.includes(`'${section}'`)
+    );
+    if (targetBtn) targetBtn.classList.add('active');
+  }
+
+  // Toggle visible sections
+  document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'block' : 'none';
+  document.getElementById('sheet-section').style.display = section === 'sheet' ? 'block' : 'none';
+  document.getElementById('receivables-section').style.display = section === 'receivables' ? 'block' : 'none';
+  document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
+  document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
+
+  // Push to history stack if not moving back
+  if (!fromHistory && previousSection !== section) {
+    navigationHistory.push(section);
+  }
+
+  if (section === 'dashboard') renderDashboard();
+  if (section === 'ledger') {
+    populateLedgerAccounts();
+    handleReportTypeChange();
+  }
+}
 
     function populateLedgerAccounts() {
       const select = document.getElementById('ledgerAccountSelect');
@@ -1994,6 +2040,96 @@
     });
 
     checkAuthSession();
+
+
+    /* ===================== BACKSPACE NAVIGATION & LOGOUT ===================== */
+document.addEventListener('keydown', function (e) {
+  // Only trigger on Backspace key
+  if (e.key !== 'Backspace') return;
+
+  // Ignore if user is actively typing in an input or textarea
+  const activeEl = document.activeElement;
+  const isTyping = activeEl && (
+    activeEl.tagName === 'INPUT' ||
+    activeEl.tagName === 'TEXTAREA' ||
+    activeEl.isContentEditable
+  );
+  if (isTyping) return;
+
+  // 1. If any modal is currently visible, close it first
+  const openModals = Array.from(document.querySelectorAll('.modal-overlay')).filter(
+    m => window.getComputedStyle(m).display === 'flex'
+  );
+  if (openModals.length > 0) {
+    e.preventDefault();
+    openModals.forEach(m => m.style.display = 'none');
+    return;
+  }
+
+  // 2. If dropdown menu is visible, close it
+  const dropdown = document.getElementById('headerDropdownMenu');
+  if (dropdown && dropdown.classList.contains('show')) {
+    e.preventDefault();
+    dropdown.classList.remove('show');
+    return;
+  }
+
+  // 3. Only run tab history navigation if logged into the main app
+  const mainApp = document.getElementById('main-app-content');
+  if (!mainApp || mainApp.style.display === 'none') return;
+
+  e.preventDefault();
+
+  const currentTab = navigationHistory[navigationHistory.length - 1] || 'dashboard';
+
+  // If already at the home/dashboard page with no history left
+  if (currentTab === 'dashboard' && navigationHistory.length <= 1) {
+    logoutUser();
+    return;
+  }
+
+  // Pop current tab and move back to the previous tab
+  navigationHistory.pop();
+  const prevTab = navigationHistory[navigationHistory.length - 1] || 'dashboard';
+  switchSection(prevTab, null, true);
+});
+
+    /* ===================== PWA & MOBILE INSTALL ENGINE ===================== */
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    async function installFinTrackApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          showToast("Installing FinTrack...", "success");
+        }
+        deferredPrompt = null;
+      } else {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          showToast("On iOS: Tap Share ➔ 'Add to Home Screen'", "success");
+        } else {
+          showToast("Tap browser menu (⋮) ➔ 'Install App' / 'Add to Home Screen'", "success");
+        }
+      }
+    }
+
+    window.addEventListener('appinstalled', () => {
+      showToast("FinTrack installed successfully!", "success");
+    });
+
+    // Register Service Worker with data URI fallback
+    if ('serviceWorker' in navigator) {
+      const swInline = "self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>{});";
+      const swUrl = 'data:application/javascript;base64,' + btoa(swInline);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
   </script>
 </body>
 </html>
