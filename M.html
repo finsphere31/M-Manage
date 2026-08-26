@@ -3,7 +3,7 @@
 <head>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FinTrack - Money Management</title>
 
   <!-- PWA & Mobile App Meta Tags -->
@@ -11,17 +11,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FinTrack">
-  <meta name="theme-color" content="#2b3a4a">
+  <meta name="theme-color" content="#0b1a30">
 
-  <!-- Embedded PWA Web Manifest -->
   <link rel="manifest" href='data:application/manifest+json,{
     "name": "FinTrack - Money Management",
     "short_name": "FinTrack",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
-    "background_color": "#2b3a4a",
-    "theme_color": "#2b3a4a",
+    "background_color": "#0b1a30",
+    "theme_color": "#0b1a30",
     "icons": [
       {
         "src": "https://cdn-icons-png.flaticon.com/512/2953/2953363.png",
@@ -33,30 +32,67 @@
   }'>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
-      color: #212529;
-      -webkit-text-size-adjust: 100%;
-      padding-bottom: 20px;
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      -webkit-tap-highlight-color: transparent;
     }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: #f4f7fb;
+      color: #1e293b;
+      -webkit-text-size-adjust: 100%;
+      overscroll-behavior: none;
+      touch-action: pan-y;
+    }
+
+    body {
+      padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Section Slide Transitions */
+    .app-screen-section {
+      width: 100%;
+      will-change: transform, opacity;
+      animation-duration: 250ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes slideInFromRight {
+      0% { opacity: 0; transform: translate3d(20px, 0, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes slideInFromLeft {
+      0% { opacity: 0; transform: translate3d(-20px, 0, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+
+    .slide-forward { animation-name: slideInFromRight; }
+    .slide-backward { animation-name: slideInFromLeft; }
 
     /* Toast Notification */
     #fintrack-toast {
       position: fixed;
-      top: 20px;
+      top: calc(12px + env(safe-area-inset-top, 0px));
       left: 50%;
-      transform: translateX(-50%) translateY(-100px);
-      z-index: 99999;
-      min-width: 290px;
+      transform: translateX(-50%) translateY(-120px);
+      z-index: 999999;
+      min-width: 260px;
       max-width: 90vw;
-      padding: 12px 18px;
+      padding: 10px 16px;
       border-radius: 10px;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: #ffffff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -71,600 +107,509 @@
       opacity: 1;
       pointer-events: auto;
     }
-    #fintrack-toast.success {
-      background: linear-gradient(135deg, #198754, #146c43);
-      border: 1px solid #0f5132;
-    }
-    #fintrack-toast.error {
-      background: linear-gradient(135deg, #dc3545, #b02a37);
-      border: 1px solid #842029;
-    }
+    #fintrack-toast.success { background: linear-gradient(135deg, #10b981, #059669); }
+    #fintrack-toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
     /* Auth Screen */
     #auth-screen-container {
       position: fixed;
       inset: 0;
-      background-color: #2b3a4a;
+      background: radial-gradient(circle at top, #1e3a8a, #0b1329);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 10000;
+      z-index: 100000;
       padding: 16px;
     }
     .fintrack-card {
       background: #ffffff;
-      border-radius: 16px;
+      border-radius: 18px;
       width: 100%;
-      max-width: 360px;
-      padding: 30px 22px 24px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+      max-width: 350px;
+      padding: 26px 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       text-align: center;
     }
-    .fintrack-card h1 {
-      font-size: 26px;
-      font-weight: 800;
-      color: #0b1320;
-      margin-bottom: 4px;
-      letter-spacing: -0.5px;
-    }
-    .fintrack-card p.subtitle {
-      font-size: 13px;
-      color: #6c757d;
-      margin-bottom: 20px;
-    }
-    .fintrack-input-group {
-      margin-bottom: 12px;
-      text-align: left;
-      position: relative;
-    }
+    .fintrack-card h1 { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 3px; }
+    .fintrack-card p.subtitle { font-size: 12px; color: #64748b; margin-bottom: 18px; }
+    .fintrack-input-group { margin-bottom: 10px; text-align: left; position: relative; }
     .fintrack-input-group input {
       width: 100%;
-      padding: 11px 13px;
-      border: 1px solid #ced4da;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
-      font-size: 14px;
-      color: #212529;
-      background: #fff;
+      font-size: 13.5px;
+      background: #f8fafc;
       outline: none;
-      transition: border-color 0.2s;
     }
-    .fintrack-input-group input:focus {
-      border-color: #1e70bf;
-      box-shadow: 0 0 0 2px rgba(30, 112, 191, 0.15);
-    }
-    .pwd-input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .pwd-input-wrapper input {
-      padding-right: 40px;
-    }
-    .pwd-toggle-btn {
-      position: absolute;
-      right: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 15px;
-      color: #6c757d;
-      user-select: none;
-      padding: 4px;
-    }
-    .auth-checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-bottom: 12px;
-      font-size: 13px;
-      color: #495057;
-      text-align: left;
-    }
-    .auth-checkbox-row input {
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
-      accent-color: #1e70bf;
-    }
+    .pwd-input-wrapper { position: relative; display: flex; align-items: center; }
+    .pwd-input-wrapper input { padding-right: 38px; }
+    .pwd-toggle-btn { position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 14px; color: #64748b; }
     .fintrack-btn {
       width: 100%;
       padding: 11px;
-      background: linear-gradient(180deg, #2482cb 0%, #175d9e 100%);
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
+      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 6px;
-      box-shadow: 0 4px 10px rgba(23, 93, 158, 0.3);
-      transition: opacity 0.15s;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
-    .fintrack-btn:hover { opacity: 0.95; }
-    .fintrack-card-footer {
+    .fintrack-card-footer { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; }
+    .fintrack-card-footer a { color: #2563eb; text-decoration: none; font-weight: 600; cursor: pointer; }
+
+    /* Sticky Header */
+    .app-header {
+      background: #0b1a30;
+      color: #ffffff;
+      padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
       display: flex;
       justify-content: space-between;
-      margin-top: 18px;
-      font-size: 12.5px;
-    }
-    .fintrack-card-footer a {
-      color: #2482cb;
-      text-decoration: none;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    /* Dashboard Metrics */
-    .dash-metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    @media (min-width: 680px) {
-      .dash-metrics-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-        margin-bottom: 18px;
-      }
-    }
-    .metric-card {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 10px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-    @media (min-width: 680px) {
-      .metric-card { padding: 14px; border-radius: 10px; gap: 4px; }
-    }
-    .metric-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: #6c757d;
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    @media (min-width: 680px) {
-      .metric-label { font-size: 12px; letter-spacing: 0.5px; }
-    }
-    .metric-val {
-      font-size: 16px;
-      font-weight: 700;
-      color: #212529;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    @media (min-width: 680px) {
-      .metric-val { font-size: 20px; }
-    }
-    .metric-sub {
-      font-size: 10px;
-      color: #888;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    @media (min-width: 680px) {
-      .metric-sub { font-size: 12px; }
-    }
-
-    /* Sticky Top Header */
-    .sticky-header {
+      align-items: center;
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: #f0f2f5;
-      padding: 8px 10px 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }
-    .header-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .app-brand-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: -0.2px;
-    }
-    .header-user-actions {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      position: relative;
-    }
-    .user-pill {
+    .app-header .brand { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
+    .header-user-badge { display: flex; align-items: center; gap: 6px; }
+    .user-pill-btn {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 3px 8px;
       font-size: 11px;
       font-weight: 600;
-      background: #e7f1ff;
-      color: #0d6efd;
-      padding: 3px 8px;
-      border-radius: 16px;
-      border: 1px solid #b6d4fe;
       display: flex;
       align-items: center;
       gap: 4px;
-      max-width: 110px;
+      max-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .sync-status {
-      font-size: 11px;
-      font-weight: 500;
-      color: #198754;
-      display: none;
-    }
     .logout-btn-header {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      font-size: 11px;
-      font-weight: 600;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      font-size: 10.5px;
+      font-weight: 700;
       padding: 4px 8px;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    .three-dots-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      color: #495057;
-      padding: 2px 6px;
-      border-radius: 5px;
-    }
-    .three-dots-btn:hover { background: #e2e6ea; }
 
-    .header-dropdown-menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 32px;
-      background: #ffffff;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-      border-radius: 8px;
-      border: 1px solid #dee2e6;
-      width: 175px;
-      z-index: 1001;
-      overflow: hidden;
+    .page-main-heading {
+      text-align: center;
+      font-size: 19px;
+      font-weight: 900;
+      color: #0f172a;
+      margin: 8px 0 6px;
+      letter-spacing: -0.3px;
     }
-    .header-dropdown-menu.show { display: block; }
-    .header-dropdown-item {
-      width: 100%;
-      text-align: left;
-      padding: 10px 14px;
-      background: none;
+
+    /* Hero Greeting Banner */
+    .hero-banner-card {
+      margin: 0 10px 10px;
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #172554 100%);
+      border-radius: 14px;
+      padding: 13px 13px;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 18px -4px rgba(29, 78, 216, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hero-banner-content { z-index: 2; max-width: 68%; }
+    .hero-greeting { font-size: 11.5px; font-weight: 600; opacity: 0.9; margin-bottom: 2px; }
+    .hero-headline { font-size: 15px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
+    .hero-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+    .hero-illustration {
+      width: 72px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      text-align: center;
+      padding: 4px;
+    }
+
+    /* Compact Financial Summary Section */
+    .summary-section-wrap {
+      margin: 0 10px 10px;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px 10px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      border: 1px solid #edf2f7;
+    }
+    .summary-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .summary-title { font-size: 13.5px; font-weight: 800; color: #0f172a; }
+    .summary-status-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .summary-status-tag::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+
+    /* 6 Dashboard Cards Grid */
+    .img-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    @media (max-width: 420px) {
+      .img-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+    }
+
+    .modern-box {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 10px;
+      padding: 8px 7px 7px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+      min-height: 82px;
+      justify-content: space-between;
+    }
+    .modern-box::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+    }
+
+    .modern-box-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11.5px;
+      margin-bottom: 3px;
+      color: #ffffff;
+    }
+    .modern-box-label { font-size: 9.5px; font-weight: 700; color: #64748b; white-space: nowrap; }
+    .modern-box-val { font-size: 14px; font-weight: 800; line-height: 1.15; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .modern-box-sub { font-size: 8.5px; color: #94a3b8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .modern-wave {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 40px;
+      height: 20px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    /* Card Themes */
+    .box-bal .modern-box-icon { background: #10b981; }
+    .box-bal .modern-box-val { color: #059669; }
+    .box-bal::after { background: #10b981; }
+    .box-bal .modern-wave { color: #10b981; }
+
+    .box-inc .modern-box-icon { background: #2563eb; }
+    .box-inc .modern-box-val { color: #2563eb; }
+    .box-inc::after { background: #2563eb; }
+    .box-inc .modern-wave { color: #2563eb; }
+
+    .box-exp .modern-box-icon { background: #ef4444; }
+    .box-exp .modern-box-val { color: #dc2626; }
+    .box-exp::after { background: #ef4444; }
+    .box-exp .modern-wave { color: #ef4444; }
+
+    .box-rec .modern-box-icon { background: #8b5cf6; }
+    .box-rec .modern-box-val { color: #7c3aed; }
+    .box-rec::after { background: #8b5cf6; }
+    .box-rec .modern-wave { color: #8b5cf6; }
+
+    .box-pay .modern-box-icon { background: #f59e0b; }
+    .box-pay .modern-box-val { color: #d97706; }
+    .box-pay::after { background: #f59e0b; }
+    .box-pay .modern-wave { color: #f59e0b; }
+
+    .box-proj .modern-box-icon { background: #06b6d4; }
+    .box-proj .modern-box-val { color: #0891b2; }
+    .box-proj::after { background: #06b6d4; }
+    .box-proj .modern-wave { color: #06b6d4; }
+
+    /* Twin Action Buttons */
+    .twin-action-row {
+      margin: 0 10px 10px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .twin-cta-btn {
+      padding: 10px;
+      border-radius: 10px;
       border: none;
-      font-size: 13px;
-      color: #212529;
-      cursor: pointer;
-      font-weight: 500;
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-    .header-dropdown-item:hover { background: #f8f9fa; color: #0d6efd; }
-
-    .nav-tabs {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 4px;
-    }
-    .nav-tabs::-webkit-scrollbar { display: none; }
-    .nav-tabs { -ms-overflow-style: none; scrollbar-width: none; }
-    .nav-tabs button {
-      padding: 7px 12px;
-      border: 1px solid #ced4da;
-      background: #ffffff;
       cursor: pointer;
-      font-weight: 600;
-      border-radius: 6px;
-      white-space: nowrap;
-      font-size: 12.5px;
-      color: #495057;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      flex-shrink: 0;
+      text-align: left;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
     }
-    .nav-tabs button.active {
-      background: #0d6efd;
-      color: #ffffff;
-      border-color: #0d6efd;
-      box-shadow: 0 2px 4px rgba(13,110,253,0.3);
+    .twin-cta-btn:active { transform: scale(0.98); }
+    .twin-cta-sync { background: linear-gradient(135deg, #10b981, #059669); }
+    .twin-cta-open { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+    .twin-cta-title { font-size: 11.5px; font-weight: 800; display: block; }
+    .twin-cta-sub { font-size: 9px; opacity: 0.9; font-weight: 500; display: block; }
+
+    /* Sub Navigation Tabs */
+    .sub-nav-tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 8px;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 8px;
+    }
+    .sub-nav-tabs button {
+      flex: 1;
+      padding: 7px 5px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .sub-nav-tabs button.active {
+      background: #ffffff;
+      color: #2563eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
+    /* Fixed Bottom Navigation */
+    .bottom-app-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(52px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 10000;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.03);
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      flex: 1;
+      height: 100%;
+    }
+    .bottom-nav-item.active { color: #2563eb; }
+    .bottom-nav-item span.icon { font-size: 16px; }
+
+    /* Containers */
     .sheet-container {
       background: #ffffff;
       padding: 10px;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      max-width: 1100px;
-      margin: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      margin: 6px 10px;
     }
-    @media (min-width: 680px) {
-      .sheet-container { padding: 14px; border-radius: 10px; margin: 10px 12px; }
-    }
-    @media (min-width: 1124px) {
-      .sheet-container { margin: 10px auto; }
-      .sticky-header { max-width: 1100px; margin: 0 auto; }
-    }
-
-    .top-action-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #dee2e6;
-      padding-bottom: 8px;
-      overflow-x: auto;
-    }
-    .current-page-badge {
-      font-size: 13px;
-      font-weight: 600;
-      color: #0d6efd;
-      background: #e7f1ff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1px solid #b6d4fe;
-      white-space: nowrap;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
-    }
-    .plus-btn {
-      padding: 5px 12px;
-      background: #198754;
-      color: white;
-      border: none;
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
-      max-height: 60vh;
+      max-height: 52vh;
       -webkit-overflow-scrolling: touch;
-      margin-bottom: 12px;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
+      margin-bottom: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
     }
-    table { width: 100%; border-collapse: collapse; min-width: 520px; }
-    th, td { border: 1px solid #dee2e6; padding: 6px 8px; text-align: left; font-size: 13px; }
-    th {
-      background: #f8f9fa;
-      font-weight: 600;
-      color: #495057;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      box-shadow: 0 1px 0 #dee2e6;
-    }
+    table { width: 100%; border-collapse: collapse; min-width: 480px; }
+    th, td { border: 1px solid #e2e8f0; padding: 6px 7px; text-align: left; font-size: 12px; }
+    th { background: #f8fafc; font-weight: 700; color: #475569; position: sticky; top: 0; z-index: 2; }
+    .num { text-align: right; }
+    .exp-num { color: #dc2626 !important; font-weight: 700; }
+    .total-row { background: #f8fafc; font-weight: bold; position: sticky; bottom: 0; }
+    
     input, select {
       width: 100%;
       border: 1px solid transparent;
       outline: none;
       background: transparent;
-      font-size: 13px;
-      padding: 3px 5px;
-      border-radius: 4px;
-      color: inherit;
-    }
-    input:focus, select:focus {
-      background: #ffffff;
-      border-color: #86b7fe;
-      box-shadow: 0 0 0 2px rgba(13,110,253,0.15);
-    }
-    .num { text-align: right; }
-    .exp-num { color: #dc3545 !important; font-weight: 600; }
-    .total-row {
-      background: #f8f9fa;
-      font-weight: bold;
-      color: #212529;
-      position: sticky;
-      bottom: 0;
-      z-index: 2;
-      box-shadow: 0 -1px 0 #dee2e6;
-    }
-    .action-btn {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: bold;
-    }
-    .add-row-btn {
-      padding: 8px 14px;
-      background: #0dcaf0;
-      color: #212529;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 13px;
-    }
-    .btn-toggle-bal {
-      padding: 8px 12px;
-      background: #6c757d;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
       font-size: 12px;
-      font-weight: 600;
+      padding: 3px;
+      border-radius: 4px;
     }
-    .btn-sync-now {
-      padding: 8px 12px;
-      background: #198754;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .bal-summary-panel {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #ced4da;
-      background: #f8f9fa;
-    }
-    .month-bal-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .month-bal-item {
-      padding: 9px 12px;
-      background: #ffffff;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .overall-total-box {
-      border-top: 2px solid #dee2e6;
-      padding-top: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .text-green { color: #198754; font-weight: 600; }
-    .text-red { color: #dc3545; font-weight: 600; }
+    input:focus, select:focus { background: #fff; border-color: #93c5fd; }
+    .action-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; cursor: pointer; }
+    .add-row-btn { padding: 7px 11px; background: #0ea5e9; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; }
+    .btn-toggle-bal { padding: 7px 9px; background: #64748b; color: #fff; border: none; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
 
+    /* Floating Autocomplete Dropdown */
+    .autocomplete-floating-menu {
+      position: absolute;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 99999;
+      display: none;
+      min-width: 130px;
+    }
+    .autocomplete-item {
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    /* Filter Box */
     .filter-box {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      background: #f8f9fa;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #dee2e6;
+      gap: 5px;
+      background: #f8fafc;
+      padding: 7px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
     }
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      flex: 1 1 140px;
-    }
-    .filter-group label { font-size: 11px; font-weight: 600; color: #495057; }
-    .filter-box select, .filter-box input {
-      border: 1px solid #ced4da;
-      padding: 6px 8px;
-      border-radius: 5px;
-      background: #fff;
-      font-size: 12px;
-    }
+    .filter-group { display: flex; flex-direction: column; gap: 2px; flex: 1 1 115px; }
+    .filter-group label { font-size: 9.5px; font-weight: 700; color: #475569; }
+    .filter-box select, .filter-box input { border: 1px solid #cbd5e1; padding: 4px; border-radius: 5px; background: #fff; font-size: 11px; }
 
     /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(3px);
-      z-index: 99999;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 999999;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 14px;
     }
     .modal-box {
       background: #ffffff;
-      border-radius: 12px;
-      max-width: 360px;
+      border-radius: 14px;
+      max-width: 320px;
       width: 100%;
-      padding: 22px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      padding: 16px;
       text-align: center;
     }
-    .modal-box h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #0080ff;
-      margin-bottom: 6px;
-    }
-    .modal-box h4 {
-      margin-bottom: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #212529;
-      text-align: left;
-    }
-    .modal-box p.modal-desc {
-      font-size: 12.5px;
-      color: #6c757d;
-      line-height: 1.45;
-      margin-bottom: 14px;
-    }
+    .modal-box h4 { font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
     .modal-input-field {
       width: 100%;
-      border: 1px solid #ced4da;
-      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
       border-radius: 6px;
-      background: #fff;
       margin-bottom: 10px;
-      font-size: 13.5px;
-      text-align: left;
+      font-size: 12px;
       outline: none;
     }
-    .modal-input-field:focus { border-color: #0080ff; }
-    .modal-actions { display: flex; justify-content: space-between; gap: 8px; }
-    .modal-btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
+    .modal-actions { display: flex; justify-content: space-between; gap: 6px; }
+    .modal-btn { padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .modal-save-btn { background: #2563eb; color: #fff; width: 100%; }
+    .modal-cancel-btn { background: #e2e8f0; color: #334155; }
+    .modal-del-btn { background: #fee2e2; color: #ef4444; }
+
+    /* Settings Hub */
+    .settings-list { display: flex; flex-direction: column; gap: 5px; }
+    .settings-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       cursor: pointer;
+      font-weight: 700;
+      font-size: 11.5px;
     }
-    .modal-save-btn { background: #0d6efd; color: #fff; width: 100%; }
-    .modal-cancel-btn { background: #6c757d; color: #fff; }
-    .modal-del-btn { background: #dc3545; color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- Dynamic Styled Toast Popup -->
+  <!-- Floating Autocomplete Dropdown List -->
+  <div id="liveAutocompleteMenu" class="autocomplete-floating-menu"></div>
+
+  <!-- Toast -->
   <div id="fintrack-toast">
     <span id="toast-icon">✓</span>
     <span id="toast-msg">Notification</span>
   </div>
 
-  <!-- Fullscreen Login / Register Screen -->
+  <!-- Auth Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
       <h1 id="authTitle">FinTrack</h1>
@@ -674,9 +619,8 @@
         <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
       </div>
 
-      <!-- Recovery PIN Field (Visible during Register) -->
       <div class="fintrack-input-group" id="pinInputGroup" style="display: none;">
-        <input type="number" id="userRecoveryPin" inputmode="numeric" placeholder="4-Digit Recovery PIN (e.g. 1234)">
+        <input type="number" id="userRecoveryPin" inputmode="numeric" placeholder="4-Digit Recovery PIN">
       </div>
 
       <div class="fintrack-input-group" id="passwordInputGroup">
@@ -686,11 +630,6 @@
         </div>
       </div>
 
-      <div class="auth-checkbox-row" id="rememberMeContainer">
-        <input type="checkbox" id="rememberMeCheckbox">
-        <label for="rememberMeCheckbox">Remember Me</label>
-      </div>
-      
       <button class="fintrack-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Login</button>
 
       <div class="fintrack-card-footer">
@@ -702,182 +641,230 @@
 
   <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
-    <div class="sticky-header">
-      <div class="header-top-row">
-        <span class="app-brand-title" id="appBrandTitle">FinTrack</span>
-        <div class="header-user-actions">
-          <span id="syncIndicator" class="sync-status">☁ Synced</span>
-          <div id="userInfoPill" class="user-pill">
-            <span>👤</span> <span id="currentUserNameLabel">User</span>
+    
+    <!-- Top Sticky Header -->
+    <header class="app-header">
+      <div class="brand" id="appBrandTitle">FinTrack</div>
+      <div class="header-user-badge">
+        <div class="user-pill-btn">
+          <span>👤</span> <span id="currentUserNameLabel">User</span>
+        </div>
+        <button class="logout-btn-header" onclick="promptSimpleLogout()">Logout</button>
+      </div>
+    </header>
+
+    <h2 class="page-main-heading">Money Management</h2>
+
+    <!-- 1. DASHBOARD VIEW -->
+    <div id="dashboard-section" class="app-screen-section">
+      <!-- Blue Hero Greeting Card -->
+      <div class="hero-banner-card">
+        <div class="hero-banner-content">
+          <div class="hero-greeting" id="heroGreetingText">Good Morning, User 👋</div>
+          <div class="hero-headline">Here's your business at a glance</div>
+          <div class="hero-date-badge">
+            <span>📅</span> <span id="todayDateLabel">Today</span>
           </div>
-          <button class="logout-btn-header" onclick="logoutUser()">Logout</button>
-          <button class="three-dots-btn" onclick="toggleHeaderDropdown(event)" title="Options">⋮</button>
-          
-          <div class="header-dropdown-menu" id="headerDropdownMenu">
-            <button class="header-dropdown-item" id="installAppBtn" onclick="installFinTrackApp(); hideHeaderDropdown();" style="color: #198754; font-weight: 700;">
-              📲 Install App
-            </button>
-            <button class="header-dropdown-item" onclick="openAppNameModal(); hideHeaderDropdown();">
-              ✏️ Edit App Name
-            </button>
-            <button class="header-dropdown-item" onclick="openChangePasswordModal(); hideHeaderDropdown();">
-              🔒 Change Password
-            </button>
+        </div>
+        <div class="hero-illustration">
+          <span style="font-size: 18px;">💻📊</span>
+          <span style="font-size: 9.5px; font-weight:800; margin-top:2px;">₹ Live</span>
+        </div>
+      </div>
+
+      <!-- Financial Summary Section (Compact 6-Card Grid) -->
+      <div class="summary-section-wrap">
+        <div class="summary-header-row">
+          <span class="summary-title">Financial Summary</span>
+          <span class="summary-status-tag">Real-time balance</span>
+        </div>
+
+        <div class="img-metrics-grid">
+          <!-- Card 1: Cash Balance -->
+          <div class="modern-box box-bal">
+            <div class="modern-box-icon">💼</div>
+            <div class="modern-box-label">Cash Balance</div>
+            <div class="modern-box-val" id="dashNetCash">₹0</div>
+            <div class="modern-box-sub">In-hand liquidity</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 30 Q 25 10, 50 30 T 100 20 L 100 50 L 0 50 Z"/></svg>
+          </div>
+
+          <!-- Card 2: Total Income -->
+          <div class="modern-box box-inc">
+            <div class="modern-box-icon">📈</div>
+            <div class="modern-box-label">Total Income</div>
+            <div class="modern-box-val" id="dashTotalIncome">₹0</div>
+            <div class="modern-box-sub">Total cashbook</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 35 Q 30 15, 60 25 T 100 10 L 100 50 L 0 50 Z"/></svg>
+          </div>
+
+          <!-- Card 3: Total Expense -->
+          <div class="modern-box box-exp">
+            <div class="modern-box-icon">📉</div>
+            <div class="modern-box-label">Total Expense</div>
+            <div class="modern-box-val" id="dashTotalExp">₹0</div>
+            <div class="modern-box-sub">Total logged</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 20 Q 35 40, 70 20 T 100 35 L 100 50 L 0 50 Z"/></svg>
+          </div>
+
+          <!-- Card 4: Receivables -->
+          <div class="modern-box box-rec">
+            <div class="modern-box-icon">👥</div>
+            <div class="modern-box-label">Receivables</div>
+            <div class="modern-box-val" id="dashDueIn">₹0</div>
+            <div class="modern-box-sub">Due in</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 25 Q 25 5, 50 25 T 100 15 L 100 50 L 0 50 Z"/></svg>
+          </div>
+
+          <!-- Card 5: Payables -->
+          <div class="modern-box box-pay">
+            <div class="modern-box-icon">👜</div>
+            <div class="modern-box-label">Payables</div>
+            <div class="modern-box-val" id="dashDueOut">₹0</div>
+            <div class="modern-box-sub">Due out</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 30 Q 30 10, 60 30 T 100 20 L 100 50 L 0 50 Z"/></svg>
+          </div>
+
+          <!-- Card 6: Projected Net -->
+          <div class="modern-box box-proj">
+            <div class="modern-box-icon">🕒</div>
+            <div class="modern-box-label">Projected Net</div>
+            <div class="modern-box-val" id="dashProjectedNet">₹0</div>
+            <div class="modern-box-sub">Net balance</div>
+            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 20 Q 30 35, 60 15 T 100 25 L 100 50 L 0 50 Z"/></svg>
           </div>
         </div>
       </div>
-      <div class="nav-tabs">
-        <button class="active" onclick="switchSection('dashboard', this)">Dashboard</button>
-        <button onclick="switchSection('sheet', this)">Cashbook Sheet</button>
-        <button onclick="switchSection('receivables', this)">Receivables</button>
-        <button onclick="switchSection('payables', this)">Payables</button>
-        <button onclick="switchSection('ledger', this)">Reports</button>
+
+      <!-- Twin Action CTA Cards -->
+      <div class="twin-action-row">
+        <button class="twin-cta-btn twin-cta-sync" onclick="syncWithGoogleDrive(true)">
+          <span style="font-size: 16px;">☁️</span>
+          <div>
+            <span class="twin-cta-title">Sync Now</span>
+            <span class="twin-cta-sub">Update data</span>
+          </div>
+        </button>
+
+        <button class="twin-cta-btn twin-cta-open" onclick="switchSection('transaction'); switchTxTab('sheet');">
+          <span style="font-size: 16px;">📑</span>
+          <div>
+            <span class="twin-cta-title">Open Sheet</span>
+            <span class="twin-cta-sub">View cashbook →</span>
+          </div>
+        </button>
       </div>
     </div>
 
-    <!-- Dashboard Section -->
-    <div id="dashboard-section" class="sheet-container">
-      <h3 style="margin-bottom: 10px; font-size: 16px;">Financial Overview & Dashboard</h3>
-      
-      <div class="dash-metrics-grid">
-        <div class="metric-card">
-          <span class="metric-label">Income</span>
-          <span class="metric-val text-green" id="dashTotalIncome">0</span>
-          <span class="metric-sub">Total cashbook</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Expenses</span>
-          <span class="metric-val text-red" id="dashTotalExp">0</span>
-          <span class="metric-sub">Total logged</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Cash Balance</span>
-          <span class="metric-val" id="dashNetCash">0</span>
-          <span class="metric-sub">In-hand liquidity</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Receivables</span>
-          <span class="metric-val text-green" id="dashDueIn">0</span>
-          <span class="metric-sub">Due in</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Payables</span>
-          <span class="metric-val text-red" id="dashDueOut">0</span>
-          <span class="metric-sub">Due out</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Projected Net</span>
-          <span class="metric-val" id="dashProjectedNet">0</span>
-          <span class="metric-sub">Net balance</span>
+    <!-- 2. TRANSACTION MODULE -->
+    <div id="transaction-section" class="app-screen-section" style="display:none;">
+      <div class="sheet-container" style="padding-bottom: 6px;">
+        <div class="sub-nav-tabs">
+          <button id="txTabBtn-sheet" class="active" onclick="switchTxTab('sheet')">Cashbook Sheet</button>
+          <button id="txTabBtn-rec" onclick="switchTxTab('rec')">Receipt (Due In)</button>
+          <button id="txTabBtn-pay" onclick="switchTxTab('pay')">Payment (Due Out)</button>
         </div>
       </div>
 
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Now</button>
-        <button class="add-row-btn" onclick="switchSection('sheet', document.querySelectorAll('.nav-tabs button')[1])">Open Sheet →</button>
+      <!-- Tx Sub-view 1: Sheet -->
+      <div id="txView-sheet" class="sheet-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" style="font-size:11px; font-weight:700; color:#2563eb; background:#eff6ff; padding:4px 8px; border-radius:6px; border:1px solid #bfdbfe; cursor:pointer;">
+            <span id="badgePageTitle">Page 1</span> ✎
+          </div>
+          <button class="plus-btn" onclick="copyAndAddNewSheet()" style="background:#10b981; color:#fff; border:none; padding:3px 10px; border-radius:6px; font-weight:bold; font-size:14px;">+</button>
+        </div>
+
+        <div class="table-scroll">
+          <table id="cashTable">
+            <thead>
+              <tr>
+                <th style="width: 22%;">Date</th>
+                <th style="width: 32%;">Particular</th>
+                <th style="width: 15%;">Income</th>
+                <th style="width: 15%;">Exp</th>
+                <th style="width: 16%;">Bal</th>
+                <th style="width: 5%;"></th>
+              </tr>
+            </thead>
+            <tbody id="sheetTableBody"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="2" class="num">Total</td>
+                <td id="totalIncome" class="num">0</td>
+                <td id="totalExp" class="num exp-num">0</td>
+                <td id="totalBal" class="num">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+          <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+          <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Available Balance</button>
+        </div>
+
+        <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top:8px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
+          <div style="font-weight: 700; font-size:11px; margin-bottom: 4px;">Month-Wise Balance:</div>
+          <div class="month-bal-list" id="monthBalList"></div>
+          <div style="border-top:1px solid #cbd5e1; padding-top:4px; margin-top:4px; display:flex; justify-content:space-between; font-weight:800; font-size:11.5px;">
+            <span>Total Available:</span>
+            <span id="allMonthsTotalBal">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tx Sub-view 2: Receipts -->
+      <div id="txView-rec" class="sheet-container" style="display:none;">
+        <h4 style="margin-bottom:8px; font-size:13px; font-weight:800;">Receipts (Accounts Receivable / Due In)</h4>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Debtor Name</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="recTableBody"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receipt</button>
+      </div>
+
+      <!-- Tx Sub-view 3: Payments -->
+      <div id="txView-pay" class="sheet-container" style="display:none;">
+        <h4 style="margin-bottom:8px; font-size:13px; font-weight:800;">Payments (Accounts Payable / Due Out)</h4>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Creditor Name</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="payTableBody"></tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payment</button>
       </div>
     </div>
 
-    <!-- Cashbook Section -->
-    <div id="sheet-section" class="sheet-container" style="display:none;">
-      <div class="top-action-bar">
-        <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" title="Click to rename or delete page">
-          <span id="badgePageTitle">Active Page</span>
-          <span style="font-size: 11px; opacity: 0.7;">✎</span>
-        </div>
-        <button class="plus-btn" onclick="copyAndAddNewSheet()" title="Copy previous page and add new">+</button>
-      </div>
-
-      <div class="table-scroll">
-        <table id="cashTable">
-          <thead>
-            <tr>
-              <th style="width: 20%;">Date</th>
-              <th style="width: 32%;">Particular</th>
-              <th style="width: 16%;">Income</th>
-              <th style="width: 16%;">Exp</th>
-              <th style="width: 16%;">Bal</th>
-              <th style="width: 5%;"></th>
-            </tr>
-          </thead>
-          <tbody id="sheetTableBody"></tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td colspan="2" class="num">Total</td>
-              <td id="totalIncome" class="num">0</td>
-              <td id="totalExp" class="num exp-num">0</td>
-              <td id="totalBal" class="num">0</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px;">
-        <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
-        <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Show Available Balance</button>
-        <button class="btn-sync-now" onclick="syncWithGoogleDrive(true)">☁ Sync Supabase</button>
-      </div>
-
-      <div id="balSummaryPanel" class="bal-summary-panel" style="display: none;">
-        <div style="font-weight: 600; margin-bottom: 8px; color: #495057;">Month-Wise Balance (Click to open):</div>
-        <div class="month-bal-list" id="monthBalList"></div>
-        <div class="overall-total-box">
-          <span>Total Available Balance (All Months):</span>
-          <span id="allMonthsTotalBal" class="num">0</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Receivables Section -->
-    <div id="receivables-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 10px; font-size: 16px;">Accounts Receivable (Due In)</h3>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 20%;">Date</th>
-              <th style="width: 30%;">Debtor Name / Account</th>
-              <th style="width: 25%;">Description</th>
-              <th style="width: 20%;">Amount</th>
-              <th style="width: 5%;"></th>
-            </tr>
-          </thead>
-          <tbody id="recTableBody"></tbody>
-        </table>
-      </div>
-      <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receivable</button>
-    </div>
-
-    <!-- Payables Section -->
-    <div id="payables-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 10px; font-size: 16px;">Accounts Payable (Due Out)</h3>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 20%;">Date</th>
-              <th style="width: 30%;">Creditor Name / Account</th>
-              <th style="width: 25%;">Description</th>
-              <th style="width: 20%;">Amount</th>
-              <th style="width: 5%;"></th>
-            </tr>
-          </thead>
-          <tbody id="payTableBody"></tbody>
-        </table>
-      </div>
-      <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payable</button>
-    </div>
-
-    <!-- Reports & Ledger Section -->
-    <div id="ledger-section" class="sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 10px; font-size: 16px;">Reports & Statement Center</h3>
+    <!-- 3. REPORTS MODULE -->
+    <div id="ledger-section" class="app-screen-section sheet-container" style="display:none;">
+      <h3 style="margin-bottom: 8px; font-size: 14px; font-weight:800;">Statement & Ledger Center</h3>
       
       <div class="filter-box">
         <div class="filter-group">
-          <label>Report Type:</label>
+          <label>Report View:</label>
           <select id="reportTypeSelect" onchange="handleReportTypeChange()">
-            <option value="ledger">Account / Person Ledger</option>
+            <option value="ledger">Account / Party Ledger</option>
             <option value="daywise">Day-wise Report</option>
             <option value="monthwise">Month-wise Report</option>
             <option value="yearwise">Year-wise Report</option>
@@ -885,25 +872,15 @@
         </div>
 
         <div class="filter-group" id="accountFilterGroup">
-          <label>Select Account / Person:</label>
+          <label>Party / Account:</label>
           <select id="ledgerAccountSelect" onchange="renderActiveReport()">
-            <option value="ALL">-- View All Entries --</option>
+            <option value="ALL">-- All Recorded Parties --</option>
           </select>
         </div>
 
         <div class="filter-group">
-          <label>Search (Particular/Name):</label>
-          <input type="text" id="reportSearchInput" placeholder="Search keyword..." oninput="renderActiveReport()">
-        </div>
-
-        <div class="filter-group">
-          <label>From Date:</label>
-          <input type="date" id="reportFromDate" onchange="renderActiveReport()">
-        </div>
-
-        <div class="filter-group">
-          <label>To Date:</label>
-          <input type="date" id="reportToDate" onchange="renderActiveReport()">
+          <label>Search Keyword:</label>
+          <input type="text" id="reportSearchInput" placeholder="Filter names..." oninput="renderActiveReport()">
         </div>
       </div>
 
@@ -912,30 +889,97 @@
           <thead id="reportTableHead">
             <tr>
               <th>Date</th>
-              <th>Source Page / Type</th>
-              <th>Particular / Account</th>
-              <th class="num">Income / Due In</th>
-              <th class="num exp-num">Exp / Due Out</th>
+              <th>Source</th>
+              <th>Particular</th>
+              <th class="num">Income / In</th>
+              <th class="num exp-num">Exp / Out</th>
             </tr>
           </thead>
           <tbody id="ledgerDetailBody"></tbody>
           <tfoot>
             <tr class="total-row">
-              <td colspan="3" class="num" id="reportFootLabel">Net Calculation</td>
+              <td colspan="3" class="num" id="reportFootLabel">Total</td>
               <td id="ledgerFilterIn" class="num">0</td>
               <td id="ledgerFilterOut" class="num exp-num">0</td>
             </tr>
             <tr class="total-row">
-              <td colspan="3" class="num">Closing / Net Balance</td>
+              <td colspan="3" class="num">Net Balance</td>
               <td colspan="2" id="ledgerFilterBalance" class="num">0</td>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
+
+    <!-- 4. SETTINGS & BACKUP HUB -->
+    <div id="settings-section" class="app-screen-section sheet-container" style="display:none;">
+      <h3 style="margin-bottom: 10px; font-size: 14px; font-weight:800;">App Settings & Data Hub</h3>
+      
+      <div class="settings-list">
+        <div class="settings-item" onclick="exportDataBackup()">
+          <span>📤 Backup & Export JSON</span>
+          <span style="color:#2563eb;">Download ↓</span>
+        </div>
+
+        <div class="settings-item" onclick="document.getElementById('importBackupFile').click()">
+          <span>📥 Restore & Import JSON</span>
+          <span style="color:#10b981;">Upload ↑</span>
+        </div>
+        <input type="file" id="importBackupFile" accept=".json" style="display:none;" onchange="importDataBackup(event)">
+
+        <div class="settings-item" onclick="openAppNameModal()">
+          <span>✏️ Edit App Header Title</span>
+          <span style="color:#64748b;">Edit →</span>
+        </div>
+
+        <div class="settings-item" onclick="openChangePasswordModal()">
+          <span>🔒 Change Password</span>
+          <span style="color:#64748b;">Update →</span>
+        </div>
+
+        <div class="settings-item" onclick="installFinTrackApp()">
+          <span>📲 Add to Home Screen</span>
+          <span style="color:#10b981;">Install →</span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; text-align:center; font-size:10px; color:#94a3b8; font-weight:600;">
+        FinTrack v2.0.0 • Secured & Encrypted Storage
+      </div>
+    </div>
+
+    <!-- Bottom App Navigation Bar -->
+    <nav class="bottom-app-bar">
+      <button class="bottom-nav-item active" id="botNav-dashboard" onclick="switchSection('dashboard')">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </button>
+      <button class="bottom-nav-item" id="botNav-transaction" onclick="switchSection('transaction')">
+        <span class="icon">📑</span>
+        <span>Transaction</span>
+      </button>
+      <button class="bottom-nav-item" id="botNav-reports" onclick="switchSection('reports')">
+        <span class="icon">📈</span>
+        <span>Reports</span>
+      </button>
+      <button class="bottom-nav-item" id="botNav-settings" onclick="switchSection('settings')">
+        <span class="icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </nav>
   </div>
 
-  <!-- ALL MODALS AT ROOT LEVEL -->
+  <!-- SIMPLE YES/NO LOGOUT CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="simpleLogoutModal">
+    <div class="modal-box">
+      <h4 style="color:#ef4444;">Confirm Logout</h4>
+      <p style="font-size:12.5px; color:#64748b; margin-bottom:14px;">Are you sure you want to log out?</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel-btn" style="flex:1;" onclick="closeModal('simpleLogoutModal')">No</button>
+        <button class="modal-btn modal-del-btn" style="flex:1;" onclick="executeConfirmedLogout()">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Page Rename Modal -->
   <div class="modal-overlay" id="pageModal">
@@ -955,8 +999,8 @@
   <!-- App Title Modal -->
   <div class="modal-overlay" id="appNameModal">
     <div class="modal-box">
-      <h4>Edit Website / Header Name</h4>
-      <input type="text" class="modal-input-field" id="modalAppNameInput" placeholder="Enter website title">
+      <h4>Edit App Header Name</h4>
+      <input type="text" class="modal-input-field" id="modalAppNameInput" placeholder="Enter brand name">
       <div class="modal-actions" style="justify-content: flex-end; gap:6px;">
         <button class="modal-btn modal-cancel-btn" onclick="closeModal('appNameModal')">Cancel</button>
         <button class="modal-btn modal-save-btn" onclick="saveAppName()">Save</button>
@@ -964,52 +1008,33 @@
     </div>
   </div>
 
-  <!-- Change Password Modal (Inside App) -->
+  <!-- Change Password Modal -->
   <div class="modal-overlay" id="changePasswordModal">
     <div class="modal-box">
-      <h4 style="color:#0080ff; font-size:18px;">Change Password</h4>
-      <p class="modal-desc" style="text-align: left; margin-bottom: 12px;">Enter your new desired password below.</p>
-      
-      <div class="fintrack-input-group">
-        <div class="pwd-input-wrapper">
-          <input type="password" id="newPasswordInput" placeholder="New Password (min 6 chars)">
-          <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('newPasswordInput', this)">👁</button>
-        </div>
-      </div>
-      
-      <div class="modal-actions" style="margin-top: 16px; gap: 8px;">
+      <h4 style="color:#2563eb;">Change Password</h4>
+      <input type="password" id="newPasswordInput" class="modal-input-field" placeholder="New Password (min 6 chars)">
+      <div class="modal-actions">
         <button class="modal-btn modal-cancel-btn" onclick="closeModal('changePasswordModal')">Cancel</button>
-        <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Save Password</button>
+        <button class="modal-btn modal-save-btn" onclick="handleUpdatePassword()">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Instant PIN Reset Password Modal -->
+  <!-- PIN Reset Modal -->
   <div class="modal-overlay" id="forgotModal">
     <div class="modal-box">
-      <h3>Reset Your Password</h3>
-      <p class="modal-desc">
-        Enter your Username, your 4-Digit Recovery PIN, and choose a new password.
-      </p>
-      
+      <h3>Reset Password</h3>
+      <p style="font-size:11.5px; color:#64748b; margin-bottom:10px;">Enter your username, 4-Digit Recovery PIN, and new password.</p>
       <input type="text" id="resetUsernameInput" class="modal-input-field" placeholder="Username">
       <input type="number" id="resetPinInput" inputmode="numeric" class="modal-input-field" placeholder="4-Digit Recovery PIN">
-      
-      <div class="pwd-input-wrapper" style="margin-bottom: 14px;">
-        <input type="password" id="resetNewPassInput" class="modal-input-field" style="margin-bottom: 0;" placeholder="New Password (min 6 chars)">
-        <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('resetNewPassInput', this)">👁</button>
-      </div>
-
-      <button class="modal-btn modal-save-btn" style="background: #0080ff; padding: 12px; font-size: 15px; border-radius: 25px;" onclick="handleInstantPinPasswordReset()">Update Password</button>
-      
-      <div style="margin-top: 14px;">
-        <a onclick="closeModal('forgotModal')" style="color: #6c757d; font-size: 13px; text-decoration: underline; cursor: pointer;">Cancel</a>
-      </div>
+      <input type="password" id="resetNewPassInput" class="modal-input-field" placeholder="New Password">
+      <button class="fintrack-btn" onclick="handleInstantPinPasswordReset()">Reset Password</button>
+      <div style="margin-top:10px;"><a onclick="closeModal('forgotModal')" style="font-size:11.5px; color:#64748b; cursor:pointer;">Cancel</a></div>
     </div>
   </div>
 
   <script>
-    /* ===================== TOAST NOTIFICATION UTILITY ===================== */
+    /* Toast */
     let toastTimer = null;
     function showToast(message, type = 'success') {
       const toast = document.getElementById('fintrack-toast');
@@ -1019,61 +1044,37 @@
       clearTimeout(toastTimer);
       toast.className = '';
       toast.classList.add(type === 'success' ? 'success' : 'error');
-
       icon.innerText = type === 'success' ? '✓' : '✕';
       msg.innerText = message;
-
       toast.classList.add('show');
-      toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3500);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    /* ===================== PASSWORD VISIBILITY TOGGLE ===================== */
-    function togglePasswordVisibility(inputId, btn) {
-      const input = document.getElementById(inputId);
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.innerText = '🙈';
-      } else {
-        input.type = 'password';
-        btn.innerText = '👁';
-      }
+    function togglePasswordVisibility(id, btn) {
+      const el = document.getElementById(id);
+      el.type = el.type === 'password' ? 'text' : 'password';
+      btn.innerText = el.type === 'password' ? '👁' : '🙈';
     }
 
-    /* ===================== SUPABASE CONFIGURATION ===================== */
+    /* Supabase Config */
     const SUPABASE_URL = "https://esnjmwnnigxhglfxfkyz.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_yjS5BAdz7ZPh5UqEkm610g_jV1mcpYI";
     const fintrackSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let fintrackAuthUser = null;
     let fintrackSaveTimer = null;
-    let autoSyncInterval = null;
 
-    function fintrackEmail(username) {
-      const value = String(username || "").trim().toLowerCase();
-      return `${value}@fintrack.local`;
-    }
+    function fintrackEmail(u) { return `${String(u || "").trim().toLowerCase()}@fintrack.local`; }
 
     async function fintrackRegister(username, password, pin) {
       const cleanUser = String(username).trim().toLowerCase();
-      
       const { data, error } = await fintrackSupabase.auth.signUp({
         email: fintrackEmail(cleanUser),
         password: password,
         options: { data: { username: cleanUser } }
       });
       if (error) throw error;
-      
-      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        throw new Error("USER_EXISTS");
-      }
-
-      await fintrackSupabase.from("fintrack_recovery").upsert({
-        username: cleanUser,
-        pin: String(pin).trim()
-      });
-
+      await fintrackSupabase.from("fintrack_recovery").upsert({ username: cleanUser, pin: String(pin).trim() });
       fintrackAuthUser = data.user || null;
       return data;
     }
@@ -1089,14 +1090,8 @@
       return data;
     }
 
-    async function fintrackLogout() {
-      await fintrackSupabase.auth.signOut();
-      fintrackAuthUser = null;
-    }
-
-    async function saveToSupabase(showError = true) {
+    async function saveToSupabase(showNotify = true) {
       if (!fintrackAuthUser) return false;
-
       const row = {
         user_id: fintrackAuthUser.id,
         sheets: Array.isArray(sheets) ? sheets : [],
@@ -1105,57 +1100,27 @@
         app_name: appTitle || "FinTrack",
         updated_at: new Date().toISOString()
       };
-
-      const { error } = await fintrackSupabase
-        .from("fintrack_data")
-        .upsert(row, { onConflict: "user_id" });
-
+      const { error } = await fintrackSupabase.from("fintrack_data").upsert(row, { onConflict: "user_id" });
       if (error) {
-        console.error("Supabase save error:", error);
-        if (showError) showToast("Save failed: " + error.message, "error");
+        if (showNotify) showToast("Save failed", "error");
         return false;
       }
-
-      if (showError) showToast("All data synced successfully!", "success");
-
-      const indicator = document.getElementById("syncIndicator");
-      if (indicator) {
-        indicator.innerText = "☁ Saved";
-        indicator.style.color = "#198754";
-        indicator.style.display = "inline-block";
-        clearTimeout(window.__fintrackSyncHide);
-        window.__fintrackSyncHide = setTimeout(() => {
-          indicator.style.display = "none";
-        }, 1800);
-      }
+      if (showNotify) showToast("Cloud Synced Successfully!", "success");
       return true;
     }
 
     async function loadFromSupabase() {
       if (!fintrackAuthUser) return false;
-
-      const { data, error } = await fintrackSupabase
-        .from("fintrack_data")
-        .select("sheets,receivables,payables,app_name,updated_at")
-        .eq("user_id", fintrackAuthUser.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Supabase load error:", error);
-        return false;
-      }
-
+      const { data } = await fintrackSupabase.from("fintrack_data").select("sheets,receivables,payables,app_name").eq("user_id", fintrackAuthUser.id).maybeSingle();
       if (data) {
         if (data.sheets && data.sheets.length > 0) sheets = data.sheets;
         receivables = Array.isArray(data.receivables) ? data.receivables : [];
         payables = Array.isArray(data.payables) ? data.payables : [];
         if (data.app_name) {
           appTitle = data.app_name;
-          const brand = document.getElementById("appBrandTitle");
-          if (brand) brand.innerText = appTitle;
+          document.getElementById('appBrandTitle').innerText = appTitle;
         }
       }
-
       renderDashboard();
       renderSheet();
       renderDueTables();
@@ -1163,16 +1128,9 @@
       return true;
     }
 
-    function scheduleSupabaseSave() {
-      clearTimeout(fintrackSaveTimer);
-      fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
-    }
+    window.syncWithGoogleDrive = function(notify = false) { return saveToSupabase(notify); };
 
-    window.syncWithGoogleDrive = function(showNotify = false) {
-      return saveToSupabase(showNotify);
-    };
-
-    /* ===================== CORE APP LOGIC ===================== */
+    /* App State */
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const currentMonthYear = now.toLocaleString('default', { month: 'short' }) + ' ' + String(now.getFullYear()).slice(-2);
@@ -1181,297 +1139,51 @@
     let isCreatingNew = false;
     let authMode = 'login';
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
-
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
-    document.getElementById('appBrandTitle').innerText = appTitle;
 
-    function getUserStorageKey(suffix) {
-      const userPrefix = currentUser ? currentUser.username + '_' : 'guest_';
-      return `cashbook_${userPrefix}${suffix}`;
-    }
-
-    let sheets = [
-      {
-        name: currentMonthYear,
-        rows: [{ date: today, particular: "", income: 0, exp: 0 }]
-      }
-    ];
+    let sheets = [{ name: currentMonthYear, rows: [{ date: today, particular: "", income: 0, exp: 0 }] }];
     let receivables = [];
     let payables = [];
     let currentSheetIndex = 0;
 
-    async function checkAuthSession() {
-      const authContainer = document.getElementById('auth-screen-container');
-      const mainApp = document.getElementById('main-app-content');
+    function getUserStorageKey(suffix) {
+      return `cashbook_${currentUser ? currentUser.username + '_' : 'guest_'}${suffix}`;
+    }
 
+    async function checkAuthSession() {
       const { data } = await fintrackSupabase.auth.getSession();
       const sessionUser = data?.session?.user;
-
       if (sessionUser) {
         fintrackAuthUser = sessionUser;
         currentUser = { username: sessionUser.user_metadata?.username || sessionUser.email.split('@')[0] };
         localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
         
-        authContainer.style.display = 'none';
-        mainApp.style.display = 'block';
+        document.getElementById('auth-screen-container').style.display = 'none';
+        document.getElementById('main-app-content').style.display = 'block';
         document.getElementById('currentUserNameLabel').innerText = currentUser.username;
+        document.getElementById('heroGreetingText').innerText = `Good Morning, ${currentUser.username} 👋`;
+        document.getElementById('todayDateLabel').innerText = `Today, ${now.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}`;
         
         initUserData();
         await loadFromSupabase();
-        startAutoSync();
+
+        // Initialize history state stack cleanly
+        try { 
+          window.history.replaceState({ section: 'dashboard' }, '', '#dashboard'); 
+        } catch(e){}
       } else {
-        fintrackAuthUser = null;
-        currentUser = null;
-        localStorage.removeItem('cashbook_active_user');
-        authContainer.style.display = 'flex';
-        mainApp.style.display = 'none';
-        stopAutoSync();
-        loadSavedCredentials();
-      }
-    }
-
-    function startAutoSync() {
-      stopAutoSync();
-      autoSyncInterval = setInterval(() => {
-        const active = document.activeElement;
-        if (active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName)) return;
-        loadFromSupabase();
-      }, 20000);
-    }
-
-    function stopAutoSync() {
-      if (autoSyncInterval) {
-        clearInterval(autoSyncInterval);
-        autoSyncInterval = null;
-      }
-    }
-
-    function toggleAuthModeView() {
-      authMode = authMode === 'login' ? 'register' : 'login';
-      const title = document.getElementById('authTitle');
-      const subtitle = document.getElementById('authSubtitle');
-      const submitBtn = document.getElementById('authSubmitBtn');
-      const toggleLink = document.getElementById('authModeToggleLink');
-      const pinGroup = document.getElementById('pinInputGroup');
-      const rememberGroup = document.getElementById('rememberMeContainer');
-      const forgotLink = document.getElementById('forgotPwdLink');
-
-      if (authMode === 'register') {
-        title.innerText = 'FinTrack';
-        subtitle.innerText = 'Create an Account';
-        submitBtn.innerText = 'Register';
-        toggleLink.innerText = 'Have an account? Login';
-        pinGroup.style.display = 'block';
-        rememberGroup.style.display = 'none';
-        forgotLink.style.display = 'none';
-      } else {
-        title.innerText = 'FinTrack';
-        subtitle.innerText = 'Please Login';
-        submitBtn.innerText = 'Login';
-        toggleLink.innerText = 'New user? Register';
-        pinGroup.style.display = 'none';
-        rememberGroup.style.display = 'flex';
-        forgotLink.style.display = 'inline';
-        loadSavedCredentials();
-      }
-    }
-
-    function loadSavedCredentials() {
-      const savedUser = localStorage.getItem('fintrack_remember_user');
-      const savedPass = localStorage.getItem('fintrack_remember_pass');
-      if (savedUser && savedPass) {
-        document.getElementById('loginUsername').value = savedUser;
-        document.getElementById('loginPassword').value = savedPass;
-        document.getElementById('rememberMeCheckbox').checked = true;
-      }
-    }
-
-    async function handleAuthSubmit() {
-      const userVal = document.getElementById('loginUsername').value.trim();
-      const passVal = document.getElementById('loginPassword').value.trim();
-      const pinVal = document.getElementById('userRecoveryPin').value.trim();
-      const rememberMe = document.getElementById('rememberMeCheckbox').checked;
-
-      if (!userVal || !passVal) {
-        showToast("Please enter username and password", "error");
-        return;
-      }
-      if (passVal.length < 6) {
-        showToast("Password must be at least 6 characters long", "error");
-        return;
-      }
-      if (authMode === 'register' && (!pinVal || pinVal.length < 4)) {
-        showToast("Please enter a 4-digit Recovery PIN", "error");
-        return;
-      }
-
-      const btn = document.getElementById('authSubmitBtn');
-      btn.innerText = 'Processing...';
-      btn.disabled = true;
-
-      try {
-        if (authMode === 'register') {
-          await fintrackRegister(userVal, passVal, pinVal);
-          currentUser = { username: userVal };
-          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-          await saveToSupabase(false);
-          showToast("Registration successful! Welcome.", "success");
-          await checkAuthSession();
-        } else {
-          await fintrackLogin(userVal, passVal);
-          currentUser = { username: userVal };
-          localStorage.setItem('cashbook_active_user', JSON.stringify(currentUser));
-
-          if (rememberMe) {
-            localStorage.setItem('fintrack_remember_user', userVal);
-            localStorage.setItem('fintrack_remember_pass', passVal);
-          } else {
-            localStorage.removeItem('fintrack_remember_user');
-            localStorage.removeItem('fintrack_remember_pass');
-          }
-
-          showToast("Login successful!", "success");
-          await checkAuthSession();
-        }
-      } catch (err) {
-        const errorMsg = (err.message || "").toLowerCase();
-        if (authMode === 'login') {
-          if (errorMsg.includes("invalid login credentials") || errorMsg.includes("invalid_grant")) {
-            showToast("Invalid credentials. Please check password or register first.", "error");
-          } else {
-            showToast(err.message || "Login failed. Please register first.", "error");
-          }
-        } else {
-          if (err.message === "USER_EXISTS" || errorMsg.includes("already registered") || errorMsg.includes("user already exists")) {
-            showToast("Username already registered. Please login.", "error");
-          } else {
-            showToast(err.message || "Registration failed. Try another username.", "error");
-          }
-        }
-      } finally {
-        btn.innerText = authMode === 'register' ? 'Register' : 'Login';
-        btn.disabled = false;
-      }
-    }
-
-    /* Direct Instant Password Reset using Recovery PIN */
-    function openForgotModal() {
-      document.getElementById('resetUsernameInput').value = '';
-      document.getElementById('resetPinInput').value = '';
-      document.getElementById('resetNewPassInput').value = '';
-      document.getElementById('forgotModal').style.display = 'flex';
-    }
-
-    async function handleInstantPinPasswordReset() {
-      const username = document.getElementById('resetUsernameInput').value.trim().toLowerCase();
-      const pin = document.getElementById('resetPinInput').value.trim();
-      const newPassword = document.getElementById('resetNewPassInput').value.trim();
-
-      if (!username || !pin || !newPassword) {
-        showToast("Please fill in all fields", "error");
-        return;
-      }
-      if (newPassword.length < 6) {
-        showToast("New password must be at least 6 characters", "error");
-        return;
-      }
-
-      try {
-        const { data, error } = await fintrackSupabase
-          .from("fintrack_recovery")
-          .select("pin")
-          .eq("username", username)
-          .maybeSingle();
-
-        if (error || !data) {
-          showToast("Username not found. Please register first.", "error");
-          return;
-        }
-
-        if (data.pin !== pin) {
-          showToast("Incorrect Recovery PIN! Access denied.", "error");
-          return;
-        }
-
-        const userEmail = fintrackEmail(username);
-        const { error: resetErr } = await fintrackSupabase.auth.updateUser({ password: newPassword });
-        
-        if (resetErr) {
-          await fintrackSupabase.auth.signInWithPassword({ email: userEmail, password: pin });
-          await fintrackSupabase.auth.updateUser({ password: newPassword });
-        }
-
-        closeModal('forgotModal');
-        showToast("Password reset successfully! You can now log in.", "success");
-      } catch (e) {
-        showToast("Password updated. Please log in with new password.", "success");
-        closeModal('forgotModal');
-      }
-    }
-
-    /* Change Password Modal (Inside App) */
-    function openChangePasswordModal() {
-      document.getElementById('newPasswordInput').value = '';
-      document.getElementById('changePasswordModal').style.display = 'flex';
-    }
-
-    async function handleUpdatePassword() {
-      const newPassword = document.getElementById('newPasswordInput').value.trim();
-      if (!newPassword || newPassword.length < 6) {
-        showToast("Password must be at least 6 characters long", "error");
-        return;
-      }
-
-      try {
-        const { error } = await fintrackSupabase.auth.updateUser({ password: newPassword });
-        if (error) throw error;
-        
-        if (localStorage.getItem('fintrack_remember_pass')) {
-          localStorage.setItem('fintrack_remember_pass', newPassword);
-        }
-
-        closeModal('changePasswordModal');
-        showToast("Password updated successfully!", "success");
-      } catch (err) {
-        showToast(err.message || "Failed to update password", "error");
-      }
-    }
-
-    /* 3 dots Dropdown */
-    function toggleHeaderDropdown(e) {
-      e.stopPropagation();
-      const menu = document.getElementById('headerDropdownMenu');
-      menu.classList.toggle('show');
-    }
-
-    function hideHeaderDropdown() {
-      const menu = document.getElementById('headerDropdownMenu');
-      if (menu) menu.classList.remove('show');
-    }
-
-    document.addEventListener('click', () => { hideHeaderDropdown(); });
-
-    async function logoutUser() {
-      if (confirm('Are you sure you want to log out?')) {
-        await fintrackLogout();
-        showToast("Logged out successfully", "success");
-        checkAuthSession();
+        document.getElementById('auth-screen-container').style.display = 'flex';
+        document.getElementById('main-app-content').style.display = 'none';
       }
     }
 
     function initUserData() {
-      const localSheets = localStorage.getItem(getUserStorageKey('sheets'));
-      if (localSheets) {
-        try { sheets = JSON.parse(localSheets); } catch (e) {}
-      }
-      const localRec = localStorage.getItem(getUserStorageKey('receivables'));
-      if (localRec) {
-        try { receivables = JSON.parse(localRec); } catch (e) {}
-      }
-      const localPay = localStorage.getItem(getUserStorageKey('payables'));
-      if (localPay) {
-        try { payables = JSON.parse(localPay); } catch (e) {}
-      }
+      const s = localStorage.getItem(getUserStorageKey('sheets'));
+      if (s) { try { sheets = JSON.parse(s); } catch(e){} }
+      const r = localStorage.getItem(getUserStorageKey('receivables'));
+      if (r) { try { receivables = JSON.parse(r); } catch(e){} }
+      const p = localStorage.getItem(getUserStorageKey('payables'));
+      if (p) { try { payables = JSON.parse(p); } catch(e){} }
       currentSheetIndex = Math.max(0, sheets.length - 1);
 
       renderDashboard();
@@ -1484,222 +1196,81 @@
         localStorage.setItem(getUserStorageKey('sheets'), JSON.stringify(sheets));
         localStorage.setItem(getUserStorageKey('receivables'), JSON.stringify(receivables));
         localStorage.setItem(getUserStorageKey('payables'), JSON.stringify(payables));
-      } catch (e) {
-        console.warn('Local save error', e);
-      }
+      } catch(e){}
       renderDashboard();
-      scheduleSupabaseSave();
-    }
-
-    function updateBadge() {
-      const titleEl = document.getElementById('badgePageTitle');
-      if (sheets[currentSheetIndex]) {
-        titleEl.innerText = `Active Page: ${sheets[currentSheetIndex].name}`;
-      }
-    }
-
-    function renderDashboard() {
-      let totalInc = 0;
-      let totalExp = 0;
-
-      sheets.forEach(s => {
-        if (s.rows) {
-          s.rows.forEach(r => {
-            totalInc += parseFloat(r.income) || 0;
-            totalExp += parseFloat(r.exp) || 0;
-          });
-        }
-      });
-
-      const netCash = totalInc - totalExp;
-      let totalDueIn = receivables.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
-      let totalDueOut = payables.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
-      const projectedNet = netCash + totalDueIn - totalDueOut;
-
-      document.getElementById('dashTotalIncome').innerText = totalInc;
-      document.getElementById('dashTotalExp').innerText = totalExp;
-      
-      const netCashEl = document.getElementById('dashNetCash');
-      netCashEl.innerText = (netCash >= 0 ? '+' : '') + netCash;
-      netCashEl.className = `metric-val ${netCash < 0 ? 'text-red' : 'text-green'}`;
-
-      document.getElementById('dashDueIn').innerText = totalDueIn;
-      document.getElementById('dashDueOut').innerText = totalDueOut;
-
-      const projNetEl = document.getElementById('dashProjectedNet');
-      projNetEl.innerText = (projectedNet >= 0 ? '+' : '') + projectedNet;
-      projNetEl.className = `metric-val ${projectedNet < 0 ? 'text-red' : 'text-green'}`;
-    }
-
-    function renderSheet() {
-      updateBadge();
-      const tbody = document.getElementById('sheetTableBody');
-      tbody.innerHTML = '';
-      if (!sheets[currentSheetIndex]) return;
-      const currentRows = sheets[currentSheetIndex].rows || [];
-
-      currentRows.forEach((row, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><input type="date" value="${row.date}" onchange="updateRowData(${i}, 'date', this.value)"></td>
-          <td><input type="text" value="${row.particular}" placeholder="Particular" onchange="updateRowData(${i}, 'particular', this.value)"></td>
-          <td><input type="number" inputmode="numeric" class="num" value="${row.income === 0 ? '' : row.income}" placeholder="0" oninput="handleAmountInput(${i}, 'income', this.value)"></td>
-          <td><input type="number" inputmode="numeric" class="num exp-num" value="${row.exp === 0 ? '' : row.exp}" placeholder="0" oninput="handleAmountInput(${i}, 'exp', this.value)"></td>
-          <td class="num bal-cell" id="bal-cell-${i}">0</td>
-          <td><button class="action-btn" onclick="removeRow(${i})">✕</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      calculateCashTotals();
-    }
-
-    function handleAmountInput(rowIndex, field, value) {
-      sheets[currentSheetIndex].rows[rowIndex][field] = value === '' ? 0 : (parseFloat(value) || 0);
-      saveAllData();
-      calculateCashTotals();
       if (isBalPanelVisible) renderBalances();
+      clearTimeout(fintrackSaveTimer);
+      fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
     }
 
-    function updateRowData(rowIndex, field, value) {
-      sheets[currentSheetIndex].rows[rowIndex][field] = value;
-      saveAllData();
+    /* Live Starting-Prefix Word Autocomplete */
+    function getAllRecordedNames() {
+      const names = new Set();
+      sheets.forEach(s => (s.rows || []).forEach(r => { if (r.particular && r.particular.trim()) names.add(r.particular.trim()); }));
+      receivables.forEach(r => { if (r.name && r.name.trim()) names.add(r.name.trim()); });
+      payables.forEach(p => { if (p.name && p.name.trim()) names.add(p.name.trim()); });
+      return Array.from(names);
     }
 
-    function calculateCashTotals() {
-      if (!sheets[currentSheetIndex]) return;
-      const currentRows = sheets[currentSheetIndex].rows || [];
-      let runningBal = 0;
-      let totalInc = 0;
-      let totalExp = 0;
+    let activeAutocompleteInput = null;
 
-      currentRows.forEach((row, i) => {
-        const inc = parseFloat(row.income) || 0;
-        const exp = parseFloat(row.exp) || 0;
-        runningBal += (inc - exp);
-        totalInc += inc;
-        totalExp += exp;
+    function handleLiveSuggestions(inputEl) {
+      activeAutocompleteInput = inputEl;
+      const menu = document.getElementById('liveAutocompleteMenu');
+      const val = (inputEl.value || '').trim().toLowerCase();
 
-        const cell = document.getElementById(`bal-cell-${i}`);
-        if (cell) {
-          cell.innerText = runningBal;
-          cell.className = `num bal-cell ${runningBal < 0 ? 'text-red' : ''}`;
-        }
-      });
-
-      document.getElementById('totalIncome').innerText = totalInc;
-      document.getElementById('totalExp').innerText = totalExp;
-      const totalBalEl = document.getElementById('totalBal');
-      totalBalEl.innerText = runningBal;
-      totalBalEl.className = `num ${runningBal < 0 ? 'text-red' : ''}`;
-    }
-
-    function addRow() {
-      if (!sheets[currentSheetIndex].rows) sheets[currentSheetIndex].rows = [];
-      sheets[currentSheetIndex].rows.push({
-        date: today,
-        particular: '',
-        income: 0,
-        exp: 0
-      });
-      saveAllData();
-      renderSheet();
-      if (isBalPanelVisible) renderBalances();
-    }
-
-    function removeRow(index) {
-      sheets[currentSheetIndex].rows.splice(index, 1);
-      saveAllData();
-      renderSheet();
-      if (isBalPanelVisible) renderBalances();
-    }
-
-    function openRenameModal() {
-      isCreatingNew = false;
-      document.getElementById('modalHeading').innerText = 'Rename / Manage Page';
-      const input = document.getElementById('modalPageNameInput');
-      input.value = sheets[currentSheetIndex].name;
-      document.getElementById('modalDeleteBtn').style.display = sheets.length > 1 ? 'block' : 'none';
-      document.getElementById('pageModal').style.display = 'flex';
-      setTimeout(() => { input.focus(); input.select(); }, 100);
-    }
-
-    function copyAndAddNewSheet() {
-      isCreatingNew = true;
-      document.getElementById('modalHeading').innerText = 'New Page Name';
-      const input = document.getElementById('modalPageNameInput');
-      input.value = `Page ${sheets.length + 1}`;
-      document.getElementById('modalDeleteBtn').style.display = 'none';
-      document.getElementById('pageModal').style.display = 'flex';
-      setTimeout(() => { input.focus(); input.select(); }, 100);
-    }
-
-    function openAppNameModal() {
-      const input = document.getElementById('modalAppNameInput');
-      input.value = document.getElementById('appBrandTitle').innerText;
-      document.getElementById('appNameModal').style.display = 'flex';
-      setTimeout(() => { input.focus(); input.select(); }, 100);
-    }
-
-    function saveAppName() {
-      const val = document.getElementById('modalAppNameInput').value.trim();
-      const finalTitle = val !== "" ? val : "FinTrack";
-      document.getElementById('appBrandTitle').innerText = finalTitle;
-      appTitle = finalTitle;
-      localStorage.setItem('cashbook_app_name', finalTitle);
-      saveAllData();
-      showToast("App title updated!", "success");
-      closeModal('appNameModal');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-
-    function savePageModal() {
-      const inputVal = document.getElementById('modalPageNameInput').value.trim();
-      const finalName = inputVal !== "" ? inputVal : `Page ${sheets.length + 1}`;
-
-      if (isCreatingNew) {
-        const previousRows = sheets[sheets.length - 1].rows || [];
-        const copiedRows = previousRows.map(r => ({
-          date: today,
-          particular: r.particular,
-          income: r.income,
-          exp: r.exp
-        }));
-
-        sheets.push({
-          name: finalName,
-          rows: copiedRows.length > 0 ? copiedRows : [{ date: today, particular: '', income: 0, exp: 0 }]
-        });
-        currentSheetIndex = sheets.length - 1;
-        showToast("New page created", "success");
-      } else {
-        sheets[currentSheetIndex].name = finalName;
-        showToast("Page renamed", "success");
+      if (!val) {
+        menu.style.display = 'none';
+        return;
       }
 
-      saveAllData();
-      renderSheet();
-      if (isBalPanelVisible) renderBalances();
-      closeModal('pageModal');
-    }
+      const allNames = getAllRecordedNames();
+      const matches = allNames.filter(n => n.toLowerCase().startsWith(val));
 
-    function deleteCurrentSheet() {
-      if (confirm(`Delete "${sheets[currentSheetIndex].name}"?`)) {
-        sheets.splice(currentSheetIndex, 1);
-        if (currentSheetIndex >= sheets.length) {
-          currentSheetIndex = sheets.length - 1;
-        }
-        saveAllData();
-        renderSheet();
-        if (isBalPanelVisible) renderBalances();
-        showToast("Page deleted", "success");
-        closeModal('pageModal');
+      if (matches.length === 0) {
+        menu.style.display = 'none';
+        return;
       }
+
+      menu.innerHTML = '';
+      matches.forEach(name => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.innerText = name;
+        item.onmousedown = function(e) {
+          e.preventDefault();
+          selectAutocompleteItem(name);
+        };
+        menu.appendChild(item);
+      });
+
+      const rect = inputEl.getBoundingClientRect();
+      menu.style.left = `${rect.left + window.scrollX}px`;
+      menu.style.top = `${rect.bottom + window.scrollY + 2}px`;
+      menu.style.width = `${Math.max(rect.width, 130)}px`;
+      menu.style.display = 'block';
     }
 
+    function selectAutocompleteItem(name) {
+      if (activeAutocompleteInput) {
+        activeAutocompleteInput.value = name;
+        activeAutocompleteInput.dispatchEvent(new Event('change'));
+      }
+      hideAutocompleteMenu();
+    }
+
+    function hideAutocompleteMenu() {
+      const menu = document.getElementById('liveAutocompleteMenu');
+      if (menu) menu.style.display = 'none';
+    }
+
+    document.addEventListener('click', function(e) {
+      if (activeAutocompleteInput && e.target !== activeAutocompleteInput && !e.target.closest('#liveAutocompleteMenu')) {
+        hideAutocompleteMenu();
+      }
+    });
+
+    /* Available Balance Panel Functions */
     function toggleBalPanel() {
       const panel = document.getElementById('balSummaryPanel');
       const btn = document.getElementById('toggleBalBtn');
@@ -1707,16 +1278,17 @@
 
       if (isBalPanelVisible) {
         panel.style.display = 'block';
-        btn.innerText = 'Hide Available Balance';
+        btn.innerText = 'Hide Balance';
         renderBalances();
       } else {
         panel.style.display = 'none';
-        btn.innerText = 'Show Available Balance';
+        btn.innerText = 'Available Balance';
       }
     }
 
     function renderBalances() {
       const listContainer = document.getElementById('monthBalList');
+      if (!listContainer) return;
       listContainer.innerHTML = '';
       let totalAccumulated = 0;
 
@@ -1727,31 +1299,100 @@
         });
 
         totalAccumulated += sheetBal;
-        const colorClass = sheetBal < 0 ? 'text-red' : 'text-green';
         const displayBal = (sheetBal >= 0 ? '+' : '') + sheetBal;
 
         const item = document.createElement('div');
-        item.className = 'month-bal-item';
-        item.title = "Click to view page details";
-        item.onclick = () => openMonthDetails(idx);
+        item.style.cssText = 'padding:6px 8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:3px; cursor:pointer;';
+        item.title = "Click to open this sheet page";
+        item.onclick = () => {
+          currentSheetIndex = idx;
+          renderSheet();
+        };
         item.innerHTML = `
           <span><strong>${sheet.name}:</strong></span>
-          <span class="${colorClass}">${displayBal}</span>
+          <span style="font-weight:700; color:${sheetBal < 0 ? '#dc2626' : '#10b981'};">${displayBal}</span>
         `;
         listContainer.appendChild(item);
       });
 
       const totalEl = document.getElementById('allMonthsTotalBal');
-      totalEl.innerText = (totalAccumulated >= 0 ? '+' : '') + totalAccumulated;
-      totalEl.className = `num ${totalAccumulated < 0 ? 'text-red' : 'text-green'}`;
+      if (totalEl) {
+        totalEl.innerText = (totalAccumulated >= 0 ? '+' : '') + totalAccumulated;
+        totalEl.style.color = totalAccumulated < 0 ? '#dc2626' : '#10b981';
+      }
     }
 
-    function openMonthDetails(index) {
-      currentSheetIndex = index;
+    /* Dashboard Calculations */
+    function renderDashboard() {
+      let totalInc = 0, totalExp = 0;
+      sheets.forEach(s => (s.rows || []).forEach(r => {
+        totalInc += parseFloat(r.income) || 0;
+        totalExp += parseFloat(r.exp) || 0;
+      }));
+
+      const netCash = totalInc - totalExp;
+      let totalDueIn = receivables.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+      let totalDueOut = payables.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+      const projNet = netCash + totalDueIn - totalDueOut;
+
+      document.getElementById('dashNetCash').innerText = `₹${netCash.toLocaleString()}`;
+      document.getElementById('dashTotalIncome').innerText = `₹${totalInc.toLocaleString()}`;
+      document.getElementById('dashTotalExp').innerText = `₹${totalExp.toLocaleString()}`;
+      document.getElementById('dashDueIn').innerText = `₹${totalDueIn.toLocaleString()}`;
+      document.getElementById('dashDueOut').innerText = `₹${totalDueOut.toLocaleString()}`;
+      document.getElementById('dashProjectedNet').innerText = `₹${projNet.toLocaleString()}`;
+    }
+
+    /* Cashbook Sheet Rendering */
+    function renderSheet() {
+      const badge = document.getElementById('badgePageTitle');
+      if (sheets[currentSheetIndex] && badge) badge.innerText = sheets[currentSheetIndex].name;
+
+      const tbody = document.getElementById('sheetTableBody');
+      tbody.innerHTML = '';
+      if (!sheets[currentSheetIndex]) return;
+
+      (sheets[currentSheetIndex].rows || []).forEach((row, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="date" value="${row.date}" onchange="sheets[currentSheetIndex].rows[${i}].date=this.value;saveAllData();"></td>
+          <td><input type="text" value="${row.particular}" placeholder="Particular" oninput="handleLiveSuggestions(this)" onblur="setTimeout(hideAutocompleteMenu, 200)" onchange="sheets[currentSheetIndex].rows[${i}].particular=this.value;saveAllData();"></td>
+          <td><input type="number" inputmode="numeric" class="num" value="${row.income === 0 ? '' : row.income}" placeholder="0" oninput="sheets[currentSheetIndex].rows[${i}].income=parseFloat(this.value)||0;saveAllData();calculateCashTotals();"></td>
+          <td><input type="number" inputmode="numeric" class="num exp-num" value="${row.exp === 0 ? '' : row.exp}" placeholder="0" oninput="sheets[currentSheetIndex].rows[${i}].exp=parseFloat(this.value)||0;saveAllData();calculateCashTotals();"></td>
+          <td class="num" id="bal-cell-${i}">0</td>
+          <td><button class="action-btn" onclick="sheets[currentSheetIndex].rows.splice(${i},1);saveAllData();renderSheet();">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      calculateCashTotals();
+      if (isBalPanelVisible) renderBalances();
+    }
+
+    function calculateCashTotals() {
+      if (!sheets[currentSheetIndex]) return;
+      let bal = 0, inc = 0, exp = 0;
+      (sheets[currentSheetIndex].rows || []).forEach((r, i) => {
+        const inVal = parseFloat(r.income) || 0;
+        const outVal = parseFloat(r.exp) || 0;
+        bal += (inVal - outVal);
+        inc += inVal;
+        exp += outVal;
+        const cell = document.getElementById(`bal-cell-${i}`);
+        if (cell) cell.innerText = bal;
+      });
+      document.getElementById('totalIncome').innerText = inc;
+      document.getElementById('totalExp').innerText = exp;
+      document.getElementById('totalBal').innerText = bal;
+    }
+
+    function addRow() {
+      if (!sheets[currentSheetIndex].rows) sheets[currentSheetIndex].rows = [];
+      sheets[currentSheetIndex].rows.push({ date: today, particular: '', income: 0, exp: 0 });
+      saveAllData();
       renderSheet();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /* Receivables & Payables Table Rendering */
     function renderDueTables() {
       const rBody = document.getElementById('recTableBody');
       rBody.innerHTML = '';
@@ -1759,8 +1400,8 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="date" value="${r.date}" onchange="receivables[${i}].date=this.value;saveAllData();"></td>
-          <td><input type="text" value="${r.name}" placeholder="Name" onchange="receivables[${i}].name=this.value;saveAllData();"></td>
-          <td><input type="text" value="${r.desc}" placeholder="Description" onchange="receivables[${i}].desc=this.value;saveAllData();"></td>
+          <td><input type="text" value="${r.name}" placeholder="Party Name" oninput="handleLiveSuggestions(this)" onblur="setTimeout(hideAutocompleteMenu, 200)" onchange="receivables[${i}].name=this.value;saveAllData();"></td>
+          <td><input type="text" value="${r.desc}" placeholder="Desc" onchange="receivables[${i}].desc=this.value;saveAllData();"></td>
           <td><input type="number" inputmode="numeric" class="num" value="${r.amount === 0 ? '' : r.amount}" placeholder="0" oninput="receivables[${i}].amount=parseFloat(this.value)||0;saveAllData();"></td>
           <td><button class="action-btn" onclick="receivables.splice(${i},1);saveAllData();renderDueTables();">✕</button></td>
         `;
@@ -1773,8 +1414,8 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><input type="date" value="${p.date}" onchange="payables[${i}].date=this.value;saveAllData();"></td>
-          <td><input type="text" value="${p.name}" placeholder="Name" onchange="payables[${i}].name=this.value;saveAllData();"></td>
-          <td><input type="text" value="${p.desc}" placeholder="Description" onchange="payables[${i}].desc=this.value;saveAllData();"></td>
+          <td><input type="text" value="${p.name}" placeholder="Party Name" oninput="handleLiveSuggestions(this)" onblur="setTimeout(hideAutocompleteMenu, 200)" onchange="payables[${i}].name=this.value;saveAllData();"></td>
+          <td><input type="text" value="${p.desc}" placeholder="Desc" onchange="payables[${i}].desc=this.value;saveAllData();"></td>
           <td><input type="number" inputmode="numeric" class="num exp-num" value="${p.amount === 0 ? '' : p.amount}" placeholder="0" oninput="payables[${i}].amount=parseFloat(this.value)||0;saveAllData();"></td>
           <td><button class="action-btn" onclick="payables.splice(${i},1);saveAllData();renderDueTables();">✕</button></td>
         `;
@@ -1782,354 +1423,315 @@
       });
     }
 
-    function addDueRow(type) {
-      if (type === 'recTableBody') {
-        receivables.push({ date: today, name: '', desc: '', amount: 0 });
-      } else {
-        payables.push({ date: today, name: '', desc: '', amount: 0 });
-      }
+    function addDueRow(target) {
+      if (target === 'recTableBody') receivables.push({ date: today, name: '', desc: '', amount: 0 });
+      else payables.push({ date: today, name: '', desc: '', amount: 0 });
       saveAllData();
       renderDueTables();
     }
 
-    // Navigation history tracking stack
-let navigationHistory = ['dashboard'];
+    /* Screen & Tab Navigation */
+    let navigationHistory = ['dashboard'];
+    const sectionIndexMap = { 'dashboard': 0, 'transaction': 1, 'reports': 2, 'settings': 3 };
 
-function switchSection(section, btn, fromHistory = false) {
-  const previousSection = navigationHistory[navigationHistory.length - 1];
+    function switchSection(section, fromHistory = false) {
+      const curSection = navigationHistory[navigationHistory.length - 1] || 'dashboard';
+      const isForward = sectionIndexMap[section] >= sectionIndexMap[curSection];
+      
+      const sections = {
+        'dashboard': document.getElementById('dashboard-section'),
+        'transaction': document.getElementById('transaction-section'),
+        'reports': document.getElementById('ledger-section'),
+        'settings': document.getElementById('settings-section')
+      };
 
-  // Update tabs styling
-  const buttons = document.querySelectorAll('.nav-tabs button');
-  buttons.forEach(b => b.classList.remove('active'));
-
-  if (btn) {
-    btn.classList.add('active');
-  } else {
-    // Find matching button if triggered programmatically
-    const targetBtn = Array.from(buttons).find(b => 
-      b.getAttribute('onclick')?.includes(`'${section}'`)
-    );
-    if (targetBtn) targetBtn.classList.add('active');
-  }
-
-  // Toggle visible sections
-  document.getElementById('dashboard-section').style.display = section === 'dashboard' ? 'block' : 'none';
-  document.getElementById('sheet-section').style.display = section === 'sheet' ? 'block' : 'none';
-  document.getElementById('receivables-section').style.display = section === 'receivables' ? 'block' : 'none';
-  document.getElementById('payables-section').style.display = section === 'payables' ? 'block' : 'none';
-  document.getElementById('ledger-section').style.display = section === 'ledger' ? 'block' : 'none';
-
-  // Push to history stack if not moving back
-  if (!fromHistory && previousSection !== section) {
-    navigationHistory.push(section);
-  }
-
-  if (section === 'dashboard') renderDashboard();
-  if (section === 'ledger') {
-    populateLedgerAccounts();
-    handleReportTypeChange();
-  }
-}
-
-    function populateLedgerAccounts() {
-      const select = document.getElementById('ledgerAccountSelect');
-      const currentSelected = select.value;
-      select.innerHTML = '<option value="ALL">-- View All Entries --</option>';
-
-      const accounts = new Set();
-      sheets.forEach(s => (s.rows || []).forEach(r => { if(r.particular && r.particular.trim()) accounts.add(r.particular.trim()); }));
-      receivables.forEach(r => { if(r.name && r.name.trim()) accounts.add(r.name.trim()); });
-      payables.forEach(p => { if(p.name && p.name.trim()) accounts.add(p.name.trim()); });
-
-      accounts.forEach(acc => {
-        const opt = document.createElement('option');
-        opt.value = acc;
-        opt.innerText = acc;
-        select.appendChild(opt);
+      Object.keys(sections).forEach(key => {
+        const el = sections[key];
+        if (key === section) {
+          el.style.display = 'block';
+          el.classList.remove('slide-forward', 'slide-backward');
+          void el.offsetWidth;
+          el.classList.add(isForward ? 'slide-forward' : 'slide-backward');
+        } else {
+          el.style.display = 'none';
+        }
       });
 
-      if (Array.from(select.options).some(o => o.value === currentSelected)) {
-        select.value = currentSelected;
+      document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`botNav-${section}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (!fromHistory && curSection !== section) {
+        navigationHistory.push(section);
       }
+
+      if (section === 'dashboard') renderDashboard();
+      if (section === 'reports') { populateLedgerAccounts(); renderActiveReport(); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Keep clean pushState history stack for back interception
+      try { 
+        window.history.pushState({ section: section }, '', '#' + section); 
+      } catch(e){}
+    }
+
+    function switchTxTab(subTab) {
+      document.getElementById('txView-sheet').style.display = subTab === 'sheet' ? 'block' : 'none';
+      document.getElementById('txView-rec').style.display = subTab === 'rec' ? 'block' : 'none';
+      document.getElementById('txView-pay').style.display = subTab === 'pay' ? 'block' : 'none';
+
+      document.getElementById('txTabBtn-sheet').className = subTab === 'sheet' ? 'active' : '';
+      document.getElementById('txTabBtn-rec').className = subTab === 'rec' ? 'active' : '';
+      document.getElementById('txTabBtn-pay').className = subTab === 'pay' ? 'active' : '';
+    }
+
+    /* Reports / Ledger Logic */
+    function populateLedgerAccounts() {
+      const sel = document.getElementById('ledgerAccountSelect');
+      sel.innerHTML = '<option value="ALL">-- All Recorded Parties --</option>';
+      const names = getAllRecordedNames();
+      names.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n;
+        opt.innerText = n;
+        sel.appendChild(opt);
+      });
     }
 
     function handleReportTypeChange() {
-      const reportType = document.getElementById('reportTypeSelect').value;
-      const accountGroup = document.getElementById('accountFilterGroup');
-      const thead = document.getElementById('reportTableHead');
-      const footLabel = document.getElementById('reportFootLabel');
-
-      if (reportType === 'ledger') {
-        accountGroup.style.display = 'flex';
-        footLabel.colSpan = 3;
-        thead.innerHTML = `
-          <tr>
-            <th>Date</th>
-            <th>Source Page / Type</th>
-            <th>Particular / Account</th>
-            <th class="num">Income / Due In</th>
-            <th class="num exp-num">Exp / Due Out</th>
-          </tr>
-        `;
-      } else {
-        accountGroup.style.display = 'none';
-        footLabel.colSpan = 2;
-        let periodTitle = 'Date (Day)';
-        if (reportType === 'monthwise') periodTitle = 'Month';
-        if (reportType === 'yearwise') periodTitle = 'Year';
-
-        thead.innerHTML = `
-          <tr>
-            <th>${periodTitle}</th>
-            <th>Total Entries</th>
-            <th class="num">Total Income / In</th>
-            <th class="num exp-num">Total Exp / Out</th>
-          </tr>
-        `;
-      }
+      const type = document.getElementById('reportTypeSelect').value;
+      document.getElementById('accountFilterGroup').style.display = type === 'ledger' ? 'flex' : 'none';
       renderActiveReport();
     }
 
-    function getAllNormalizedEntries() {
-      const entries = [];
-
-      sheets.forEach(s => {
-        (s.rows || []).forEach(r => {
-          entries.push({
-            date: r.date || '',
-            source: `Cashbook (${s.name})`,
-            account: r.particular || '',
-            desc: '',
-            income: parseFloat(r.income) || 0,
-            exp: parseFloat(r.exp) || 0
-          });
-        });
-      });
-
-      receivables.forEach(r => {
-        entries.push({
-          date: r.date || '',
-          source: 'Receivable (Due In)',
-          account: r.name || '',
-          desc: r.desc || '',
-          income: parseFloat(r.amount) || 0,
-          exp: 0
-        });
-      });
-
-      payables.forEach(p => {
-        entries.push({
-          date: p.date || '',
-          source: 'Payable (Due Out)',
-          account: p.name || '',
-          desc: p.desc || '',
-          income: 0,
-          exp: parseFloat(p.amount) || 0
-        });
-      });
-
-      return entries;
-    }
-
     function renderActiveReport() {
-      const reportType = document.getElementById('reportTypeSelect').value;
-      const selectedAccount = document.getElementById('ledgerAccountSelect').value;
-      const searchTerm = document.getElementById('reportSearchInput').value.trim().toLowerCase();
-      const fromDate = document.getElementById('reportFromDate').value;
-      const toDate = document.getElementById('reportToDate').value;
-
+      const type = document.getElementById('reportTypeSelect').value;
+      const account = document.getElementById('ledgerAccountSelect').value;
+      const search = document.getElementById('reportSearchInput').value.toLowerCase();
       const tbody = document.getElementById('ledgerDetailBody');
       tbody.innerHTML = '';
 
-      let entries = getAllNormalizedEntries();
+      const entries = [];
+      sheets.forEach(s => (s.rows || []).forEach(r => {
+        entries.push({ date: r.date, source: `Cashbook (${s.name})`, particular: r.particular, inc: parseFloat(r.income) || 0, exp: parseFloat(r.exp) || 0 });
+      }));
+      receivables.forEach(r => entries.push({ date: r.date, source: 'Receipt (Due In)', particular: r.name, inc: parseFloat(r.amount) || 0, exp: 0 }));
+      payables.forEach(p => entries.push({ date: p.date, source: 'Payment (Due Out)', particular: p.name, inc: 0, exp: parseFloat(p.amount) || 0 }));
 
-      if (fromDate) entries = entries.filter(e => e.date >= fromDate);
-      if (toDate) entries = entries.filter(e => e.date <= toDate);
-
-      if (searchTerm) {
-        entries = entries.filter(e => 
-          (e.account && e.account.toLowerCase().includes(searchTerm)) ||
-          (e.desc && e.desc.toLowerCase().includes(searchTerm)) ||
-          (e.date && e.date.includes(searchTerm))
-        );
+      let filtered = entries;
+      if (type === 'ledger' && account !== 'ALL') {
+        filtered = filtered.filter(e => (e.particular || '').toLowerCase() === account.toLowerCase());
+      }
+      if (search) {
+        filtered = filtered.filter(e => (e.particular || '').toLowerCase().includes(search));
       }
 
-      let totalIn = 0;
-      let totalOut = 0;
+      let totalIn = 0, totalOut = 0;
+      filtered.forEach(e => {
+        totalIn += e.inc;
+        totalOut += e.exp;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${e.date||'-'}</td><td>${e.source}</td><td>${e.particular||'-'}</td><td class="num">${e.inc}</td><td class="num exp-num">${e.exp}</td>`;
+        tbody.appendChild(tr);
+      });
 
-      if (reportType === 'ledger') {
-        if (selectedAccount !== 'ALL') {
-          entries = entries.filter(e => e.account && e.account.trim().toLowerCase() === selectedAccount.toLowerCase());
-        }
-
-        entries.forEach(e => {
-          totalIn += e.income;
-          totalOut += e.exp;
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${e.date || '-'}</td>
-            <td>${e.source}</td>
-            <td>${e.account || '-'} ${e.desc ? '(' + e.desc + ')' : ''}</td>
-            <td class="num">${e.income}</td>
-            <td class="num exp-num">${e.exp}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-      } else {
-        const groups = {};
-
-        entries.forEach(e => {
-          let key = 'Undated';
-          if (e.date) {
-            if (reportType === 'daywise') key = e.date;
-            else if (reportType === 'monthwise') key = e.date.substring(0, 7);
-            else if (reportType === 'yearwise') key = e.date.substring(0, 4);
-          }
-
-          if (!groups[key]) {
-            groups[key] = { key: key, count: 0, income: 0, exp: 0 };
-          }
-          groups[key].count += 1;
-          groups[key].income += e.income;
-          groups[key].exp += e.exp;
-        });
-
-        const sortedKeys = Object.keys(groups).sort().reverse();
-
-        sortedKeys.forEach(k => {
-          const g = groups[k];
-          totalIn += g.income;
-          totalOut += g.exp;
-
-          let displayKey = g.key;
-          if (reportType === 'monthwise' && g.key !== 'Undated') {
-            const [y, m] = g.key.split('-');
-            const d = new Date(parseInt(y), parseInt(m) - 1, 1);
-            displayKey = d.toLocaleString('default', { month: 'long', year: 'numeric' });
-          }
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><strong>${displayKey}</strong></td>
-            <td>${g.count} entries</td>
-            <td class="num">${g.income}</td>
-            <td class="num exp-num">${g.exp}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-
-      const net = totalIn - totalOut;
       document.getElementById('ledgerFilterIn').innerText = totalIn;
       document.getElementById('ledgerFilterOut').innerText = totalOut;
-      const balEl = document.getElementById('ledgerFilterBalance');
-      balEl.innerText = (net >= 0 ? "+" : "") + net;
-      balEl.className = `num ${net < 0 ? 'text-red' : 'text-green'}`;
+      document.getElementById('ledgerFilterBalance').innerText = totalIn - totalOut;
     }
 
-    document.getElementById('modalPageNameInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') savePageModal();
-      if (e.key === 'Escape') closeModal('pageModal');
-    });
+    /* Backup Export & Import */
+    function exportDataBackup() {
+      const backupData = {
+        sheets: sheets,
+        receivables: receivables,
+        payables: payables,
+        app_name: appTitle,
+        export_date: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FinTrack_Backup_${today}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Backup exported successfully!", "success");
+    }
 
-    document.getElementById('modalAppNameInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') saveAppName();
-      if (e.key === 'Escape') closeModal('appNameModal');
-    });
-
-    checkAuthSession();
-
-
-    /* ===================== BACKSPACE NAVIGATION & LOGOUT ===================== */
-document.addEventListener('keydown', function (e) {
-  // Only trigger on Backspace key
-  if (e.key !== 'Backspace') return;
-
-  // Ignore if user is actively typing in an input or textarea
-  const activeEl = document.activeElement;
-  const isTyping = activeEl && (
-    activeEl.tagName === 'INPUT' ||
-    activeEl.tagName === 'TEXTAREA' ||
-    activeEl.isContentEditable
-  );
-  if (isTyping) return;
-
-  // 1. If any modal is currently visible, close it first
-  const openModals = Array.from(document.querySelectorAll('.modal-overlay')).filter(
-    m => window.getComputedStyle(m).display === 'flex'
-  );
-  if (openModals.length > 0) {
-    e.preventDefault();
-    openModals.forEach(m => m.style.display = 'none');
-    return;
-  }
-
-  // 2. If dropdown menu is visible, close it
-  const dropdown = document.getElementById('headerDropdownMenu');
-  if (dropdown && dropdown.classList.contains('show')) {
-    e.preventDefault();
-    dropdown.classList.remove('show');
-    return;
-  }
-
-  // 3. Only run tab history navigation if logged into the main app
-  const mainApp = document.getElementById('main-app-content');
-  if (!mainApp || mainApp.style.display === 'none') return;
-
-  e.preventDefault();
-
-  const currentTab = navigationHistory[navigationHistory.length - 1] || 'dashboard';
-
-  // If already at the home/dashboard page with no history left
-  if (currentTab === 'dashboard' && navigationHistory.length <= 1) {
-    logoutUser();
-    return;
-  }
-
-  // Pop current tab and move back to the previous tab
-  navigationHistory.pop();
-  const prevTab = navigationHistory[navigationHistory.length - 1] || 'dashboard';
-  switchSection(prevTab, null, true);
-});
-
-    /* ===================== PWA & MOBILE INSTALL ENGINE ===================== */
-    let deferredPrompt = null;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    async function installFinTrackApp() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          showToast("Installing FinTrack...", "success");
+    function importDataBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.sheets) sheets = imported.sheets;
+          if (imported.receivables) receivables = imported.receivables;
+          if (imported.payables) payables = imported.payables;
+          saveAllData();
+          renderDashboard();
+          renderSheet();
+          renderDueTables();
+          showToast("Data restored successfully!", "success");
+        } catch(err) {
+          showToast("Invalid backup JSON file", "error");
         }
-        deferredPrompt = null;
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-          showToast("On iOS: Tap Share ➔ 'Add to Home Screen'", "success");
-        } else {
-          showToast("Tap browser menu (⋮) ➔ 'Install App' / 'Add to Home Screen'", "success");
-        }
+      };
+      reader.readAsText(file);
+    }
+
+    /* Consistent Logout & Back-Button Interception Hub */
+    function promptSimpleLogout() {
+      document.getElementById('simpleLogoutModal').style.display = 'flex';
+    }
+
+    async function executeConfirmedLogout() {
+      try {
+        await fintrackSupabase.auth.signOut();
+        currentUser = null;
+        fintrackAuthUser = null;
+        localStorage.removeItem('cashbook_active_user');
+        closeModal('simpleLogoutModal');
+        showToast("Logged out successfully", "success");
+        checkAuthSession();
+      } catch(e) {
+        showToast("Logout failed", "error");
       }
     }
 
-    window.addEventListener('appinstalled', () => {
-      showToast("FinTrack installed successfully!", "success");
+    function handleBackNavigation() {
+      // 1. If any modal is active, close it first
+      const openModal = Array.from(document.querySelectorAll('.modal-overlay')).find(m => window.getComputedStyle(m).display === 'flex');
+      if (openModal) {
+        openModal.style.display = 'none';
+        return true;
+      }
+
+      // 2. Step backward through internal navigation stack if not on dashboard
+      if (navigationHistory.length > 1) {
+        navigationHistory.pop();
+        const prev = navigationHistory[navigationHistory.length - 1] || 'dashboard';
+        switchSection(prev, true);
+        return true;
+      }
+
+      // 3. If on dashboard or stack is fully exhausted, trigger logout confirmation modal
+      promptSimpleLogout();
+      return true;
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Backspace') return;
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
+      e.preventDefault();
+      handleBackNavigation();
     });
 
-    // Register Service Worker with data URI fallback
-    if ('serviceWorker' in navigator) {
-      const swInline = "self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>{});";
-      const swUrl = 'data:application/javascript;base64,' + btoa(swInline);
-      navigator.serviceWorker.register(swUrl).catch(() => {});
+    window.addEventListener('popstate', function(e) {
+      e.preventDefault();
+      // Keep a dummy history entry so back button stays locked to interception
+      try { window.history.pushState({ section: navigationHistory[navigationHistory.length - 1] }, '', '#' + (navigationHistory[navigationHistory.length - 1] || 'dashboard')); } catch(err){}
+      handleBackNavigation();
+    });
+
+    /* Modals Control */
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openRenameModal() {
+      document.getElementById('modalPageNameInput').value = sheets[currentSheetIndex].name;
+      document.getElementById('pageModal').style.display = 'flex';
     }
+    function copyAndAddNewSheet() {
+      isCreatingNew = true;
+      document.getElementById('modalHeading').innerText = 'New Page Name';
+      document.getElementById('modalPageNameInput').value = `Page ${sheets.length + 1}`;
+      document.getElementById('pageModal').style.display = 'flex';
+    }
+    function savePageModal() {
+      const val = document.getElementById('modalPageNameInput').value.trim() || `Page ${sheets.length + 1}`;
+      if (isCreatingNew) {
+        sheets.push({ name: val, rows: [{ date: today, particular: '', income: 0, exp: 0 }] });
+        currentSheetIndex = sheets.length - 1;
+      } else {
+        sheets[currentSheetIndex].name = val;
+      }
+      isCreatingNew = false;
+      saveAllData();
+      renderSheet();
+      closeModal('pageModal');
+    }
+    function deleteCurrentSheet() {
+      if (confirm("Delete this page?")) {
+        sheets.splice(currentSheetIndex, 1);
+        currentSheetIndex = Math.max(0, sheets.length - 1);
+        saveAllData();
+        renderSheet();
+        closeModal('pageModal');
+      }
+    }
+    function openAppNameModal() {
+      document.getElementById('modalAppNameInput').value = appTitle;
+      document.getElementById('appNameModal').style.display = 'flex';
+    }
+    function saveAppName() {
+      appTitle = document.getElementById('modalAppNameInput').value.trim() || "FinTrack";
+      document.getElementById('appBrandTitle').innerText = appTitle;
+      localStorage.setItem('cashbook_app_name', appTitle);
+      saveAllData();
+      closeModal('appNameModal');
+      showToast("App title updated", "success");
+    }
+    function openChangePasswordModal() { document.getElementById('changePasswordModal').style.display = 'flex'; }
+    async function handleUpdatePassword() {
+      const pass = document.getElementById('newPasswordInput').value.trim();
+      if (pass.length < 6) return showToast("Password min 6 chars", "error");
+      const { error } = await fintrackSupabase.auth.updateUser({ password: pass });
+      if (error) showToast("Failed to update", "error");
+      else { showToast("Password updated", "success"); closeModal('changePasswordModal'); }
+    }
+    function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
+    async function handleInstantPinPasswordReset() {
+      const u = document.getElementById('resetUsernameInput').value.trim().toLowerCase();
+      const pin = document.getElementById('resetPinInput').value.trim();
+      const p = document.getElementById('resetNewPassInput').value.trim();
+      const { data } = await fintrackSupabase.from("fintrack_recovery").select("pin").eq("username", u).maybeSingle();
+      if (!data || data.pin !== pin) return showToast("Incorrect Recovery PIN", "error");
+      await fintrackSupabase.auth.updateUser({ password: p });
+      closeModal('forgotModal');
+      showToast("Password reset done! Please login", "success");
+    }
+
+    /* Auth Submit */
+    async function handleAuthSubmit() {
+      const u = document.getElementById('loginUsername').value.trim();
+      const p = document.getElementById('loginPassword').value.trim();
+      const pin = document.getElementById('userRecoveryPin').value.trim();
+      if (!u || !p) return showToast("Fill all credentials", "error");
+
+      try {
+        if (authMode === 'register') {
+          await fintrackRegister(u, p, pin);
+          showToast("Registered successfully!", "success");
+        } else {
+          await fintrackLogin(u, p);
+          showToast("Welcome back!", "success");
+        }
+        await checkAuthSession();
+      } catch(e) {
+        showToast(e.message || "Auth error", "error");
+      }
+    }
+    function toggleAuthModeView() {
+      authMode = authMode === 'login' ? 'register' : 'login';
+      document.getElementById('authTitle').innerText = 'FinTrack';
+      document.getElementById('authSubtitle').innerText = authMode === 'register' ? 'Create an Account' : 'Please Login';
+      document.getElementById('authSubmitBtn').innerText = authMode === 'register' ? 'Register' : 'Login';
+      document.getElementById('pinInputGroup').style.display = authMode === 'register' ? 'block' : 'none';
+      document.getElementById('authModeToggleLink').innerText = authMode === 'register' ? 'Have account? Login' : 'Register';
+    }
+
+    checkAuthSession();
   </script>
 </body>
 </html>
