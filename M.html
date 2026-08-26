@@ -4,18 +4,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Srusti - Money Management</title>
+  <title>FinTrack - Money Management</title>
 
   <!-- PWA & Mobile App Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Srusti">
+  <meta name="apple-mobile-web-app-title" content="FinTrack">
   <meta name="theme-color" content="#0b1a30">
 
   <link rel="manifest" href='data:application/manifest+json,{
-    "name": "Srusti - Money Management",
-    "short_name": "Srusti",
+    "name": "FinTrack- Money Management",
+    "short_name": "FinTrack",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
@@ -747,7 +747,7 @@
   <!-- Auth Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
-      <h1 id="authTitle">Srusti</h1>
+      <h1 id="authTitle">FinTrack</h1>
       <p class="subtitle" id="authSubtitle">Please Login</p>
 
       <div class="fintrack-input-group">
@@ -779,7 +779,7 @@
     
     <!-- Top Header -->
     <header class="app-header">
-      <div class="brand" id="appBrandTitle">Srusti</div>
+      <div class="brand" id="appBrandTitle">FinTack</div>
       <div class="header-user-badge">
         <div class="user-pill-btn">
           <span>👤</span> <span id="currentUserNameLabel">User</span>
@@ -813,7 +813,7 @@
           </div>
         </div>
         <div class="hero-illustration">
-          <span style="font-size: 18px;">💻📊</span>
+          <span style="font-size: 18px;">💻</span>
           <span style="font-size: 9.5px; font-weight:800; margin-top:2px;">₹ Live</span>
         </div>
       </div>
@@ -1090,7 +1090,7 @@
       </div>
 
       <div style="margin-top:14px; text-align:center; font-size:10px; color:#94a3b8; font-weight:600;">
-        Srusti v2.0.0 • Secured & Encrypted Storage
+        FinTrack v2.0.0 • Secured & Encrypted Storage
       </div>
     </div>
 
@@ -1243,7 +1243,7 @@
         sheets: Array.isArray(sheets) ? sheets : [],
         receivables: Array.isArray(receivables) ? receivables : [],
         payables: Array.isArray(payables) ? payables : [],
-        app_name: appTitle || "Srusti",
+        app_name: appTitle || "FinTrack",
         updated_at: new Date().toISOString()
       };
       const { error } = await fintrackSupabase.from("fintrack_data").upsert(row, { onConflict: "user_id" });
@@ -1285,7 +1285,7 @@
     let isCreatingNew = false;
     let authMode = 'login';
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
-    let appTitle = localStorage.getItem('cashbook_app_name') || "Srusti";
+    let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
 
     let sheets = [{ name: currentMonthYear, rows: [{ date: today, particular: "", income: 0, exp: 0 }] }];
     let receivables = [];
@@ -1701,7 +1701,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Srusti_Backup_${today}.json`;
+      a.download = `FinTrack_Backup_${today}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast("Backup exported successfully!", "success");
@@ -1824,7 +1824,7 @@
       document.getElementById('appNameModal').style.display = 'flex';
     }
     function saveAppName() {
-      appTitle = document.getElementById('modalAppNameInput').value.trim() || "Srusti";
+      appTitle = document.getElementById('modalAppNameInput').value.trim() || "FinTrack";
       document.getElementById('appBrandTitle').innerText = appTitle;
       localStorage.setItem('cashbook_app_name', appTitle);
       saveAllData();
@@ -1873,7 +1873,7 @@
     }
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
-      document.getElementById('authTitle').innerText = 'Srusti';
+      document.getElementById('authTitle').innerText = 'FinTrack';
       document.getElementById('authSubtitle').innerText = authMode === 'register' ? 'Create an Account' : 'Please Login';
       document.getElementById('authSubmitBtn').innerText = authMode === 'register' ? 'Register' : 'Login';
       document.getElementById('pinInputGroup').style.display = authMode === 'register' ? 'block' : 'none';
