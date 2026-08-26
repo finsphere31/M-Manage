@@ -4,18 +4,18 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>FinTrack - Money Management</title>
+  <title>Srusti - Money Management</title>
 
   <!-- PWA & Mobile App Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FinTrack">
+  <meta name="apple-mobile-web-app-title" content="Srusti">
   <meta name="theme-color" content="#0b1a30">
 
   <link rel="manifest" href='data:application/manifest+json,{
-    "name": "FinTrack - Money Management",
-    "short_name": "FinTrack",
+    "name": "Srusti - Money Management",
+    "short_name": "Srusti",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
@@ -44,39 +44,21 @@
       width: 100%;
       height: 100%;
       overflow-x: hidden;
-      overflow-y: auto;
       background: #f4f7fb;
       color: #1e293b;
       -webkit-text-size-adjust: 100%;
-      overscroll-behavior: none;
-      touch-action: pan-y;
     }
 
     body {
       padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* Section Slide Transitions */
-    .app-screen-section {
-      width: 100%;
-      will-change: transform, opacity;
-      animation-duration: 250ms;
-      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-      animation-fill-mode: forwards;
+    @media (min-width: 768px) {
+      body {
+        padding-bottom: 25px;
+        background: #f0f3f8;
+      }
     }
-
-    @keyframes slideInFromRight {
-      0% { opacity: 0; transform: translate3d(20px, 0, 0); }
-      100% { opacity: 1; transform: translate3d(0, 0, 0); }
-    }
-
-    @keyframes slideInFromLeft {
-      0% { opacity: 0; transform: translate3d(-20px, 0, 0); }
-      100% { opacity: 1; transform: translate3d(0, 0, 0); }
-    }
-
-    .slide-forward { animation-name: slideInFromRight; }
-    .slide-backward { animation-name: slideInFromLeft; }
 
     /* Toast Notification */
     #fintrack-toast {
@@ -160,7 +142,9 @@
     .fintrack-card-footer { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; }
     .fintrack-card-footer a { color: #2563eb; text-decoration: none; font-weight: 600; cursor: pointer; }
 
-    /* Sticky Header */
+    /* ========================================================= */
+    /* HEADER (DESKTOP vs MOBILE) */
+    /* ========================================================= */
     .app-header {
       background: #0b1a30;
       color: #ffffff;
@@ -173,33 +157,105 @@
       z-index: 1000;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }
-    .app-header .brand { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
+    .app-header .brand { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
     .header-user-badge { display: flex; align-items: center; gap: 6px; }
     .user-pill-btn {
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 16px;
-      padding: 3px 8px;
-      font-size: 11px;
+      padding: 4px 10px;
+      font-size: 11.5px;
       font-weight: 600;
       display: flex;
       align-items: center;
       gap: 4px;
-      max-width: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .logout-btn-header {
       background: rgba(239, 68, 68, 0.2);
       border: 1px solid rgba(239, 68, 68, 0.4);
       color: #fca5a5;
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 4px 8px;
+      padding: 5px 10px;
       border-radius: 6px;
       cursor: pointer;
+    }
+    .desktop-three-dots { display: none; }
+
+    @media (min-width: 768px) {
+      .app-header {
+        background: #ffffff;
+        color: #0f172a;
+        padding: 12px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      }
+      .app-header .brand { font-size: 22px; color: #0f172a; font-weight: 900; }
+      .user-pill-btn {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+        font-size: 12px;
+      }
+      .logout-btn-header {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        font-size: 12px;
+      }
+      .desktop-three-dots {
+        display: inline-block;
+        background: none;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        color: #475569;
+      }
+    }
+
+    /* Desktop Top Navigation Tabs (Image 1 Style) */
+    .desktop-nav-tabs {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .desktop-nav-tabs {
+        display: flex;
+        gap: 8px;
+        padding: 12px 24px 0;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .desktop-nav-tabs button {
+        padding: 8px 18px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        border-radius: 8px 8px 0 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .desktop-nav-tabs button.active {
+        background: #2563eb;
+        color: #ffffff;
+        border-color: #2563eb;
+      }
+    }
+
+    /* Mobile Title & Hero Card */
+    .mobile-only { display: block; }
+    .desktop-only { display: none; }
+
+    @media (min-width: 768px) {
+      .mobile-only { display: none !important; }
+      .desktop-only { display: block !important; }
     }
 
     .page-main-heading {
@@ -211,7 +267,6 @@
       letter-spacing: -0.3px;
     }
 
-    /* Hero Greeting Banner */
     .hero-banner-card {
       margin: 0 10px 10px;
       background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #172554 100%);
@@ -254,7 +309,7 @@
       padding: 4px;
     }
 
-    /* Compact Financial Summary Section */
+    /* Financial Summary Card Wrap */
     .summary-section-wrap {
       margin: 0 10px 10px;
       background: #ffffff;
@@ -263,6 +318,16 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
       border: 1px solid #edf2f7;
     }
+    @media (min-width: 768px) {
+      .summary-section-wrap {
+        max-width: 1200px;
+        margin: 18px auto;
+        padding: 18px 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      }
+    }
+
     .summary-header-row {
       display: flex;
       justify-content: space-between;
@@ -270,9 +335,9 @@
       margin-bottom: 8px;
       padding: 0 2px;
     }
-    .summary-title { font-size: 13.5px; font-weight: 800; color: #0f172a; }
+    .summary-title { font-size: 14px; font-weight: 800; color: #0f172a; }
     .summary-status-tag {
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 700;
       color: #10b981;
       display: flex;
@@ -287,7 +352,9 @@
       border-radius: 50%;
     }
 
-    /* 6 Dashboard Cards Grid */
+    /* ========================================================= */
+    /* METRICS CARDS: MOBILE vs DESKTOP LAYOUT (IMAGE 1 vs IMAGE 2) */
+    /* ========================================================= */
     .img-metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -347,7 +414,7 @@
       pointer-events: none;
     }
 
-    /* Card Themes */
+    /* Mobile Color Schemes (Image 2) */
     .box-bal .modern-box-icon { background: #10b981; }
     .box-bal .modern-box-val { color: #059669; }
     .box-bal::after { background: #10b981; }
@@ -378,12 +445,59 @@
     .box-proj::after { background: #06b6d4; }
     .box-proj .modern-wave { color: #06b6d4; }
 
+    /* Desktop Exact Layout (Image 1 Style: 4 on top, 2 below, left colored borders) */
+    @media (min-width: 768px) {
+      .img-metrics-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      .modern-box {
+        border-radius: 8px;
+        padding: 10px 14px;
+        min-height: 72px;
+        border-left-width: 4px !important;
+        border-top: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .modern-box::after { display: none; }
+      .modern-box-icon {
+        border-radius: 4px;
+        background: transparent !important;
+        color: #64748b !important;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 16px;
+      }
+      .modern-box-label { font-size: 11px; text-transform: uppercase; color: #64748b; }
+      .modern-box-val { font-size: 18px; margin: 4px 0 2px; }
+      .modern-box-sub { font-size: 10px; }
+      .modern-wave { display: none; }
+
+      .box-bal { border-left-color: #0284c7 !important; background: linear-gradient(135deg, #ffffff 60%, #eff6ff 100%); }
+      .box-inc { border-left-color: #10b981 !important; background: linear-gradient(135deg, #ffffff 60%, #ecfdf5 100%); }
+      .box-exp { border-left-color: #ef4444 !important; background: linear-gradient(135deg, #ffffff 60%, #fef2f2 100%); }
+      .box-rec { border-left-color: #059669 !important; background: linear-gradient(135deg, #ffffff 60%, #ecfdf5 100%); }
+      .box-pay { border-left-color: #f59e0b !important; background: linear-gradient(135deg, #ffffff 60%, #fffbeb 100%); }
+      .box-proj { border-left-color: #9333ea !important; background: linear-gradient(135deg, #ffffff 60%, #faf5ff 100%); }
+    }
+
     /* Twin Action Buttons */
     .twin-action-row {
       margin: 0 10px 10px;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
+    }
+    @media (min-width: 768px) {
+      .twin-action-row {
+        display: flex;
+        justify-content: flex-start;
+        max-width: 1200px;
+        margin: 14px auto;
+        gap: 12px;
+      }
     }
     .twin-cta-btn {
       padding: 10px;
@@ -402,6 +516,15 @@
     .twin-cta-open { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
     .twin-cta-title { font-size: 11.5px; font-weight: 800; display: block; }
     .twin-cta-sub { font-size: 9px; opacity: 0.9; font-weight: 500; display: block; }
+
+    @media (min-width: 768px) {
+      .twin-cta-btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+      }
+      .twin-cta-title { font-size: 13px; }
+      .twin-cta-sub { display: none; }
+    }
 
     /* Sub Navigation Tabs */
     .sub-nav-tabs {
@@ -431,7 +554,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
-    /* Fixed Bottom Navigation */
+    /* Fixed Bottom Navigation (Mobile Only) */
     .bottom-app-bar {
       position: fixed;
       bottom: 0;
@@ -447,6 +570,10 @@
       z-index: 10000;
       box-shadow: 0 -3px 10px rgba(0,0,0,0.03);
     }
+    @media (min-width: 768px) {
+      .bottom-app-bar { display: none; }
+    }
+
     .bottom-nav-item {
       display: flex;
       flex-direction: column;
@@ -474,10 +601,18 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       margin: 6px 10px;
     }
+    @media (min-width: 768px) {
+      .sheet-container {
+        max-width: 1200px;
+        margin: 14px auto;
+        padding: 16px;
+      }
+    }
+
     .table-scroll {
       overflow-x: auto;
       overflow-y: auto;
-      max-height: 52vh;
+      max-height: 55vh;
       -webkit-overflow-scrolling: touch;
       margin-bottom: 8px;
       border: 1px solid #e2e8f0;
@@ -612,7 +747,7 @@
   <!-- Auth Screen -->
   <div id="auth-screen-container">
     <div class="fintrack-card">
-      <h1 id="authTitle">FinTrack</h1>
+      <h1 id="authTitle">Srusti</h1>
       <p class="subtitle" id="authSubtitle">Please Login</p>
 
       <div class="fintrack-input-group">
@@ -642,23 +777,34 @@
   <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
     
-    <!-- Top Sticky Header -->
+    <!-- Top Header -->
     <header class="app-header">
-      <div class="brand" id="appBrandTitle">FinTrack</div>
+      <div class="brand" id="appBrandTitle">Srusti</div>
       <div class="header-user-badge">
         <div class="user-pill-btn">
           <span>👤</span> <span id="currentUserNameLabel">User</span>
         </div>
         <button class="logout-btn-header" onclick="promptSimpleLogout()">Logout</button>
+        <button class="desktop-three-dots" onclick="openAppNameModal()">⋮</button>
       </div>
     </header>
 
-    <h2 class="page-main-heading">Money Management</h2>
+    <!-- Desktop Navigation Tabs (Visible on Laptop/PC) -->
+    <nav class="desktop-nav-tabs">
+      <button class="active" id="dtab-dashboard" onclick="switchSection('dashboard')">Dashboard</button>
+      <button id="dtab-sheet" onclick="switchSection('transaction'); switchTxTab('sheet');">Cashbook Sheet</button>
+      <button id="dtab-rec" onclick="switchSection('transaction'); switchTxTab('rec');">Receivables</button>
+      <button id="dtab-pay" onclick="switchSection('transaction'); switchTxTab('pay');">Payables</button>
+      <button id="dtab-reports" onclick="switchSection('reports')">Reports</button>
+    </nav>
+
+    <!-- Mobile Heading -->
+    <h2 class="page-main-heading mobile-only">Money Management</h2>
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="dashboard-section" class="app-screen-section">
-      <!-- Blue Hero Greeting Card -->
-      <div class="hero-banner-card">
+      <!-- Blue Hero Greeting Card (Mobile Only) -->
+      <div class="hero-banner-card mobile-only">
         <div class="hero-banner-content">
           <div class="hero-greeting" id="heroGreetingText">Good Morning, User 👋</div>
           <div class="hero-headline">Here's your business at a glance</div>
@@ -672,7 +818,7 @@
         </div>
       </div>
 
-      <!-- Financial Summary Section (Compact 6-Card Grid) -->
+      <!-- Financial Summary Section -->
       <div class="summary-section-wrap">
         <div class="summary-header-row">
           <span class="summary-title">Financial Summary</span>
@@ -736,7 +882,7 @@
         </div>
       </div>
 
-      <!-- Twin Action CTA Cards -->
+      <!-- Action Buttons -->
       <div class="twin-action-row">
         <button class="twin-cta-btn twin-cta-sync" onclick="syncWithGoogleDrive(true)">
           <span style="font-size: 16px;">☁️</span>
@@ -749,8 +895,8 @@
         <button class="twin-cta-btn twin-cta-open" onclick="switchSection('transaction'); switchTxTab('sheet');">
           <span style="font-size: 16px;">📑</span>
           <div>
-            <span class="twin-cta-title">Open Sheet</span>
-            <span class="twin-cta-sub">View cashbook →</span>
+            <span class="twin-cta-title">Open Sheet →</span>
+            <span class="twin-cta-sub">View cashbook</span>
           </div>
         </button>
       </div>
@@ -758,7 +904,7 @@
 
     <!-- 2. TRANSACTION MODULE -->
     <div id="transaction-section" class="app-screen-section" style="display:none;">
-      <div class="sheet-container" style="padding-bottom: 6px;">
+      <div class="sheet-container mobile-only" style="padding-bottom: 6px;">
         <div class="sub-nav-tabs">
           <button id="txTabBtn-sheet" class="active" onclick="switchTxTab('sheet')">Cashbook Sheet</button>
           <button id="txTabBtn-rec" onclick="switchTxTab('rec')">Receipt (Due In)</button>
@@ -944,11 +1090,11 @@
       </div>
 
       <div style="margin-top:14px; text-align:center; font-size:10px; color:#94a3b8; font-weight:600;">
-        FinTrack v2.0.0 • Secured & Encrypted Storage
+        Srusti v2.0.0 • Secured & Encrypted Storage
       </div>
     </div>
 
-    <!-- Bottom App Navigation Bar -->
+    <!-- Bottom App Navigation Bar (Mobile Only) -->
     <nav class="bottom-app-bar">
       <button class="bottom-nav-item active" id="botNav-dashboard" onclick="switchSection('dashboard')">
         <span class="icon">📊</span>
@@ -1097,7 +1243,7 @@
         sheets: Array.isArray(sheets) ? sheets : [],
         receivables: Array.isArray(receivables) ? receivables : [],
         payables: Array.isArray(payables) ? payables : [],
-        app_name: appTitle || "FinTrack",
+        app_name: appTitle || "Srusti",
         updated_at: new Date().toISOString()
       };
       const { error } = await fintrackSupabase.from("fintrack_data").upsert(row, { onConflict: "user_id" });
@@ -1139,7 +1285,7 @@
     let isCreatingNew = false;
     let authMode = 'login';
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
-    let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
+    let appTitle = localStorage.getItem('cashbook_app_name') || "Srusti";
 
     let sheets = [{ name: currentMonthYear, rows: [{ date: today, particular: "", income: 0, exp: 0 }] }];
     let receivables = [];
@@ -1166,11 +1312,6 @@
         
         initUserData();
         await loadFromSupabase();
-
-        // Initialize history state stack cleanly
-        try { 
-          window.history.replaceState({ section: 'dashboard' }, '', '#dashboard'); 
-        } catch(e){}
       } else {
         document.getElementById('auth-screen-container').style.display = 'flex';
         document.getElementById('main-app-content').style.display = 'none';
@@ -1457,9 +1598,15 @@
         }
       });
 
+      // Update mobile bottom bar
       document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`botNav-${section}`);
       if (activeBtn) activeBtn.classList.add('active');
+
+      // Update desktop tabs
+      document.querySelectorAll('.desktop-nav-tabs button').forEach(b => b.classList.remove('active'));
+      if (section === 'dashboard') document.getElementById('dtab-dashboard')?.classList.add('active');
+      if (section === 'reports') document.getElementById('dtab-reports')?.classList.add('active');
 
       if (!fromHistory && curSection !== section) {
         navigationHistory.push(section);
@@ -1468,11 +1615,6 @@
       if (section === 'dashboard') renderDashboard();
       if (section === 'reports') { populateLedgerAccounts(); renderActiveReport(); }
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Keep clean pushState history stack for back interception
-      try { 
-        window.history.pushState({ section: section }, '', '#' + section); 
-      } catch(e){}
     }
 
     function switchTxTab(subTab) {
@@ -1483,6 +1625,12 @@
       document.getElementById('txTabBtn-sheet').className = subTab === 'sheet' ? 'active' : '';
       document.getElementById('txTabBtn-rec').className = subTab === 'rec' ? 'active' : '';
       document.getElementById('txTabBtn-pay').className = subTab === 'pay' ? 'active' : '';
+
+      // Update desktop tab active class
+      document.querySelectorAll('.desktop-nav-tabs button').forEach(b => b.classList.remove('active'));
+      if (subTab === 'sheet') document.getElementById('dtab-sheet')?.classList.add('active');
+      if (subTab === 'rec') document.getElementById('dtab-rec')?.classList.add('active');
+      if (subTab === 'pay') document.getElementById('dtab-pay')?.classList.add('active');
     }
 
     /* Reports / Ledger Logic */
@@ -1553,7 +1701,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FinTrack_Backup_${today}.json`;
+      a.download = `Srusti_Backup_${today}.json`;
       a.click();
       URL.revokeObjectURL(url);
       showToast("Backup exported successfully!", "success");
@@ -1581,7 +1729,7 @@
       reader.readAsText(file);
     }
 
-    /* Consistent Logout & Back-Button Interception Hub */
+    /* Logout & Reliable Backspace Interception */
     function promptSimpleLogout() {
       document.getElementById('simpleLogoutModal').style.display = 'flex';
     }
@@ -1601,14 +1749,22 @@
     }
 
     function handleBackNavigation() {
-      // 1. If any modal is active, close it first
+      // 1. Close any visible modal first
       const openModal = Array.from(document.querySelectorAll('.modal-overlay')).find(m => window.getComputedStyle(m).display === 'flex');
       if (openModal) {
         openModal.style.display = 'none';
         return true;
       }
 
-      // 2. Step backward through internal navigation stack if not on dashboard
+      // 2. If viewing sub-tabs in transaction, go back to Cashbook Sheet
+      const recVisible = document.getElementById('txView-rec').style.display === 'block';
+      const payVisible = document.getElementById('txView-pay').style.display === 'block';
+      if (recVisible || payVisible) {
+        switchTxTab('sheet');
+        return true;
+      }
+
+      // 3. Step back in section history
       if (navigationHistory.length > 1) {
         navigationHistory.pop();
         const prev = navigationHistory[navigationHistory.length - 1] || 'dashboard';
@@ -1616,7 +1772,7 @@
         return true;
       }
 
-      // 3. If on dashboard or stack is fully exhausted, trigger logout confirmation modal
+      // 4. On Dashboard -> ALWAYS prompt for confirmation
       promptSimpleLogout();
       return true;
     }
@@ -1626,13 +1782,6 @@
       const active = document.activeElement;
       if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
       e.preventDefault();
-      handleBackNavigation();
-    });
-
-    window.addEventListener('popstate', function(e) {
-      e.preventDefault();
-      // Keep a dummy history entry so back button stays locked to interception
-      try { window.history.pushState({ section: navigationHistory[navigationHistory.length - 1] }, '', '#' + (navigationHistory[navigationHistory.length - 1] || 'dashboard')); } catch(err){}
       handleBackNavigation();
     });
 
@@ -1675,7 +1824,7 @@
       document.getElementById('appNameModal').style.display = 'flex';
     }
     function saveAppName() {
-      appTitle = document.getElementById('modalAppNameInput').value.trim() || "FinTrack";
+      appTitle = document.getElementById('modalAppNameInput').value.trim() || "Srusti";
       document.getElementById('appBrandTitle').innerText = appTitle;
       localStorage.setItem('cashbook_app_name', appTitle);
       saveAllData();
@@ -1724,7 +1873,7 @@
     }
     function toggleAuthModeView() {
       authMode = authMode === 'login' ? 'register' : 'login';
-      document.getElementById('authTitle').innerText = 'FinTrack';
+      document.getElementById('authTitle').innerText = 'Srusti';
       document.getElementById('authSubtitle').innerText = authMode === 'register' ? 'Create an Account' : 'Please Login';
       document.getElementById('authSubmitBtn').innerText = authMode === 'register' ? 'Register' : 'Login';
       document.getElementById('pinInputGroup').style.display = authMode === 'register' ? 'block' : 'none';
