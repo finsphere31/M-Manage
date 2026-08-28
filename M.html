@@ -6,21 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FinTrack - Money Management</title>
 
-  <!-- PWA & Mobile App Meta Tags -->
+  <!-- PWA Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="FinTrack">
-  <meta name="theme-color" content="#0b1a30">
+  <meta name="theme-color" content="#ffffff">
 
   <link rel="manifest" href='data:application/manifest+json,{
-    "name": "FinTrack- Money Management",
+    "name": "FinTrack - Money Management",
     "short_name": "FinTrack",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
-    "background_color": "#0b1a30",
-    "theme_color": "#0b1a30",
+    "background_color": "#f8fafc",
+    "theme_color": "#ffffff",
     "icons": [
       {
         "src": "https://cdn-icons-png.flaticon.com/512/2953/2953363.png",
@@ -40,27 +40,577 @@
       -webkit-tap-highlight-color: transparent;
     }
     
-    html, body {
+     html, body {
       width: 100%;
       height: 100%;
-      overflow-x: hidden;
-      background: #f4f7fb;
-      color: #1e293b;
+      background: #f8fafc;
+      color: #0f172a;
       -webkit-text-size-adjust: 100%;
     }
 
     body {
-      padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px));
     }
 
-    @media (min-width: 768px) {
-      body {
-        padding-bottom: 25px;
-        background: #f0f3f8;
-      }
+    /* Fixed Sticky App Header */
+    .app-header {
+      background: #ffffff;
+      color: #0f172a;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .app-header-left { display: flex; align-items: center; gap: 8px; }
+    .brand-icon-box {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+    }
+    .app-header .brand {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.4px;
+      color: #0f172a;
+      cursor: pointer;
+    }
+    
+    .app-header-right { display: flex; align-items: center; gap: 10px; }
+    .header-icon-btn {
+      background: none;
+      border: none;
+      font-size: 17px;
+      cursor: pointer;
+      position: relative;
+      color: #475569;
+    }
+    .header-notification-dot {
+      position: absolute;
+      top: 0; right: 0;
+      width: 7px; height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+    .user-avatar-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      padding: 3px 8px 3px 4px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .user-avatar-pill img {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .user-avatar-pill span {
+      font-size: 11.5px; font-weight: 700; color: #334155;
     }
 
-    /* Toast Notification */
+    /* Section Wrapper */
+    .app-screen-section {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    /* Hero Banner */
+    .hero-banner-card {
+      margin: 10px 0 12px;
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 50%, #1d4ed8 100%);
+      border-radius: 20px;
+      padding: 18px;
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .hero-greeting { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
+    .hero-subtitle { font-size: 11.5px; opacity: 0.9; }
+    .hero-month-pill {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      backdrop-filter: blur(4px);
+    }
+    
+    .hero-balance-box {
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 14px;
+      backdrop-filter: blur(6px);
+    }
+    .hero-bal-label { font-size: 11px; font-weight: 700; opacity: 0.85; display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+    .hero-bal-label::before { content: ""; width: 6px; height: 6px; background: #10b981; border-radius: 50%; }
+    .hero-bal-val-row { display: flex; justify-content: space-between; align-items: flex-end; }
+    .hero-bal-amount { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
+    .hero-bal-trend {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 3px 7px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+    }
+
+    /* Financial Summary Section */
+    .summary-section-wrap {
+      margin: 0 0 12px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      border: 1px solid #e2e8f0;
+    }
+    .summary-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .summary-title { font-size: 14px; font-weight: 800; color: #0f172a; }
+    .view-all-link { font-size: 11.5px; font-weight: 700; color: #2563eb; cursor: pointer; text-decoration: none; }
+
+    /* 6 Cards Grid */
+    .img-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .modern-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 68px;
+    }
+    .modern-box-top { display: flex; justify-content: space-between; align-items: center; }
+    .modern-box-label { font-size: 9px; font-weight: 800; color: #64748b; text-transform: uppercase; }
+    .modern-box-icon { font-size: 11px; }
+    .modern-box-val { font-size: 12.5px; font-weight: 900; margin: 2px 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .modern-box-sub { font-size: 8px; color: #94a3b8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .box-bal { border-left: 3px solid #0284c7; } .box-bal .modern-box-val { color: #0284c7; }
+    .box-inc { border-left: 3px solid #10b981; } .box-inc .modern-box-val { color: #10b981; }
+    .box-exp { border-left: 3px solid #ef4444; } .box-exp .modern-box-val { color: #ef4444; }
+    .box-rec { border-left: 3px solid #8b5cf6; } .box-rec .modern-box-val { color: #8b5cf6; }
+    .box-pay { border-left: 3px solid #f59e0b; } .box-pay .modern-box-val { color: #f59e0b; }
+    .box-proj { border-left: 3px solid #06b6d4; } .box-proj .modern-box-val { color: #06b6d4; }
+
+    /* Twin Action CTA Buttons */
+    .twin-action-row {
+      margin: 0 0 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .twin-cta-btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .twin-cta-sync { background: linear-gradient(135deg, #059669, #047857); }
+    .twin-cta-open { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+
+    /* Updated Sub Navigation Tabs */
+    .sub-nav-wrapper {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .sub-nav-tabs-btn {
+      flex: 1;
+      padding: 9px 6px;
+      border: none;
+      background: transparent;
+      border-radius: 24px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .sub-nav-tabs-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Side-by-Side Lower Dashboard Grid */
+    .dashboard-lower-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .lower-card-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .lower-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .lower-card-title { font-size: 12.5px; font-weight: 800; color: #0f172a; }
+
+    .inc-exp-content-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .inc-exp-left-side { flex: 1; padding-right: 8px; }
+    .inc-exp-right-side {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .donut-circle {
+      width: 76px; height: 76px;
+      border-radius: 50%;
+      background: conic-gradient(#10b981 0deg 260deg, #ef4444 260deg 360deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .donut-inner {
+      width: 58px; height: 58px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-line-label { font-size: 9.5px; font-weight: 700; color: #64748b; margin-top: 4px; }
+    .mini-line-val { font-size: 13px; font-weight: 900; margin-bottom: 4px; }
+    .mini-progress-track { width: 100%; height: 5px; background: #f1f5f9; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+    .mini-progress-fill-inc { height: 100%; background: #10b981; border-radius: 4px; }
+    .mini-progress-fill-exp { height: 100%; background: #ef4444; border-radius: 4px; }
+
+    /* Recent Transactions List */
+    .recent-tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .recent-tx-item:last-child { border-bottom: none; }
+    .recent-tx-left { display: flex; align-items: center; gap: 8px; }
+    .recent-tx-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: bold;
+    }
+    .tx-inc-bg { background: #d1fae5; color: #059669; }
+    .tx-exp-bg { background: #fee2e2; color: #dc2626; }
+    .recent-tx-title { font-size: 11px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+    .recent-tx-sub { font-size: 9px; color: #94a3b8; }
+    .recent-tx-right { display: flex; align-items: center; gap: 6px; }
+    .recent-tx-amt { font-size: 11.5px; font-weight: 800; }
+    .recent-tx-dots { font-size: 12px; color: #94a3b8; cursor: pointer; padding: 0 2px; }
+
+    /* Bottom Sticky Navigation Bar (Mobile Only) */
+    .bottom-app-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(54px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 10000;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.03);
+    }
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      flex: 1;
+      height: 100%;
+    }
+    .bottom-nav-item.active { color: #2563eb; }
+    .bottom-nav-item span.icon { font-size: 16px; }
+
+    /* Desktop Top Navigation Bar Styles */
+    .desktop-top-nav {
+      display: none;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 20px;
+      gap: 10px;
+      align-items: center;
+      position: sticky;
+      top: 53px;
+      z-index: 999;
+    }
+
+    .desktop-nav-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .desktop-nav-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Media Queries for Desktop layout sync */
+@media (min-width: 768px) {
+
+  
+
+  /* Hide mobile bottom navigation on computer */
+  .bottom-app-bar {
+    display: none !important;
+  }
+
+  /* Hide blue greeting banner on computer */
+  .hero-banner-card {
+    display: none !important;
+  }
+
+   #transaction-section > .sheet-container:first-child {
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 10px;
+  }
+
+  .dashboard-lower-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .img-metrics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .desktop-top-nav {
+    display: flex;
+  }
+}
+
+/* Containers & Table */
+.sheet-container {
+  background: #ffffff;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  margin: 8px 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 54vh;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  scroll-behavior: smooth;
+}
+    table { width: 100%; border-collapse: collapse; min-width: 500px; }
+    th, td { 
+      border: 1px solid #e2e8f0; 
+      padding: 7px 8px; 
+      text-align: left; /* Default center alignment for Date and Particular */
+      font-size: 12.5px; 
+    }
+    
+    /* Right align numerical columns and headers */
+    th:nth-child(3), th:nth-child(4), th:nth-child(5),
+    td:nth-child(3), td:nth-child(4), td:nth-child(5),
+    .num { 
+      text-align: right; 
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid transparent;
+      outline: none;
+      background: transparent;
+      font-size: 12.5px;
+      padding: 3px;
+      border-radius: 4px;
+      text-align: inherit; /* Inherits center or right alignment from the parent cell */
+    }
+    th { background: #f8fafc; font-weight: 700; color: #475569; position: sticky; top: 0; z-index: 2; }
+    .num { text-align: right; }
+    .exp-num { color: #dc2626 !important; font-weight: 700; }
+    .total-row { background: #f8fafc; font-weight: bold; position: sticky; bottom: 0; }
+    
+    input, select {
+      width: 100%;
+      border: 1px solid transparent;
+      outline: none;
+      background: transparent;
+      font-size: 12.5px;
+      padding: 3px;
+      border-radius: 4px;
+    }
+    input:focus, select:focus { background: #fff; border-color: #93c5fd; }
+    .action-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; cursor: pointer; }
+    .add-row-btn { padding: 8px 14px; background: #0ea5e9; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+    .btn-toggle-bal { padding: 8px 12px; background: #64748b; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; }
+
+    /* Filter Box for Reports */
+    .filter-box {
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 3px; flex: 1 1 140px; }
+    .filter-group label { font-size: 10.5px; font-weight: 700; color: #475569; }
+    .filter-box select, .filter-box input { border: 1px solid #cbd5e1; padding: 6px; border-radius: 6px; background: #fff; font-size: 12px; }
+
+    /* Floating Autocomplete */
+    .autocomplete-floating-menu {
+      position: absolute;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      max-height: 160px;
+      overflow-y: auto;
+      z-index: 999999;
+      display: none;
+      min-width: 160px;
+    }
+    .autocomplete-item {
+      padding: 8px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover { background: #eff6ff; color: #2563eb; }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      z-index: 999999;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 14px;
+      max-width: 360px;
+      width: 100%;
+      padding: 18px;
+      text-align: center;
+    }
+    .modal-box h4 { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 10px; }
+    .modal-input-field {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      padding: 9px 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      outline: none;
+      background: #f8fafc;
+    }
+    .modal-input-field:focus { border-color: #2563eb; background: #fff; }
+    .modal-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+    .modal-btn { padding: 9px 14px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .modal-save-btn { background: #2563eb; color: #fff; width: 100%; }
+    .modal-cancel-btn { background: #e2e8f0; color: #334155; }
+    .modal-del-btn { background: #fee2e2; color: #ef4444; }
+
+    /* Toast */
     #fintrack-toast {
       position: fixed;
       top: calc(12px + env(safe-area-inset-top, 0px));
@@ -79,18 +629,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      text-align: center;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    #fintrack-toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-    #fintrack-toast.success { background: linear-gradient(135deg, #10b981, #059669); }
-    #fintrack-toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    #fintrack-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+    #fintrack-toast.success { background: #059669; }
+    #fintrack-toast.error { background: #dc2626; }
 
     /* Auth Screen */
     #auth-screen-container {
@@ -130,607 +675,33 @@
     .fintrack-btn {
       width: 100%;
       padding: 11px;
-      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      background: #2563eb;
       color: #fff;
       font-size: 14px;
       font-weight: 700;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
     .fintrack-card-footer { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; }
     .fintrack-card-footer a { color: #2563eb; text-decoration: none; font-weight: 600; cursor: pointer; }
 
-    /* ========================================================= */
-    /* HEADER (DESKTOP vs MOBILE) */
-    /* ========================================================= */
-    .app-header {
-      background: #0b1a30;
-      color: #ffffff;
-      padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    }
-    .app-header .brand { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; color: #ffffff; }
-    .header-user-badge { display: flex; align-items: center; gap: 6px; }
-    .user-pill-btn {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 4px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .logout-btn-header {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .desktop-three-dots { display: none; }
-
-    @media (min-width: 768px) {
-      .app-header {
-        background: #ffffff;
-        color: #0f172a;
-        padding: 12px 24px;
-        border-bottom: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      }
-      .app-header .brand { font-size: 22px; color: #0f172a; font-weight: 900; }
-      .user-pill-btn {
-        background: #eff6ff;
-        color: #1e40af;
-        border: 1px solid #bfdbfe;
-        font-size: 12px;
-      }
-      .logout-btn-header {
-        background: #fee2e2;
-        border: 1px solid #fecaca;
-        color: #dc2626;
-        font-size: 12px;
-      }
-      .desktop-three-dots {
-        display: inline-block;
-        background: none;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 4px 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: bold;
-        color: #475569;
-      }
-    }
-
-    /* Desktop Top Navigation Tabs (Image 1 Style) */
-    .desktop-nav-tabs {
-      display: none;
-    }
-    @media (min-width: 768px) {
-      .desktop-nav-tabs {
-        display: flex;
-        gap: 8px;
-        padding: 12px 24px 0;
-        background: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .desktop-nav-tabs button {
-        padding: 8px 18px;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
-        border-radius: 8px 8px 0 0;
-        font-size: 13px;
-        font-weight: 700;
-        color: #475569;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      .desktop-nav-tabs button.active {
-        background: #2563eb;
-        color: #ffffff;
-        border-color: #2563eb;
-      }
-    }
-
-    /* Mobile Title & Hero Card */
-    .mobile-only { display: block; }
-    .desktop-only { display: none; }
-
-    @media (min-width: 768px) {
-      .mobile-only { display: none !important; }
-      .desktop-only { display: block !important; }
-    }
-
-    .page-main-heading {
-      text-align: center;
-      font-size: 19px;
-      font-weight: 900;
-      color: #0f172a;
-      margin: 8px 0 6px;
-      letter-spacing: -0.3px;
-    }
-
-    .hero-banner-card {
-      margin: 0 10px 10px;
-      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 60%, #172554 100%);
-      border-radius: 14px;
-      padding: 13px 13px;
-      color: #ffffff;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 6px 18px -4px rgba(29, 78, 216, 0.3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .hero-banner-content { z-index: 2; max-width: 68%; }
-    .hero-greeting { font-size: 11.5px; font-weight: 600; opacity: 0.9; margin-bottom: 2px; }
-    .hero-headline { font-size: 15px; font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
-    .hero-date-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 8px;
-      padding: 3px 8px;
-      font-size: 10px;
-      font-weight: 600;
-      backdrop-filter: blur(4px);
-    }
-    .hero-illustration {
-      width: 72px;
-      height: 60px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      text-align: center;
-      padding: 4px;
-    }
-
-    /* Financial Summary Card Wrap */
-    .summary-section-wrap {
-      margin: 0 10px 10px;
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 10px 10px 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      border: 1px solid #edf2f7;
-    }
-    @media (min-width: 768px) {
-      .summary-section-wrap {
-        max-width: 1200px;
-        margin: 18px auto;
-        padding: 18px 20px;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      }
-    }
-
-    .summary-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      padding: 0 2px;
-    }
-    .summary-title { font-size: 14px; font-weight: 800; color: #0f172a; }
-    .summary-status-tag {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: #10b981;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-    .summary-status-tag::before {
-      content: "";
-      width: 5px;
-      height: 5px;
-      background: #10b981;
-      border-radius: 50%;
-    }
-
-    /* ========================================================= */
-    /* METRICS CARDS: MOBILE vs DESKTOP LAYOUT (IMAGE 1 vs IMAGE 2) */
-    /* ========================================================= */
-    .img-metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-    @media (max-width: 420px) {
-      .img-metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-      }
-    }
-
-    .modern-box {
-      background: #ffffff;
-      border: 1px solid #f1f5f9;
-      border-radius: 10px;
-      padding: 8px 7px 7px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-      min-height: 82px;
-      justify-content: space-between;
-    }
-    .modern-box::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2.5px;
-    }
-
-    .modern-box-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11.5px;
-      margin-bottom: 3px;
-      color: #ffffff;
-    }
-    .modern-box-label { font-size: 9.5px; font-weight: 700; color: #64748b; white-space: nowrap; }
-    .modern-box-val { font-size: 14px; font-weight: 800; line-height: 1.15; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .modern-box-sub { font-size: 8.5px; color: #94a3b8; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    .modern-wave {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 40px;
-      height: 20px;
-      opacity: 0.18;
-      pointer-events: none;
-    }
-
-    /* Mobile Color Schemes (Image 2) */
-    .box-bal .modern-box-icon { background: #10b981; }
-    .box-bal .modern-box-val { color: #059669; }
-    .box-bal::after { background: #10b981; }
-    .box-bal .modern-wave { color: #10b981; }
-
-    .box-inc .modern-box-icon { background: #2563eb; }
-    .box-inc .modern-box-val { color: #2563eb; }
-    .box-inc::after { background: #2563eb; }
-    .box-inc .modern-wave { color: #2563eb; }
-
-    .box-exp .modern-box-icon { background: #ef4444; }
-    .box-exp .modern-box-val { color: #dc2626; }
-    .box-exp::after { background: #ef4444; }
-    .box-exp .modern-wave { color: #ef4444; }
-
-    .box-rec .modern-box-icon { background: #8b5cf6; }
-    .box-rec .modern-box-val { color: #7c3aed; }
-    .box-rec::after { background: #8b5cf6; }
-    .box-rec .modern-wave { color: #8b5cf6; }
-
-    .box-pay .modern-box-icon { background: #f59e0b; }
-    .box-pay .modern-box-val { color: #d97706; }
-    .box-pay::after { background: #f59e0b; }
-    .box-pay .modern-wave { color: #f59e0b; }
-
-    .box-proj .modern-box-icon { background: #06b6d4; }
-    .box-proj .modern-box-val { color: #0891b2; }
-    .box-proj::after { background: #06b6d4; }
-    .box-proj .modern-wave { color: #06b6d4; }
-
-    /* Desktop Exact Layout (Image 1 Style: 4 on top, 2 below, left colored borders) */
-    @media (min-width: 768px) {
-      .img-metrics-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-      }
-      .modern-box {
-        border-radius: 8px;
-        padding: 10px 14px;
-        min-height: 72px;
-        border-left-width: 4px !important;
-        border-top: 1px solid #e2e8f0;
-        border-right: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
-      }
-      .modern-box::after { display: none; }
-      .modern-box-icon {
-        border-radius: 4px;
-        background: transparent !important;
-        color: #64748b !important;
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        font-size: 16px;
-      }
-      .modern-box-label { font-size: 11px; text-transform: uppercase; color: #64748b; }
-      .modern-box-val { font-size: 18px; margin: 4px 0 2px; }
-      .modern-box-sub { font-size: 10px; }
-      .modern-wave { display: none; }
-
-      .box-bal { border-left-color: #0284c7 !important; background: linear-gradient(135deg, #ffffff 60%, #eff6ff 100%); }
-      .box-inc { border-left-color: #10b981 !important; background: linear-gradient(135deg, #ffffff 60%, #ecfdf5 100%); }
-      .box-exp { border-left-color: #ef4444 !important; background: linear-gradient(135deg, #ffffff 60%, #fef2f2 100%); }
-      .box-rec { border-left-color: #059669 !important; background: linear-gradient(135deg, #ffffff 60%, #ecfdf5 100%); }
-      .box-pay { border-left-color: #f59e0b !important; background: linear-gradient(135deg, #ffffff 60%, #fffbeb 100%); }
-      .box-proj { border-left-color: #9333ea !important; background: linear-gradient(135deg, #ffffff 60%, #faf5ff 100%); }
-    }
-
-    /* Twin Action Buttons */
-    .twin-action-row {
-      margin: 0 10px 10px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-    @media (min-width: 768px) {
-      .twin-action-row {
-        display: flex;
-        justify-content: flex-start;
-        max-width: 1200px;
-        margin: 14px auto;
-        gap: 12px;
-      }
-    }
-    .twin-cta-btn {
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      text-align: left;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    }
-    .twin-cta-btn:active { transform: scale(0.98); }
-    .twin-cta-sync { background: linear-gradient(135deg, #10b981, #059669); }
-    .twin-cta-open { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
-    .twin-cta-title { font-size: 11.5px; font-weight: 800; display: block; }
-    .twin-cta-sub { font-size: 9px; opacity: 0.9; font-weight: 500; display: block; }
-
-    @media (min-width: 768px) {
-      .twin-cta-btn {
-        padding: 10px 18px;
-        border-radius: 8px;
-      }
-      .twin-cta-title { font-size: 13px; }
-      .twin-cta-sub { display: none; }
-    }
-
-    /* Sub Navigation Tabs */
-    .sub-nav-tabs {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 8px;
-      background: #f1f5f9;
-      padding: 3px;
-      border-radius: 8px;
-    }
-    .sub-nav-tabs button {
-      flex: 1;
-      padding: 7px 5px;
-      border: none;
-      background: transparent;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .sub-nav-tabs button.active {
-      background: #ffffff;
-      color: #2563eb;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    /* Fixed Bottom Navigation (Mobile Only) */
-    .bottom-app-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: calc(52px + env(safe-area-inset-bottom, 0px));
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      background: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 10000;
-      box-shadow: 0 -3px 10px rgba(0,0,0,0.03);
-    }
-    @media (min-width: 768px) {
-      .bottom-app-bar { display: none; }
-    }
-
-    .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      background: none;
-      border: none;
-      color: #64748b;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      flex: 1;
-      height: 100%;
-    }
-    .bottom-nav-item.active { color: #2563eb; }
-    .bottom-nav-item span.icon { font-size: 16px; }
-
-    /* Containers */
-    .sheet-container {
-      background: #ffffff;
-      padding: 10px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-      margin: 6px 10px;
-    }
-    @media (min-width: 768px) {
-      .sheet-container {
-        max-width: 1200px;
-        margin: 14px auto;
-        padding: 16px;
-      }
-    }
-
-    .table-scroll {
-      overflow-x: auto;
-      overflow-y: auto;
-      max-height: 55vh;
-      -webkit-overflow-scrolling: touch;
-      margin-bottom: 8px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-    }
-    table { width: 100%; border-collapse: collapse; min-width: 480px; }
-    th, td { border: 1px solid #e2e8f0; padding: 6px 7px; text-align: left; font-size: 12px; }
-    th { background: #f8fafc; font-weight: 700; color: #475569; position: sticky; top: 0; z-index: 2; }
-    .num { text-align: right; }
-    .exp-num { color: #dc2626 !important; font-weight: 700; }
-    .total-row { background: #f8fafc; font-weight: bold; position: sticky; bottom: 0; }
-    
-    input, select {
-      width: 100%;
-      border: 1px solid transparent;
-      outline: none;
-      background: transparent;
-      font-size: 12px;
-      padding: 3px;
-      border-radius: 4px;
-    }
-    input:focus, select:focus { background: #fff; border-color: #93c5fd; }
-    .action-btn { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; padding: 3px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; cursor: pointer; }
-    .add-row-btn { padding: 7px 11px; background: #0ea5e9; color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; }
-    .btn-toggle-bal { padding: 7px 9px; background: #64748b; color: #fff; border: none; border-radius: 6px; font-weight: 600; font-size: 11px; cursor: pointer; }
-
-    /* Floating Autocomplete Dropdown */
-    .autocomplete-floating-menu {
-      position: absolute;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 99999;
-      display: none;
-      min-width: 130px;
-    }
-    .autocomplete-item {
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #1e293b;
-      cursor: pointer;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .autocomplete-item:last-child { border-bottom: none; }
-    .autocomplete-item:hover {
-      background: #eff6ff;
-      color: #2563eb;
-    }
-
-    /* Filter Box */
-    .filter-box {
-      margin-bottom: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      background: #f8fafc;
-      padding: 7px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-    }
-    .filter-group { display: flex; flex-direction: column; gap: 2px; flex: 1 1 115px; }
-    .filter-group label { font-size: 9.5px; font-weight: 700; color: #475569; }
-    .filter-box select, .filter-box input { border: 1px solid #cbd5e1; padding: 4px; border-radius: 5px; background: #fff; font-size: 11px; }
-
-    /* Modals */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(4px);
-      z-index: 999999;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-    }
-    .modal-box {
-      background: #ffffff;
-      border-radius: 14px;
-      max-width: 320px;
-      width: 100%;
-      padding: 16px;
-      text-align: center;
-    }
-    .modal-box h4 { font-size: 14.5px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
-    .modal-input-field {
-      width: 100%;
-      border: 1px solid #cbd5e1;
-      padding: 8px 10px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      font-size: 12px;
-      outline: none;
-    }
-    .modal-actions { display: flex; justify-content: space-between; gap: 6px; }
-    .modal-btn { padding: 8px 12px; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    .modal-save-btn { background: #2563eb; color: #fff; width: 100%; }
-    .modal-cancel-btn { background: #e2e8f0; color: #334155; }
-    .modal-del-btn { background: #fee2e2; color: #ef4444; }
-
     /* Settings Hub */
-    .settings-list { display: flex; flex-direction: column; gap: 5px; }
+    .settings-list { display: flex; flex-direction: column; gap: 6px; }
     .settings-item {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 11px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
       font-weight: 700;
-      font-size: 11.5px;
+      font-size: 12px;
     }
+    
+  
   </style>
 </head>
 <body>
@@ -777,44 +748,51 @@
   <!-- Main Application Wrapper -->
   <div id="main-app-content" style="display:none;">
     
-    <!-- Top Header -->
+    <!-- Top Sticky Header -->
     <header class="app-header">
-      <div class="brand" id="appBrandTitle">FinTack</div>
-      <div class="header-user-badge">
-        <div class="user-pill-btn">
-          <span>👤</span> <span id="currentUserNameLabel">User</span>
+      <div class="app-header-left">
+        <div class="brand-icon-box">F</div>
+        <div class="brand" id="appBrandTitle" onclick="openAppNameModal()">FinTrack</div>
+      </div>
+      <div class="app-header-right">
+        <div class="user-avatar-pill" onclick="promptSimpleLogout()" title="Click to Logout" style="cursor: pointer;">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar">
+          <span id="currentUserNameLabel">Sadu</span>
+          <span style="font-weight: 800; color: #ef4444; margin-left: 2px; font-size: 11px;">Logout</span>
         </div>
-        <button class="logout-btn-header" onclick="promptSimpleLogout()">Logout</button>
-        <button class="desktop-three-dots" onclick="openAppNameModal()">⋮</button>
       </div>
     </header>
 
-    <!-- Desktop Navigation Tabs (Visible on Laptop/PC) -->
-    <nav class="desktop-nav-tabs">
-      <button class="active" id="dtab-dashboard" onclick="switchSection('dashboard')">Dashboard</button>
-      <button id="dtab-sheet" onclick="switchSection('transaction'); switchTxTab('sheet');">Cashbook Sheet</button>
-      <button id="dtab-rec" onclick="switchSection('transaction'); switchTxTab('rec');">Receivables</button>
-      <button id="dtab-pay" onclick="switchSection('transaction'); switchTxTab('pay');">Payables</button>
-      <button id="dtab-reports" onclick="switchSection('reports')">Reports</button>
+    <!-- Desktop Top Navigation Bar -->
+    <nav class="desktop-top-nav">
+      <button class="desktop-nav-btn active" id="deskNav-dashboard" onclick="switchSection('dashboard')">Dashboard</button>
+      <button class="desktop-nav-btn" id="deskNav-transaction-sheet" onclick="switchSection('transaction'); switchTxTab('sheet');">Cashbook Sheet</button>
+      <button class="desktop-nav-btn" id="deskNav-transaction-rec" onclick="switchSection('transaction'); switchTxTab('rec');">Receivables</button>
+      <button class="desktop-nav-btn" id="deskNav-transaction-pay" onclick="switchSection('transaction'); switchTxTab('pay');">Payables</button>
+      <button class="desktop-nav-btn" id="deskNav-reports" onclick="switchSection('reports')">Reports</button>
+      <button class="desktop-nav-btn" id="deskNav-settings" onclick="switchSection('settings')">Settings</button>
     </nav>
-
-    <!-- Mobile Heading -->
-    <h2 class="page-main-heading mobile-only">Money Management</h2>
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="dashboard-section" class="app-screen-section">
-      <!-- Blue Hero Greeting Card (Mobile Only) -->
-      <div class="hero-banner-card mobile-only">
-        <div class="hero-banner-content">
-          <div class="hero-greeting" id="heroGreetingText">Good Morning, User 👋</div>
-          <div class="hero-headline">Here's your business at a glance</div>
-          <div class="hero-date-badge">
-            <span>📅</span> <span id="todayDateLabel">Today</span>
+      <!-- Hero Greeting Card -->
+      <div class="hero-banner-card">
+        <div class="hero-top-row">
+          <div>
+            <div class="hero-greeting">Good Morning, <span id="heroUserName">Sadu</span> 👋</div>
+            <div class="hero-subtitle">Here's your financial overview</div>
+          </div>
+          <div class="hero-month-pill">
+            <span>📅</span> This Month <span>▾</span>
           </div>
         </div>
-        <div class="hero-illustration">
-          <span style="font-size: 18px;">💻</span>
-          <span style="font-size: 9.5px; font-weight:800; margin-top:2px;">₹ Live</span>
+
+        <div class="hero-balance-box">
+          <div class="hero-bal-label">Real-time Net Balance</div>
+          <div class="hero-bal-val-row">
+            <div class="hero-bal-amount" id="heroNetBalance">₹73,543</div>
+            <div class="hero-bal-trend">+12.5% ↗</div>
+          </div>
         </div>
       </div>
 
@@ -822,114 +800,158 @@
       <div class="summary-section-wrap">
         <div class="summary-header-row">
           <span class="summary-title">Financial Summary</span>
-          <span class="summary-status-tag">Real-time balance</span>
+          <a class="view-all-link" onclick="switchSection('transaction'); switchTxTab('sheet');">View All</a>
         </div>
 
         <div class="img-metrics-grid">
           <!-- Card 1: Cash Balance -->
           <div class="modern-box box-bal">
-            <div class="modern-box-icon">💼</div>
-            <div class="modern-box-label">Cash Balance</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Cash Balance</span>
+              <span class="modern-box-icon">💼</span>
+            </div>
             <div class="modern-box-val" id="dashNetCash">₹0</div>
             <div class="modern-box-sub">In-hand liquidity</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 30 Q 25 10, 50 30 T 100 20 L 100 50 L 0 50 Z"/></svg>
           </div>
 
           <!-- Card 2: Total Income -->
           <div class="modern-box box-inc">
-            <div class="modern-box-icon">📈</div>
-            <div class="modern-box-label">Total Income</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Total Income</span>
+              <span class="modern-box-icon">📈</span>
+            </div>
             <div class="modern-box-val" id="dashTotalIncome">₹0</div>
             <div class="modern-box-sub">Total cashbook</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 35 Q 30 15, 60 25 T 100 10 L 100 50 L 0 50 Z"/></svg>
           </div>
 
           <!-- Card 3: Total Expense -->
           <div class="modern-box box-exp">
-            <div class="modern-box-icon">📉</div>
-            <div class="modern-box-label">Total Expense</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Total Expense</span>
+              <span class="modern-box-icon">📉</span>
+            </div>
             <div class="modern-box-val" id="dashTotalExp">₹0</div>
             <div class="modern-box-sub">Total logged</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 20 Q 35 40, 70 20 T 100 35 L 100 50 L 0 50 Z"/></svg>
           </div>
 
           <!-- Card 4: Receivables -->
           <div class="modern-box box-rec">
-            <div class="modern-box-icon">👥</div>
-            <div class="modern-box-label">Receivables</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Receivables</span>
+              <span class="modern-box-icon">👥</span>
+            </div>
             <div class="modern-box-val" id="dashDueIn">₹0</div>
             <div class="modern-box-sub">Due in</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 25 Q 25 5, 50 25 T 100 15 L 100 50 L 0 50 Z"/></svg>
           </div>
 
           <!-- Card 5: Payables -->
           <div class="modern-box box-pay">
-            <div class="modern-box-icon">👜</div>
-            <div class="modern-box-label">Payables</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Payables</span>
+              <span class="modern-box-icon">👜</span>
+            </div>
             <div class="modern-box-val" id="dashDueOut">₹0</div>
             <div class="modern-box-sub">Due out</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 30 Q 30 10, 60 30 T 100 20 L 100 50 L 0 50 Z"/></svg>
           </div>
 
           <!-- Card 6: Projected Net -->
           <div class="modern-box box-proj">
-            <div class="modern-box-icon">🕒</div>
-            <div class="modern-box-label">Projected Net</div>
+            <div class="modern-box-top">
+              <span class="modern-box-label">Projected Net</span>
+              <span class="modern-box-icon">🕒</span>
+            </div>
             <div class="modern-box-val" id="dashProjectedNet">₹0</div>
             <div class="modern-box-sub">Net balance</div>
-            <svg class="modern-wave" viewBox="0 0 100 50" fill="currentColor"><path d="M0 20 Q 30 35, 60 15 T 100 25 L 100 50 L 0 50 Z"/></svg>
           </div>
         </div>
       </div>
 
-      <!-- Action Buttons -->
+      <!-- Twin Action CTA Buttons -->
       <div class="twin-action-row">
         <button class="twin-cta-btn twin-cta-sync" onclick="syncWithGoogleDrive(true)">
-          <span style="font-size: 16px;">☁️</span>
-          <div>
-            <span class="twin-cta-title">Sync Now</span>
-            <span class="twin-cta-sub">Update data</span>
-          </div>
+          <span>☁️</span> <span>Sync Now</span>
         </button>
 
         <button class="twin-cta-btn twin-cta-open" onclick="switchSection('transaction'); switchTxTab('sheet');">
-          <span style="font-size: 16px;">📑</span>
-          <div>
-            <span class="twin-cta-title">Open Sheet →</span>
-            <span class="twin-cta-sub">View cashbook</span>
-          </div>
+          <span>📑</span> <span>Open Sheet →</span>
         </button>
+      </div>
+
+      <!-- Side-by-Side Section -->
+      <div class="dashboard-lower-grid">
+        <!-- Income vs Expense Box -->
+        <div class="lower-card-box">
+          <div class="lower-card-header">
+            <span class="lower-card-title">Income vs Expense</span>
+            <span style="font-size:10px; font-weight:700; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:6px; cursor:pointer;">This Month ▾</span>
+          </div>
+          
+          <div class="inc-exp-content-row">
+            <div class="inc-exp-left-side">
+              <div class="mini-line-label">Income</div>
+              <div class="mini-line-val" id="lowerIncVal" style="color:#10b981;">₹0</div>
+              <div class="mini-progress-track"><div class="mini-progress-fill-inc" id="incBar" style="width: 50%;"></div></div>
+
+              <div class="mini-line-label">Expense</div>
+              <div class="mini-line-val" id="lowerExpVal" style="color:#ef4444;">₹0</div>
+              <div class="mini-progress-track"><div class="mini-progress-fill-exp" id="expBar" style="width: 25%;"></div></div>
+            </div>
+
+            <div class="inc-exp-right-side">
+              <div class="donut-circle">
+                <div class="donut-inner">
+                  <div style="font-size:8.5px; font-weight:700; color:#64748b;">Net</div>
+                  <div style="font-size:10px; font-weight:900; color:#0f172a;" id="donutNetVal">₹0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions Box (Last 3) -->
+        <div class="lower-card-box">
+          <div class="lower-card-header">
+            <span class="lower-card-title">Recent Transactions</span>
+            <a class="view-all-link" onclick="switchSection('reports')">View All</a>
+          </div>
+          
+          <div id="recentTransactionsList">
+            <div style="font-size:11px; color:#94a3b8; text-align:center; padding:12px 0;">No transactions yet</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 2. TRANSACTION MODULE -->
     <div id="transaction-section" class="app-screen-section" style="display:none;">
-      <div class="sheet-container mobile-only" style="padding-bottom: 6px;">
-        <div class="sub-nav-tabs">
-          <button id="txTabBtn-sheet" class="active" onclick="switchTxTab('sheet')">Cashbook Sheet</button>
-          <button id="txTabBtn-rec" onclick="switchTxTab('rec')">Receipt (Due In)</button>
-          <button id="txTabBtn-pay" onclick="switchTxTab('pay')">Payment (Due Out)</button>
+      
+      <!-- Replaced Tab Switcher -->
+      <div class="sheet-container" style="padding-bottom: 6px;">
+        <div class="sub-nav-wrapper">
+          <button id="txTabBtn-sheet" class="sub-nav-tabs-btn active" onclick="switchTxTab('sheet')">Cashbook Sheet</button>
+          <button id="txTabBtn-rec" class="sub-nav-tabs-btn" onclick="switchTxTab('rec')">Receipt (Due In)</button>
+          <button id="txTabBtn-pay" class="sub-nav-tabs-btn" onclick="switchTxTab('pay')">Payment (Due Out)</button>
         </div>
       </div>
 
       <!-- Tx Sub-view 1: Sheet -->
       <div id="txView-sheet" class="sheet-container">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-          <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" style="font-size:11px; font-weight:700; color:#2563eb; background:#eff6ff; padding:4px 8px; border-radius:6px; border:1px solid #bfdbfe; cursor:pointer;">
+          <div id="currentPageBadge" class="current-page-badge" onclick="openRenameModal()" style="font-size:11.5px; font-weight:700; color:#2563eb; background:#eff6ff; padding:4px 10px; border-radius:6px; border:1px solid #bfdbfe; cursor:pointer;">
             <span id="badgePageTitle">Page 1</span> ✎
           </div>
-          <button class="plus-btn" onclick="copyAndAddNewSheet()" style="background:#10b981; color:#fff; border:none; padding:3px 10px; border-radius:6px; font-weight:bold; font-size:14px;">+</button>
+          <button class="plus-btn" onclick="copyAndAddNewSheet()" style="background:#10b981; color:#fff; border:none; padding:4px 12px; border-radius:6px; font-weight:bold; font-size:14px;">+</button>
         </div>
 
-        <div class="table-scroll">
+        <div class="table-scroll" id="cashTableContainer">
           <table id="cashTable">
             <thead>
               <tr>
                 <th style="width: 22%;">Date</th>
                 <th style="width: 32%;">Particular</th>
                 <th style="width: 15%;">Income</th>
-                <th style="width: 15%;">Exp</th>
-                <th style="width: 16%;">Bal</th>
+                <th style="width: 15%;">Expense</th>
+                <th style="width: 16%;">Balance</th>
                 <th style="width: 5%;"></th>
               </tr>
             </thead>
@@ -946,15 +968,15 @@
           </table>
         </div>
 
-        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
-          <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+          <button class="add-row-btn" onclick="openQuickEntryModal('cashbook')">+ Add Row <span style="font-size:10px; opacity:0.85;">(Ctrl+I)</span></button>
           <button class="btn-toggle-bal" id="toggleBalBtn" onclick="toggleBalPanel()">Available Balance</button>
         </div>
 
-        <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top:8px; background:#f8fafc; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
-          <div style="font-weight: 700; font-size:11px; margin-bottom: 4px;">Month-Wise Balance:</div>
+        <div id="balSummaryPanel" class="bal-summary-panel" style="display: none; margin-top:8px; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
+          <div style="font-weight: 700; font-size:11.5px; margin-bottom: 6px;">Month-Wise Balance:</div>
           <div class="month-bal-list" id="monthBalList"></div>
-          <div style="border-top:1px solid #cbd5e1; padding-top:4px; margin-top:4px; display:flex; justify-content:space-between; font-weight:800; font-size:11.5px;">
+          <div style="border-top:1px solid #cbd5e1; padding-top:6px; margin-top:6px; display:flex; justify-content:space-between; font-weight:800; font-size:12px;">
             <span>Total Available:</span>
             <span id="allMonthsTotalBal">0</span>
           </div>
@@ -963,8 +985,8 @@
 
       <!-- Tx Sub-view 2: Receipts -->
       <div id="txView-rec" class="sheet-container" style="display:none;">
-        <h4 style="margin-bottom:8px; font-size:13px; font-weight:800;">Receipts (Accounts Receivable / Due In)</h4>
-        <div class="table-scroll">
+        <h4 style="margin-bottom:8px; font-size:13.5px; font-weight:800;">Receipts (Accounts Receivable / Due In)</h4>
+        <div class="table-scroll" id="recTableContainer">
           <table>
             <thead>
               <tr>
@@ -978,13 +1000,13 @@
             <tbody id="recTableBody"></tbody>
           </table>
         </div>
-        <button class="add-row-btn" onclick="addDueRow('recTableBody')">+ Add Receipt</button>
+        <button class="add-row-btn" onclick="openQuickEntryModal('receivable')">+ Add Receipt</button>
       </div>
 
       <!-- Tx Sub-view 3: Payments -->
       <div id="txView-pay" class="sheet-container" style="display:none;">
-        <h4 style="margin-bottom:8px; font-size:13px; font-weight:800;">Payments (Accounts Payable / Due Out)</h4>
-        <div class="table-scroll">
+        <h4 style="margin-bottom:8px; font-size:13.5px; font-weight:800;">Payments (Accounts Payable / Due Out)</h4>
+        <div class="table-scroll" id="payTableContainer">
           <table>
             <thead>
               <tr>
@@ -998,66 +1020,55 @@
             <tbody id="payTableBody"></tbody>
           </table>
         </div>
-        <button class="add-row-btn" onclick="addDueRow('payTableBody')">+ Add Payment</button>
+        <button class="add-row-btn" onclick="openQuickEntryModal('payable')">+ Add Payment</button>
       </div>
     </div>
 
     <!-- 3. REPORTS MODULE -->
     <div id="ledger-section" class="app-screen-section sheet-container" style="display:none;">
-      <h3 style="margin-bottom: 8px; font-size: 14px; font-weight:800;">Statement & Ledger Center</h3>
+      <h3 style="margin-bottom: 10px; font-size: 15px; font-weight:800;">Statement & Reports Center</h3>
       
       <div class="filter-box">
         <div class="filter-group">
-          <label>Report View:</label>
+          <label>Report Type:</label>
           <select id="reportTypeSelect" onchange="handleReportTypeChange()">
             <option value="ledger">Account / Party Ledger</option>
-            <option value="daywise">Day-wise Report</option>
-            <option value="monthwise">Month-wise Report</option>
-            <option value="yearwise">Year-wise Report</option>
+            <option value="daywise">Day-wise Summary</option>
+            <option value="monthwise">Month-wise Summary</option>
+            <option value="yearwise">Year-wise Summary</option>
           </select>
         </div>
 
         <div class="filter-group" id="accountFilterGroup">
-          <label>Party / Account:</label>
+          <label>Filter Party / Account:</label>
           <select id="ledgerAccountSelect" onchange="renderActiveReport()">
             <option value="ALL">-- All Recorded Parties --</option>
           </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" id="searchFilterGroup">
           <label>Search Keyword:</label>
-          <input type="text" id="reportSearchInput" placeholder="Filter names..." oninput="renderActiveReport()">
+          <input type="text" id="reportSearchInput" placeholder="Filter descriptions..." oninput="renderActiveReport()">
         </div>
       </div>
 
       <div class="table-scroll">
         <table>
-          <thead id="reportTableHead">
-            <tr>
-              <th>Date</th>
-              <th>Source</th>
-              <th>Particular</th>
-              <th class="num">Income / In</th>
-              <th class="num exp-num">Exp / Out</th>
-            </tr>
-          </thead>
+          <thead id="reportTableHead"></thead>
           <tbody id="ledgerDetailBody"></tbody>
           <tfoot>
             <tr class="total-row">
-              <td colspan="3" class="num" id="reportFootLabel">Total</td>
+              <td id="reportFootLabel" class="num">Total</td>
               <td id="ledgerFilterIn" class="num">0</td>
               <td id="ledgerFilterOut" class="num exp-num">0</td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3" class="num">Net Balance</td>
-              <td colspan="2" id="ledgerFilterBalance" class="num">0</td>
+              <td id="ledgerFilterBalance" class="num">0</td>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
 
-    <!-- 4. SETTINGS & BACKUP HUB -->
+    <!-- 4. SETTINGS HUB -->
     <div id="settings-section" class="app-screen-section sheet-container" style="display:none;">
       <h3 style="margin-bottom: 10px; font-size: 14px; font-weight:800;">App Settings & Data Hub</h3>
       
@@ -1083,8 +1094,8 @@
           <span style="color:#64748b;">Update →</span>
         </div>
 
-        <div class="settings-item" onclick="installFinTrackApp()">
-          <span>📲 Add to Home Screen</span>
+        <div class="settings-item" id="installSettingsItem" onclick="installFinTrack()">
+          <span>📲 Install App (Add to Home Screen)</span>
           <span style="color:#10b981;">Install →</span>
         </div>
       </div>
@@ -1094,10 +1105,10 @@
       </div>
     </div>
 
-    <!-- Bottom App Navigation Bar (Mobile Only) -->
+    <!-- Bottom Sticky Navigation Bar (Mobile Only) -->
     <nav class="bottom-app-bar">
       <button class="bottom-nav-item active" id="botNav-dashboard" onclick="switchSection('dashboard')">
-        <span class="icon">📊</span>
+        <span class="icon">🏠</span>
         <span>Dashboard</span>
       </button>
       <button class="bottom-nav-item" id="botNav-transaction" onclick="switchSection('transaction')">
@@ -1115,7 +1126,53 @@
     </nav>
   </div>
 
-  <!-- SIMPLE YES/NO LOGOUT CONFIRMATION MODAL -->
+  <!-- QUICK ENTRY MODAL -->
+  <div class="modal-overlay" id="quickEntryModal">
+    <div class="modal-box" style="max-width: 380px;">
+      <h4 id="quickEntryModalTitle">New Transaction Entry</h4>
+      
+      <div style="text-align:left; margin-bottom: 6px;">
+        <label style="font-size: 10.5px; font-weight:700; color:#64748b;">Date</label>
+        <input type="date" id="qeDate" class="modal-input-field">
+      </div>
+
+      <div style="text-align:left; margin-bottom: 6px; position:relative;">
+        <label id="qePartLabel" style="font-size: 10.5px; font-weight:700; color:#64748b;">Particular / Party</label>
+        <input type="text" id="qeParticular" class="modal-input-field" placeholder="Enter name or description" oninput="handleLiveSuggestions(this)" onblur="setTimeout(hideAutocompleteMenu, 200)">
+      </div>
+
+      <div id="qeCashbookFields">
+        <div style="display:flex; gap:8px;">
+          <div style="flex:1; text-align:left;">
+            <label style="font-size: 10.5px; font-weight:700; color:#059669;">Income (+)</label>
+            <input type="number" inputmode="numeric" id="qeIncome" class="modal-input-field" placeholder="0">
+          </div>
+          <div style="flex:1; text-align:left;">
+            <label style="font-size: 10.5px; font-weight:700; color:#dc2626;">Expense (-)</label>
+            <input type="number" inputmode="numeric" id="qeExp" class="modal-input-field" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <div id="qeDueFields" style="display: none;">
+        <div style="text-align:left; margin-bottom: 6px;">
+          <label style="font-size: 10.5px; font-weight:700; color:#64748b;">Description (Optional)</label>
+          <input type="text" id="qeDesc" class="modal-input-field" placeholder="Notes">
+        </div>
+        <div style="text-align:left;">
+          <label style="font-size: 10.5px; font-weight:700; color:#2563eb;">Amount (₹)</label>
+          <input type="number" inputmode="numeric" id="qeAmount" class="modal-input-field" placeholder="0">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel-btn" onclick="closeModal('quickEntryModal')">Cancel</button>
+        <button class="modal-btn modal-save-btn" onclick="submitQuickEntry()">Save Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
   <div class="modal-overlay" id="simpleLogoutModal">
     <div class="modal-box">
       <h4 style="color:#ef4444;">Confirm Logout</h4>
@@ -1142,7 +1199,7 @@
     </div>
   </div>
 
-  <!-- App Title Modal -->
+  <!-- App Header Title Modal -->
   <div class="modal-overlay" id="appNameModal">
     <div class="modal-box">
       <h4>Edit App Header Name</h4>
@@ -1287,7 +1344,7 @@
     let currentUser = JSON.parse(localStorage.getItem('cashbook_active_user')) || null;
     let appTitle = localStorage.getItem('cashbook_app_name') || "FinTrack";
 
-    let sheets = [{ name: currentMonthYear, rows: [{ date: today, particular: "", income: 0, exp: 0 }] }];
+    let sheets = [{ name: currentMonthYear, rows: [] }];
     let receivables = [];
     let payables = [];
     let currentSheetIndex = 0;
@@ -1307,8 +1364,8 @@
         document.getElementById('auth-screen-container').style.display = 'none';
         document.getElementById('main-app-content').style.display = 'block';
         document.getElementById('currentUserNameLabel').innerText = currentUser.username;
-        document.getElementById('heroGreetingText').innerText = `Good Morning, ${currentUser.username} 👋`;
-        document.getElementById('todayDateLabel').innerText = `Today, ${now.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}`;
+        document.getElementById('heroUserName').innerText = currentUser.username;
+        document.getElementById('appBrandTitle').innerText = appTitle;
         
         initUserData();
         await loadFromSupabase();
@@ -1344,7 +1401,7 @@
       fintrackSaveTimer = setTimeout(() => saveToSupabase(false), 650);
     }
 
-    /* Live Starting-Prefix Word Autocomplete */
+    /* Live Autocomplete */
     function getAllRecordedNames() {
       const names = new Set();
       sheets.forEach(s => (s.rows || []).forEach(r => { if (r.particular && r.particular.trim()) names.add(r.particular.trim()); }));
@@ -1388,7 +1445,7 @@
       const rect = inputEl.getBoundingClientRect();
       menu.style.left = `${rect.left + window.scrollX}px`;
       menu.style.top = `${rect.bottom + window.scrollY + 2}px`;
-      menu.style.width = `${Math.max(rect.width, 130)}px`;
+      menu.style.width = `${Math.max(rect.width, 160)}px`;
       menu.style.display = 'block';
     }
 
@@ -1411,7 +1468,102 @@
       }
     });
 
-    /* Available Balance Panel Functions */
+    /* Quick Entry Modal Controller */
+    let currentEntryTarget = 'cashbook';
+
+    function openQuickEntryModal(target = 'cashbook') {
+      currentEntryTarget = target;
+      document.getElementById('qeDate').value = today;
+      document.getElementById('qeParticular').value = '';
+
+      if (target === 'cashbook') {
+        document.getElementById('quickEntryModalTitle').innerText = 'Add Cashbook Row';
+        document.getElementById('qePartLabel').innerText = 'Particular';
+        document.getElementById('qeParticular').placeholder = 'e.g. Salary, Rent, Grocery';
+        document.getElementById('qeCashbookFields').style.display = 'block';
+        document.getElementById('qeDueFields').style.display = 'none';
+        document.getElementById('qeIncome').value = '';
+        document.getElementById('qeExp').value = '';
+      } else if (target === 'receivable') {
+        document.getElementById('quickEntryModalTitle').innerText = 'Add Due In (Receipt)';
+        document.getElementById('qePartLabel').innerText = 'Debtor / Customer Name';
+        document.getElementById('qeParticular').placeholder = 'e.g. Ramu, Office A';
+        document.getElementById('qeCashbookFields').style.display = 'none';
+        document.getElementById('qeDueFields').style.display = 'block';
+        document.getElementById('qeDesc').value = '';
+        document.getElementById('qeAmount').value = '';
+      } else if (target === 'payable') {
+        document.getElementById('quickEntryModalTitle').innerText = 'Add Due Out (Payment)';
+        document.getElementById('qePartLabel').innerText = 'Creditor / Vendor Name';
+        document.getElementById('qeParticular').placeholder = 'e.g. Vendor B, Supplier';
+        document.getElementById('qeCashbookFields').style.display = 'none';
+        document.getElementById('qeDueFields').style.display = 'block';
+        document.getElementById('qeDesc').value = '';
+        document.getElementById('qeAmount').value = '';
+      }
+
+      document.getElementById('quickEntryModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('qeParticular').focus(), 80);
+    }
+
+    function submitQuickEntry() {
+      const dateVal = document.getElementById('qeDate').value || today;
+      const particularVal = document.getElementById('qeParticular').value.trim();
+
+      if (!particularVal) {
+        return showToast("Please enter particular/party name", "error");
+      }
+
+      if (currentEntryTarget === 'cashbook') {
+        const incVal = parseFloat(document.getElementById('qeIncome').value) || 0;
+        const expVal = parseFloat(document.getElementById('qeExp').value) || 0;
+
+        if (incVal === 0 && expVal === 0) {
+          return showToast("Please enter either Income or Expense", "error");
+        }
+
+        if (!sheets[currentSheetIndex].rows) sheets[currentSheetIndex].rows = [];
+        sheets[currentSheetIndex].rows.push({
+          date: dateVal,
+          particular: particularVal,
+          income: incVal,
+          exp: expVal
+        });
+
+        saveAllData();
+        renderSheet();
+
+        setTimeout(() => {
+          const container = document.getElementById('cashTableContainer');
+          if (container) container.scrollTop = container.scrollHeight;
+        }, 50);
+
+      } else if (currentEntryTarget === 'receivable') {
+        const amt = parseFloat(document.getElementById('qeAmount').value) || 0;
+        const descVal = document.getElementById('qeDesc').value.trim();
+
+        if (amt === 0) return showToast("Please enter receivable amount", "error");
+
+        receivables.push({ date: dateVal, name: particularVal, desc: descVal, amount: amt });
+        saveAllData();
+        renderDueTables();
+
+      } else if (currentEntryTarget === 'payable') {
+        const amt = parseFloat(document.getElementById('qeAmount').value) || 0;
+        const descVal = document.getElementById('qeDesc').value.trim();
+
+        if (amt === 0) return showToast("Please enter payable amount", "error");
+
+        payables.push({ date: dateVal, name: particularVal, desc: descVal, amount: amt });
+        saveAllData();
+        renderDueTables();
+      }
+
+      closeModal('quickEntryModal');
+      showToast("Entry added successfully!", "success");
+    }
+
+    /* Available Balance Panel */
     function toggleBalPanel() {
       const panel = document.getElementById('balSummaryPanel');
       const btn = document.getElementById('toggleBalBtn');
@@ -1443,7 +1595,7 @@
         const displayBal = (sheetBal >= 0 ? '+' : '') + sheetBal;
 
         const item = document.createElement('div');
-        item.style.cssText = 'padding:6px 8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:11px; margin-bottom:3px; cursor:pointer;';
+        item.style.cssText = 'padding:7px 10px; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; margin-bottom:4px; cursor:pointer;';
         item.title = "Click to open this sheet page";
         item.onclick = () => {
           currentSheetIndex = idx;
@@ -1463,13 +1615,39 @@
       }
     }
 
-    /* Dashboard Calculations */
+    /* Dashboard Calculations & Rendering Recent Transactions */
     function renderDashboard() {
       let totalInc = 0, totalExp = 0;
+      const allEntries = [];
+
       sheets.forEach(s => (s.rows || []).forEach(r => {
-        totalInc += parseFloat(r.income) || 0;
-        totalExp += parseFloat(r.exp) || 0;
+        const inc = parseFloat(r.income) || 0;
+        const exp = parseFloat(r.exp) || 0;
+        totalInc += inc;
+        totalExp += exp;
+        if (inc > 0 || exp > 0) {
+          allEntries.push({
+            date: r.date,
+            title: r.particular || 'Cash Entry',
+            type: inc > 0 ? 'inc' : 'exp',
+            amount: inc > 0 ? inc : exp
+          });
+        }
       }));
+
+      receivables.forEach(r => {
+        const amt = parseFloat(r.amount) || 0;
+        if (amt > 0) {
+          allEntries.push({ date: r.date, title: r.name || 'Receipt', type: 'inc', amount: amt });
+        }
+      });
+
+      payables.forEach(p => {
+        const amt = parseFloat(p.amount) || 0;
+        if (amt > 0) {
+          allEntries.push({ date: p.date, title: p.name || 'Payment', type: 'exp', amount: amt });
+        }
+      });
 
       const netCash = totalInc - totalExp;
       let totalDueIn = receivables.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
@@ -1482,6 +1660,42 @@
       document.getElementById('dashDueIn').innerText = `₹${totalDueIn.toLocaleString()}`;
       document.getElementById('dashDueOut').innerText = `₹${totalDueOut.toLocaleString()}`;
       document.getElementById('dashProjectedNet').innerText = `₹${projNet.toLocaleString()}`;
+      document.getElementById('heroNetBalance').innerText = `₹${netCash.toLocaleString()}`;
+
+      document.getElementById('lowerIncVal').innerText = `₹${totalInc.toLocaleString()}`;
+      document.getElementById('lowerExpVal').innerText = `₹${totalExp.toLocaleString()}`;
+      document.getElementById('donutNetVal').innerText = `₹${netCash.toLocaleString()}`;
+      const maxVal = Math.max(totalInc, totalExp, 1);
+      document.getElementById('incBar').style.width = `${Math.min(100, (totalInc / maxVal) * 100)}%`;
+      document.getElementById('expBar').style.width = `${Math.min(100, (totalExp / maxVal) * 100)}%`;
+
+      const recentListContainer = document.getElementById('recentTransactionsList');
+      recentListContainer.innerHTML = '';
+
+      if (allEntries.length === 0) {
+        recentListContainer.innerHTML = '<div style="font-size:11px; color:#94a3b8; text-align:center; padding:12px 0;">No transactions yet</div>';
+      } else {
+        const lastThree = allEntries.slice(-3).reverse();
+        lastThree.forEach(tx => {
+          const isInc = tx.type === 'inc';
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'recent-tx-item';
+          itemDiv.innerHTML = `
+            <div class="recent-tx-left">
+              <div class="recent-tx-icon ${isInc ? 'tx-inc-bg' : 'tx-exp-bg'}">${isInc ? '↓' : '↑'}</div>
+              <div>
+                <div class="recent-tx-title">${tx.title}</div>
+                <div class="recent-tx-sub">${tx.date || 'Today'}</div>
+              </div>
+            </div>
+            <div class="recent-tx-right">
+              <div class="recent-tx-amt" style="color: ${isInc ? '#059669' : '#dc2626'};">${isInc ? '+' : '-'}₹${tx.amount.toLocaleString()}</div>
+              <div class="recent-tx-dots">⋮</div>
+            </div>
+          `;
+          recentListContainer.appendChild(itemDiv);
+        });
+      }
     }
 
     /* Cashbook Sheet Rendering */
@@ -1526,13 +1740,6 @@
       document.getElementById('totalBal').innerText = bal;
     }
 
-    function addRow() {
-      if (!sheets[currentSheetIndex].rows) sheets[currentSheetIndex].rows = [];
-      sheets[currentSheetIndex].rows.push({ date: today, particular: '', income: 0, exp: 0 });
-      saveAllData();
-      renderSheet();
-    }
-
     /* Receivables & Payables Table Rendering */
     function renderDueTables() {
       const rBody = document.getElementById('recTableBody');
@@ -1564,21 +1771,12 @@
       });
     }
 
-    function addDueRow(target) {
-      if (target === 'recTableBody') receivables.push({ date: today, name: '', desc: '', amount: 0 });
-      else payables.push({ date: today, name: '', desc: '', amount: 0 });
-      saveAllData();
-      renderDueTables();
-    }
-
-    /* Screen & Tab Navigation */
+    /* Navigation Controller */
     let navigationHistory = ['dashboard'];
-    const sectionIndexMap = { 'dashboard': 0, 'transaction': 1, 'reports': 2, 'settings': 3 };
 
     function switchSection(section, fromHistory = false) {
       const curSection = navigationHistory[navigationHistory.length - 1] || 'dashboard';
-      const isForward = sectionIndexMap[section] >= sectionIndexMap[curSection];
-      
+
       const sections = {
         'dashboard': document.getElementById('dashboard-section'),
         'transaction': document.getElementById('transaction-section'),
@@ -1590,26 +1788,22 @@
         const el = sections[key];
         if (key === section) {
           el.style.display = 'block';
-          el.classList.remove('slide-forward', 'slide-backward');
-          void el.offsetWidth;
-          el.classList.add(isForward ? 'slide-forward' : 'slide-backward');
         } else {
           el.style.display = 'none';
         }
       });
 
-      // Update mobile bottom bar
+      // Mobile bottom nav active sync
       document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`botNav-${section}`);
       if (activeBtn) activeBtn.classList.add('active');
 
-      // Update desktop tabs
-      document.querySelectorAll('.desktop-nav-tabs button').forEach(b => b.classList.remove('active'));
-      if (section === 'dashboard') document.getElementById('dtab-dashboard')?.classList.add('active');
-      if (section === 'reports') document.getElementById('dtab-reports')?.classList.add('active');
-
-      if (!fromHistory && curSection !== section) {
-        navigationHistory.push(section);
+      if (section === 'dashboard') {
+        navigationHistory = ['dashboard'];
+      } else {
+        if (!fromHistory && curSection !== section) {
+          navigationHistory.push(section);
+        }
       }
 
       if (section === 'dashboard') renderDashboard();
@@ -1622,18 +1816,36 @@
       document.getElementById('txView-rec').style.display = subTab === 'rec' ? 'block' : 'none';
       document.getElementById('txView-pay').style.display = subTab === 'pay' ? 'block' : 'none';
 
-      document.getElementById('txTabBtn-sheet').className = subTab === 'sheet' ? 'active' : '';
-      document.getElementById('txTabBtn-rec').className = subTab === 'rec' ? 'active' : '';
-      document.getElementById('txTabBtn-pay').className = subTab === 'pay' ? 'active' : '';
+      document.getElementById('txTabBtn-sheet').className = subTab === 'sheet' ? 'sub-nav-tabs-btn active' : 'sub-nav-tabs-btn';
+      document.getElementById('txTabBtn-rec').className = subTab === 'rec' ? 'sub-nav-tabs-btn active' : 'sub-nav-tabs-btn';
+      document.getElementById('txTabBtn-pay').className = subTab === 'pay' ? 'sub-nav-tabs-btn active' : 'sub-nav-tabs-btn';
 
-      // Update desktop tab active class
-      document.querySelectorAll('.desktop-nav-tabs button').forEach(b => b.classList.remove('active'));
-      if (subTab === 'sheet') document.getElementById('dtab-sheet')?.classList.add('active');
-      if (subTab === 'rec') document.getElementById('dtab-rec')?.classList.add('active');
-      if (subTab === 'pay') document.getElementById('dtab-pay')?.classList.add('active');
+      // Keep desktop top-nav buttons synchronized with transaction sub-tabs
+      document.querySelectorAll('.desktop-nav-btn').forEach(b => b.classList.remove('active'));
+      const deskBtn = document.getElementById(`deskNav-transaction-${subTab}`);
+      if (deskBtn) deskBtn.classList.add('active');
     }
 
-    /* Reports / Ledger Logic */
+    const originalSwitchSection = switchSection;
+    switchSection = function(section, fromHistory = false) {
+      originalSwitchSection(section, fromHistory);
+      
+      // Sync desktop top navigation buttons active state
+      document.querySelectorAll('.desktop-nav-btn').forEach(b => b.classList.remove('active'));
+      let activeBtnId = '';
+      if (section === 'transaction') {
+        // Find which sub-tab is currently visible
+        const isRec = document.getElementById('txView-rec').style.display === 'block';
+        const isPay = document.getElementById('txView-pay').style.display === 'block';
+        activeBtnId = isRec ? 'deskNav-transaction-rec' : (isPay ? 'deskNav-transaction-pay' : 'deskNav-transaction-sheet');
+      } else {
+        activeBtnId = 'deskNav-' + section;
+      }
+      const targetDeskBtn = document.getElementById(activeBtnId);
+      if (targetDeskBtn) targetDeskBtn.classList.add('active');
+    };
+
+    /* Reports & Statement Core Logic */
     function populateLedgerAccounts() {
       const sel = document.getElementById('ledgerAccountSelect');
       sel.innerHTML = '<option value="ALL">-- All Recorded Parties --</option>';
@@ -1649,6 +1861,7 @@
     function handleReportTypeChange() {
       const type = document.getElementById('reportTypeSelect').value;
       document.getElementById('accountFilterGroup').style.display = type === 'ledger' ? 'flex' : 'none';
+      document.getElementById('searchFilterGroup').style.display = type === 'ledger' ? 'flex' : 'none';
       renderActiveReport();
     }
 
@@ -1656,36 +1869,154 @@
       const type = document.getElementById('reportTypeSelect').value;
       const account = document.getElementById('ledgerAccountSelect').value;
       const search = document.getElementById('reportSearchInput').value.toLowerCase();
+      const thead = document.getElementById('reportTableHead');
       const tbody = document.getElementById('ledgerDetailBody');
       tbody.innerHTML = '';
 
       const entries = [];
       sheets.forEach(s => (s.rows || []).forEach(r => {
-        entries.push({ date: r.date, source: `Cashbook (${s.name})`, particular: r.particular, inc: parseFloat(r.income) || 0, exp: parseFloat(r.exp) || 0 });
+        if (r.date) {
+          entries.push({
+            date: r.date,
+            source: `Cashbook (${s.name})`,
+            particular: r.particular || '-',
+            inc: parseFloat(r.income) || 0,
+            exp: parseFloat(r.exp) || 0
+          });
+        }
       }));
-      receivables.forEach(r => entries.push({ date: r.date, source: 'Receipt (Due In)', particular: r.name, inc: parseFloat(r.amount) || 0, exp: 0 }));
-      payables.forEach(p => entries.push({ date: p.date, source: 'Payment (Due Out)', particular: p.name, inc: 0, exp: parseFloat(p.amount) || 0 }));
-
-      let filtered = entries;
-      if (type === 'ledger' && account !== 'ALL') {
-        filtered = filtered.filter(e => (e.particular || '').toLowerCase() === account.toLowerCase());
-      }
-      if (search) {
-        filtered = filtered.filter(e => (e.particular || '').toLowerCase().includes(search));
-      }
-
-      let totalIn = 0, totalOut = 0;
-      filtered.forEach(e => {
-        totalIn += e.inc;
-        totalOut += e.exp;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${e.date||'-'}</td><td>${e.source}</td><td>${e.particular||'-'}</td><td class="num">${e.inc}</td><td class="num exp-num">${e.exp}</td>`;
-        tbody.appendChild(tr);
+      receivables.forEach(r => {
+        if (r.date) {
+          entries.push({
+            date: r.date,
+            source: 'Receipt (Due In)',
+            particular: r.name || '-',
+            inc: parseFloat(r.amount) || 0,
+            exp: 0
+          });
+        }
+      });
+      payables.forEach(p => {
+        if (p.date) {
+          entries.push({
+            date: p.date,
+            source: 'Payment (Due Out)',
+            particular: p.name || '-',
+            inc: 0,
+            exp: parseFloat(p.amount) || 0
+          });
+        }
       });
 
-      document.getElementById('ledgerFilterIn').innerText = totalIn;
-      document.getElementById('ledgerFilterOut').innerText = totalOut;
-      document.getElementById('ledgerFilterBalance').innerText = totalIn - totalOut;
+      let totalIn = 0, totalOut = 0;
+
+      if (type === 'ledger') {
+        thead.innerHTML = `
+          <tr>
+            <th style="width:20%;">Date</th>
+            <th style="width:22%;">Source</th>
+            <th style="width:26%;">Particular</th>
+            <th style="width:16%;" class="num">Income / In</th>
+            <th style="width:16%;" class="num exp-num">Exp / Out</th>
+          </tr>
+        `;
+
+        let filtered = entries;
+        if (account !== 'ALL') {
+          filtered = filtered.filter(e => (e.particular || '').toLowerCase() === account.toLowerCase());
+        }
+        if (search) {
+          filtered = filtered.filter(e => (e.particular || '').toLowerCase().includes(search));
+        }
+
+        filtered.forEach(e => {
+          totalIn += e.inc;
+          totalOut += e.exp;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${e.date}</td>
+            <td>${e.source}</td>
+            <td>${e.particular}</td>
+            <td class="num">${e.inc.toLocaleString()}</td>
+            <td class="num exp-num">${e.exp.toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('reportFootLabel').colSpan = 3;
+        document.getElementById('reportFootLabel').innerText = "Total";
+        document.getElementById('ledgerFilterIn').style.display = "";
+        document.getElementById('ledgerFilterOut').style.display = "";
+        document.getElementById('ledgerFilterIn').innerText = totalIn.toLocaleString();
+        document.getElementById('ledgerFilterOut').innerText = totalOut.toLocaleString();
+        document.getElementById('ledgerFilterBalance').innerText = `Net: ₹${(totalIn - totalOut).toLocaleString()}`;
+
+      } else {
+        const grouping = {};
+
+        entries.forEach(e => {
+          let key = '';
+          const [yr, mo, dy] = e.date.split('-');
+          if (type === 'daywise') {
+            key = e.date;
+          } else if (type === 'monthwise') {
+            key = `${yr}-${mo}`;
+          } else if (type === 'yearwise') {
+            key = yr || 'Unknown';
+          }
+
+          if (!grouping[key]) {
+            grouping[key] = { inc: 0, exp: 0, count: 0 };
+          }
+          grouping[key].inc += e.inc;
+          grouping[key].exp += e.exp;
+          grouping[key].count += 1;
+        });
+
+        const labelTitle = type === 'daywise' ? 'Date (Day)' : type === 'monthwise' ? 'Year - Month' : 'Year';
+
+        thead.innerHTML = `
+          <tr>
+            <th style="width:34%;">${labelTitle}</th>
+            <th style="width:22%;" class="num">Total Income / In</th>
+            <th style="width:22%;" class="num exp-num">Total Exp / Out</th>
+            <th style="width:22%;" class="num">Net Balance</th>
+          </tr>
+        `;
+
+        const sortedKeys = Object.keys(grouping).sort().reverse();
+
+        sortedKeys.forEach(k => {
+          const item = grouping[k];
+          const net = item.inc - item.exp;
+          totalIn += item.inc;
+          totalOut += item.exp;
+
+          let displayKey = k;
+          if (type === 'monthwise' && k.includes('-')) {
+            const [y, m] = k.split('-');
+            const dateObj = new Date(parseInt(y), parseInt(m) - 1, 1);
+            displayKey = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${displayKey}</strong> <span style="font-size:10px; color:#64748b;">(${item.count} items)</span></td>
+            <td class="num">${item.inc.toLocaleString()}</td>
+            <td class="num exp-num">${item.exp.toLocaleString()}</td>
+            <td class="num" style="font-weight:700; color:${net >= 0 ? '#10b981' : '#dc2626'};">${net >= 0 ? '+' : ''}${net.toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('reportFootLabel').colSpan = 1;
+        document.getElementById('reportFootLabel').innerText = "Grand Total";
+        document.getElementById('ledgerFilterIn').style.display = "";
+        document.getElementById('ledgerFilterOut').style.display = "";
+        document.getElementById('ledgerFilterIn').innerText = totalIn.toLocaleString();
+        document.getElementById('ledgerFilterOut').innerText = totalOut.toLocaleString();
+        document.getElementById('ledgerFilterBalance').innerText = `₹${(totalIn - totalOut).toLocaleString()}`;
+      }
     }
 
     /* Backup Export & Import */
@@ -1729,7 +2060,7 @@
       reader.readAsText(file);
     }
 
-    /* Logout & Reliable Backspace Interception */
+    /* Logout Action */
     function promptSimpleLogout() {
       document.getElementById('simpleLogoutModal').style.display = 'flex';
     }
@@ -1748,39 +2079,41 @@
       }
     }
 
+    /* Navigation & Modal Keyboard Control */
     function handleBackNavigation() {
-      // 1. Close any visible modal first
       const openModal = Array.from(document.querySelectorAll('.modal-overlay')).find(m => window.getComputedStyle(m).display === 'flex');
       if (openModal) {
         openModal.style.display = 'none';
-        return true;
+        return;
       }
 
-      // 2. If viewing sub-tabs in transaction, go back to Cashbook Sheet
-      const recVisible = document.getElementById('txView-rec').style.display === 'block';
-      const payVisible = document.getElementById('txView-pay').style.display === 'block';
-      if (recVisible || payVisible) {
-        switchTxTab('sheet');
-        return true;
-      }
+      const curSection = navigationHistory[navigationHistory.length - 1] || 'dashboard';
 
-      // 3. Step back in section history
-      if (navigationHistory.length > 1) {
+      if (curSection !== 'dashboard') {
         navigationHistory.pop();
-        const prev = navigationHistory[navigationHistory.length - 1] || 'dashboard';
-        switchSection(prev, true);
-        return true;
+        const prevSection = navigationHistory[navigationHistory.length - 1] || 'dashboard';
+        switchSection(prevSection, true);
       }
-
-      // 4. On Dashboard -> ALWAYS prompt for confirmation
-      promptSimpleLogout();
-      return true;
     }
 
     document.addEventListener('keydown', function(e) {
-      if (e.key !== 'Backspace') return;
-      const active = document.activeElement;
-      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'i' || e.key === 'I')) {
+        e.preventDefault();
+        openQuickEntryModal('cashbook');
+        return;
+      }
+
+      if (e.key === 'Backspace') {
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+          return;
+        }
+        e.preventDefault();
+        handleBackNavigation();
+      }
+    });
+
+    window.addEventListener('popstate', function(e) {
       e.preventDefault();
       handleBackNavigation();
     });
@@ -1800,7 +2133,7 @@
     function savePageModal() {
       const val = document.getElementById('modalPageNameInput').value.trim() || `Page ${sheets.length + 1}`;
       if (isCreatingNew) {
-        sheets.push({ name: val, rows: [{ date: today, particular: '', income: 0, exp: 0 }] });
+        sheets.push({ name: val, rows: [] });
         currentSheetIndex = sheets.length - 1;
       } else {
         sheets[currentSheetIndex].name = val;
@@ -1879,6 +2212,32 @@
       document.getElementById('pinInputGroup').style.display = authMode === 'register' ? 'block' : 'none';
       document.getElementById('authModeToggleLink').innerText = authMode === 'register' ? 'Have account? Login' : 'Register';
     }
+
+    /* PWA Direct Installation */
+    let deferredInstallPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", function(event) {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+    });
+
+    async function installFinTrack() {
+      if (!deferredInstallPrompt) {
+        showToast("Open browser menu & select 'Add to Home Screen'", "error");
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice;
+      if (result.outcome === 'accepted') {
+        showToast("App added to Home Screen!", "success");
+      }
+      deferredInstallPrompt = null;
+    }
+
+    window.addEventListener("appinstalled", function() {
+      showToast("App installed successfully!", "success");
+      deferredInstallPrompt = null;
+    });
 
     checkAuthSession();
   </script>
